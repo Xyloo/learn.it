@@ -16,9 +16,9 @@ public partial class Groups
     [Column("group_id")]
     public int GroupId { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Group's name cannot be blank.")]
     [Column("name")]
-    [StringLength(150)]
+    [StringLength(150, ErrorMessage = "Group's name cannot be shorter than 5 and longer than 150 characters.", MinimumLength = 5)]
     public string Name { get; set; }
 
     [Column("owner_id")]

@@ -1,5 +1,8 @@
+using System.Reflection;
 using learn.it.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 
 /*
  * Modifications to launchSettings.json (found in Properties):
@@ -18,6 +21,13 @@ builder.Services.AddDbContext<LearnitDbContext>(options =>
     options.UseSqlServer(
         "Data Source=localhost,1433;Initial Catalog=learnitdb;Persist Security Info=True;User ID=sa;Password=!root123456"));
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo() { Title = "learn.it", Version = "v1" });
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,10 +37,18 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("v1/swagger.json", "learn.it API V1");
+    });
+}
+
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",
