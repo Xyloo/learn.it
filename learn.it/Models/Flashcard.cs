@@ -10,7 +10,7 @@ namespace learn.it.Models;
 
 [Table("flashcards", Schema = "learnitdb")]
 [Index("StudySetId", Name = "fk_flashcards_study_sets1_idx")]
-public partial class Flashcards
+public partial class Flashcard
 {
     [Key]
     [Column("flashcard_id")]
@@ -33,12 +33,12 @@ public partial class Flashcards
     public short IsTermText { get; set; }
 
     [InverseProperty("Flashcard")]
-    public virtual ICollection<Answers> Answers { get; set; } = new List<Answers>();
+    public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
     [InverseProperty("Flashcard")]
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
     [ForeignKey("StudySetId")]
-    [InverseProperty("Flashcards")]
-    public virtual StudySets StudySet { get; set; }
+    [InverseProperty("Flashcard")]
+    public virtual StudySet StudySet { get; set; }
 }

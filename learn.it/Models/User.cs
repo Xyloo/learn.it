@@ -12,7 +12,7 @@ namespace learn.it.Models;
 [Index("PermissionId", Name = "fk_users_permissions1_idx")]
 [Index("Email", Name = "users$email_UNIQUE", IsUnique = true)]
 [Index("Username", Name = "users$username_UNIQUE", IsUnique = true)]
-public partial class Users
+public partial class User
 {
     [Key]
     [Column("user_id")]
@@ -48,23 +48,23 @@ public partial class Users
     public string? Avatar { get; set; }
 
     [InverseProperty("User")]
-    public virtual ICollection<Answers> Answers { get; set; } = new List<Answers>();
+    public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
     [InverseProperty("User")]
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
     [InverseProperty("Owner")]
-    public virtual ICollection<Groups> Groups { get; set; } = new List<Groups>();
+    public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 
     [InverseProperty("User")]
-    public virtual ICollection<Logins> Logins { get; set; } = new List<Logins>();
+    public virtual ICollection<Login> Logins { get; set; } = new List<Login>();
 
     [ForeignKey("PermissionId")]
-    [InverseProperty("Users")]
-    public required virtual Permissions Permission { get; set; }
+    [InverseProperty("User")]
+    public required virtual Permission Permission { get; set; }
 
     [InverseProperty("Creator")]
-    public virtual ICollection<StudySets> StudySets { get; set; } = new List<StudySets>();
+    public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
 
     [InverseProperty("User")]
     public virtual ICollection<UserAchievements> UserAchievements { get; set; } = new List<UserAchievements>();
@@ -77,5 +77,5 @@ public partial class Users
 
     [ForeignKey("UserId")]
     [InverseProperty("User")]
-    public virtual ICollection<Groups> Group { get; set; } = new List<Groups>();
+    public virtual ICollection<Group> Group { get; set; } = new List<Group>();
 }

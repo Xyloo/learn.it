@@ -27,5 +27,5 @@ public partial class UserPreferences
 
     [ForeignKey("UserId")]
     [InverseProperty("UserPreferences")]
-    public virtual Users User { get; set; }
+    public virtual User User { get; set; }
 }

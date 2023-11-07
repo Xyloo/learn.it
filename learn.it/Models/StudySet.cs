@@ -11,7 +11,7 @@ namespace learn.it.Models;
 [Table("study_sets", Schema = "learnitdb")]
 [Index("GroupId", Name = "fk_study_sets_groups1_idx")]
 [Index("CreatorId", Name = "fk_study_sets_users1_idx")]
-public partial class StudySets
+public partial class StudySet
 {
     [Key]
     [Column("study_set_id")]
@@ -39,13 +39,13 @@ public partial class StudySets
     public required string Visibility { get; set; }
 
     [ForeignKey("CreatorId")]
-    [InverseProperty("StudySets")]
-    public virtual Users Creator { get; set; }
+    [InverseProperty("StudySet")]
+    public virtual User Creator { get; set; }
 
     [InverseProperty("StudySet")]
-    public virtual ICollection<Flashcards> Flashcards { get; set; } = new List<Flashcards>();
+    public virtual ICollection<Flashcard> Flashcards { get; set; } = new List<Flashcard>();
 
     [ForeignKey("GroupId")]
-    [InverseProperty("StudySets")]
-    public virtual Groups Group { get; set; }
+    [InverseProperty("StudySet")]
+    public virtual Group Group { get; set; }
 }

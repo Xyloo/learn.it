@@ -1,7 +1,10 @@
 using System.Reflection;
+using System.Text;
 using learn.it.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 /*
@@ -19,13 +22,37 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<LearnitDbContext>(options =>
     options.UseSqlServer(
-        "Data Source=localhost,1433;Initial Catalog=learnitdb;Persist Security Info=True;User ID=sa;Password=!root123456"));
+        builder.Configuration.GetConnectionString("MsSqlConnection")
+        ));
 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo() { Title = "learn.it", Version = "v1" });
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+builder.Services.AddLogging(b =>
+{
+    b.AddConsole();
+    b.AddDebug();
+});
+
+var jwtKey = builder.Configuration.GetSection("JwtSettings")["Key"] ?? throw new NullReferenceException("JwtSettings:Key not found in appsettings.json");
+
+builder.Services.AddAuthentication(auth => {
+    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(jwt => {
+    jwt.RequireHttpsMetadata = false;
+    jwt.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 var app = builder.Build();
@@ -49,6 +76,9 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

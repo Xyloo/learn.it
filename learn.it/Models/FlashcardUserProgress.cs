@@ -36,9 +36,9 @@ public partial class FlashcardUserProgress
 
     [ForeignKey("FlashcardId")]
     [InverseProperty("FlashcardUserProgress")]
-    public virtual Flashcards Flashcard { get; set; }
+    public virtual Flashcard Flashcard { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("FlashcardUserProgress")]
-    public virtual Users User { get; set; }
+    public virtual User User { get; set; }
 }

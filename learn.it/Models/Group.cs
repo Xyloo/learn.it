@@ -10,7 +10,7 @@ namespace learn.it.Models;
 
 [Table("groups", Schema = "learnitdb")]
 [Index("OwnerId", Name = "fk_groups_users1_idx")]
-public partial class Groups
+public partial class Group
 {
     [Key]
     [Column("group_id")]
@@ -25,13 +25,13 @@ public partial class Groups
     public int OwnerId { get; set; }
 
     [ForeignKey("OwnerId")]
-    [InverseProperty("Groups")]
-    public virtual Users Owner { get; set; }
+    [InverseProperty("Group")]
+    public virtual User Owner { get; set; }
 
     [InverseProperty("Group")]
-    public virtual ICollection<StudySets> StudySets { get; set; } = new List<StudySets>();
+    public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
 
     [ForeignKey("GroupId")]
     [InverseProperty("Group")]
-    public virtual ICollection<Users> User { get; set; } = new List<Users>();
+    public virtual ICollection<User> User { get; set; } = new List<User>();
 }

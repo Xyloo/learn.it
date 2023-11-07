@@ -28,9 +28,9 @@ public partial class UserAchievements
 
     [ForeignKey("AchievementId")]
     [InverseProperty("UserAchievements")]
-    public virtual Achievements Achievement { get; set; }
+    public virtual Achievement Achievement { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("UserAchievements")]
-    public virtual Users User { get; set; }
+    public virtual User User { get; set; }
 }

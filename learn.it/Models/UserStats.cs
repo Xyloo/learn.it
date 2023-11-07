@@ -36,5 +36,5 @@ public partial class UserStats
 
     [ForeignKey("UserId")]
     [InverseProperty("UserStats")]
-    public virtual Users User { get; set; }
+    public virtual User User { get; set; }
 }

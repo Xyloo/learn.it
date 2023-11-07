@@ -10,7 +10,7 @@ namespace learn.it.Models;
 
 [Table("logins", Schema = "learnitdb")]
 [Index("UserId", Name = "fk_logins_users_idx")]
-public partial class Logins
+public partial class Login
 {
     [Key]
     [Column("login_id")]
@@ -24,6 +24,6 @@ public partial class Logins
     public DateTime Timestamp { get; set; }
 
     [ForeignKey("UserId")]
-    [InverseProperty("Logins")]
-    public virtual Users User { get; set; }
+    [InverseProperty("Login")]
+    public virtual User User { get; set; }
 }

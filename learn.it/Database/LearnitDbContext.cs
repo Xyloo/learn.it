@@ -17,21 +17,21 @@ public partial class LearnitDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Achievements> Achievements { get; set; }
+    public virtual DbSet<Achievement> Achievements { get; set; }
 
-    public virtual DbSet<Answers> Answers { get; set; }
+    public virtual DbSet<Answer> Answers { get; set; }
 
     public virtual DbSet<FlashcardUserProgress> FlashcardUserProgress { get; set; }
 
-    public virtual DbSet<Flashcards> Flashcards { get; set; }
+    public virtual DbSet<Flashcard> Flashcards { get; set; }
 
-    public virtual DbSet<Groups> Groups { get; set; }
+    public virtual DbSet<Group> Groups { get; set; }
 
-    public virtual DbSet<Logins> Logins { get; set; }
+    public virtual DbSet<Login> Logins { get; set; }
 
-    public virtual DbSet<Permissions> Permissions { get; set; }
+    public virtual DbSet<Permission> Permissions { get; set; }
 
-    public virtual DbSet<StudySets> StudySets { get; set; }
+    public virtual DbSet<StudySet> StudySets { get; set; }
 
     public virtual DbSet<UserAchievements> UserAchievements { get; set; }
 
@@ -39,18 +39,18 @@ public partial class LearnitDbContext : DbContext
 
     public virtual DbSet<UserStats> UserStats { get; set; }
 
-    public virtual DbSet<Users> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Achievements>(entity =>
+        modelBuilder.Entity<Achievement>(entity =>
         {
             entity.HasKey(e => e.AchievementId).HasName("PK_achievements_achievement_id");
 
             entity.Property(e => e.AchievementId).ValueGeneratedNever();
         });
 
-        modelBuilder.Entity<Answers>(entity =>
+        modelBuilder.Entity<Answer>(entity =>
         {
             entity.HasKey(e => e.AnswerId).HasName("PK_answers_answer_id");
 
@@ -74,7 +74,7 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.FlashcardUserProgress).HasConstraintName("flashcard_user_progress$fk_flashcard_user_progress_users1");
         });
 
-        modelBuilder.Entity<Flashcards>(entity =>
+        modelBuilder.Entity<Flashcard>(entity =>
         {
             entity.HasKey(e => e.FlashcardId).HasName("PK_flashcards_flashcard_id");
 
@@ -84,7 +84,7 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(d => d.StudySet).WithMany(p => p.Flashcards).HasConstraintName("flashcards$fk_flashcards_study_sets1");
         });
 
-        modelBuilder.Entity<Groups>(entity =>
+        modelBuilder.Entity<Group>(entity =>
         {
             entity.HasKey(e => e.GroupId).HasName("PK_groups_group_id");
 
@@ -93,7 +93,7 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(d => d.Owner).WithMany(p => p.Groups).HasConstraintName("groups$fk_groups_users1");
         });
 
-        modelBuilder.Entity<Logins>(entity =>
+        modelBuilder.Entity<Login>(entity =>
         {
             entity.HasKey(e => e.LoginId).HasName("PK_logins_login_id");
 
@@ -103,14 +103,14 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Logins).HasConstraintName("logins$fk_logins_users");
         });
 
-        modelBuilder.Entity<Permissions>(entity =>
+        modelBuilder.Entity<Permission>(entity =>
         {
             entity.HasKey(e => e.PermissionId).HasName("PK_permissions_permission_id");
 
             entity.Property(e => e.PermissionId).ValueGeneratedNever();
         });
 
-        modelBuilder.Entity<StudySets>(entity =>
+        modelBuilder.Entity<StudySet>(entity =>
         {
             entity.HasKey(e => e.StudySetId).HasName("PK_study_sets_study_set_id");
 
@@ -150,7 +150,7 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(d => d.User).WithOne(p => p.UserStats).HasConstraintName("user_stats$fk_user_stats_users1");
         });
 
-        modelBuilder.Entity<Users>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK_users_user_id");
 
@@ -165,11 +165,11 @@ public partial class LearnitDbContext : DbContext
             entity.HasMany(d => d.Group).WithMany(p => p.User)
                 .UsingEntity<Dictionary<string, object>>(
                     "UsersHasGroups",
-                    r => r.HasOne<Groups>().WithMany()
+                    r => r.HasOne<Group>().WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("users_has_groups$fk_users_has_groups_groups1"),
-                    l => l.HasOne<Users>().WithMany()
+                    l => l.HasOne<User>().WithMany()
                         .HasForeignKey("UserId")
                         .HasConstraintName("users_has_groups$fk_users_has_groups_users1"),
                     j =>

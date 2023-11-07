@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace learn.it.Models;
 
 [Table("achievements", Schema = "learnitdb")]
-public partial class Achievements
+public partial class Achievement
 {
     [Key]
     [Column("achievement_id")]

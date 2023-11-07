@@ -11,7 +11,7 @@ namespace learn.it.Models;
 [Table("answers", Schema = "learnitdb")]
 [Index("FlashcardId", Name = "fk_answers_flashcards1_idx")]
 [Index("UserId", Name = "fk_answers_users1_idx")]
-public partial class Answers
+public partial class Answer
 {
     [Key]
     [Column("answer_id")]
@@ -30,10 +30,10 @@ public partial class Answers
     public int AnswerTime { get; set; }
 
     [ForeignKey("FlashcardId")]
-    [InverseProperty("Answers")]
-    public virtual Flashcards Flashcard { get; set; }
+    [InverseProperty("Answer")]
+    public virtual Flashcard Flashcard { get; set; }
 
     [ForeignKey("UserId")]
-    [InverseProperty("Answers")]
-    public virtual Users User { get; set; }
+    [InverseProperty("Answer")]
+    public virtual User User { get; set; }
 }

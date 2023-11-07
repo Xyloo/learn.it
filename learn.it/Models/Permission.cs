@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace learn.it.Models;
 
 [Table("permissions", Schema = "learnitdb")]
-public partial class Permissions
+public partial class Permission
 {
     [Key]
     [Column("permission_id")]
@@ -21,5 +21,5 @@ public partial class Permissions
     public string Name { get; set; }
 
     [InverseProperty("Permission")]
-    public virtual ICollection<Users> Users { get; set; } = new List<Users>();
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
