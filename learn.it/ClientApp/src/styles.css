@@ -1,12 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
 
-/* Provide sufficient contrast against white background */
+
+
+:root {
+  --primary-bg-color: #4e7a5a;
+  --secondary-bg-color: #8ccfff;
+  --text-color: #ffffff;
+  --login-button-bg: #ffffff;
+  --login-button-text-color: #4e7a5a;
+  --link-text-color: #c2ffb0;
+  --grey-text: #504646;
+  --high-contrast-bg: #000000; /* Black */
+  --high-contrast-text: #ffff00; /* Yellow */
+  --green-light-main: #96E6B3;
+  --green-light-main-dark-60: #1d7a3f;
+  --green-light-main-dark-15: #67db91;
+  --green-dark-main: #32533D;
+}
+
+
 a {
   color: #0366d6;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+
+body {
+  background-image: url('/assets/main-background.svg');
+  background-size: cover; 
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed; 
 }
 
 code {

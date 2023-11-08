@@ -1,0 +1,134 @@
+/* login.component.css */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px 35px 35px 35px;
+  background-color: var(--primary-bg-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-title-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.login-icon {
+  width: 5rem;
+  height: auto;
+  margin-left: 8px; 
+}
+
+
+.login-title {
+  color: #ffffff;
+  font-size: 2.75rem;
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+.icon-input {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50.0%;
+  height: 22px; 
+  width: auto;
+}
+
+.form-group {
+  margin-bottom: 0px;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  padding-left: 40px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: var(--grey-text);
+  background-color: var(--green-light-main);
+}
+
+.forgot-password {
+  display: block;
+  margin: 5px 0px 15px 5px;
+  color: #ffffff; /* White text color */
+  text-decoration: none;
+  text-align:left;
+}
+
+.btn-login {
+  background-color: var(--green-light-main); /* White background */
+  color: black;
+  font-weight: bold;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+  .btn-login:hover {
+    background-color: var(--green-light-main-dark-15); /* Light grey background for hover state */
+  }
+
+.sign-up-btn {
+  width: 100%;
+}
+
+.register-link{
+    display: flex;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.register-link a {
+  text-decoration: none;
+}
+
+
+.decorator {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: space-around; /* This will ensure the lines and text are spaced evenly */
+}
+
+.line {
+  flex-grow: 1; /* Lines will take up fill all available space */
+  background: #FFFFFF; /* Adjust color to match your design */
+  height: 1px; /* Adjust thickness of the line */
+  margin: 0 10px; /* Adjust spacing around the text */
+}
+
+
+.text {
+  white-space: nowrap;
+  padding: 0 10px; /* Adjust to ensure it doesn't overlap with the lines on smaller screens */
+  color: #FFFFFF; /* Adjust color to match your design */
+}
+
+
+@media (max-width: 768px) {
+  .login-panel {
+    margin: 20px;
+  }
+}

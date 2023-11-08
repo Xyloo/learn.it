@@ -132,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "learn.it"
+  "defaultProject": "learn.it",
+  "cli": {
+    "analytics": false
+  }
 }
