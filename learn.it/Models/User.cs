@@ -24,6 +24,7 @@ public partial class User
     [Required(ErrorMessage = "Username cannot be blank.")]
     [Column("username")]
     [StringLength(32, ErrorMessage = "Username cannot be shorter than 3 and longer than 32 characters.", MinimumLength = 3)]
+    [RegularExpression(@"^[A-Za-z][A-Za-z0-9_]*$", ErrorMessage = "Username cannot start with a number and can only contain letters, numbers and underscores.")]
     public required string Username { get; set; }
 
     [Required(ErrorMessage = "Email cannot be blank.")]
@@ -41,6 +42,10 @@ public partial class User
     [Column("create_time")]
     [Precision(0)]
     public DateTime CreateTime { get; set; }
+
+    [Column("last_login")]
+    [Precision(0)]
+    public DateTime? LastLogin { get; set; }
 
     //this can be null - the database has a default value of "default.png"
     [Column("avatar")]
@@ -61,7 +66,7 @@ public partial class User
 
     [ForeignKey("PermissionId")]
     [InverseProperty("User")]
-    public required virtual Permission Permission { get; set; }
+    public required virtual Permission Permissions { get; set; }
 
     [InverseProperty("Creator")]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
