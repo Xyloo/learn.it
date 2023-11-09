@@ -16,9 +16,6 @@ public partial class Flashcard
     [Column("flashcard_id")]
     public int FlashcardId { get; set; }
 
-    [Column("study_set_id")]
-    public int StudySetId { get; set; }
-
     [Required(ErrorMessage = "Flashcard's term cannot be blank.")]
     [Column("term")]
     [StringLength(500, ErrorMessage = "Flashcard's term cannot be longer than 500 characters.")]

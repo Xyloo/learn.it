@@ -16,9 +16,6 @@ public partial class Login
     [Column("login_id")]
     public int LoginId { get; set; }
 
-    [Column("user_id")]
-    public int UserId { get; set; }
-
     [Column("timestamp")]
     [Precision(0)]
     public DateTime Timestamp { get; set; }

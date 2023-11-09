@@ -17,12 +17,6 @@ public partial class StudySet
     [Column("study_set_id")]
     public int StudySetId { get; set; }
 
-    [Column("group_id")]
-    public int? GroupId { get; set; }
-
-    [Column("creator_id")]
-    public int CreatorId { get; set; }
-
     [Required(ErrorMessage = "Study set's name cannot be blank.")]
     [Column("name")]
     [StringLength(100, ErrorMessage = "Study set's name cannot be shorter than 4 and longer than 100 characters.", MinimumLength = 4)]

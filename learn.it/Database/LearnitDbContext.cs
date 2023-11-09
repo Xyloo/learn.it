@@ -158,11 +158,11 @@ public partial class LearnitDbContext : DbContext
             entity.Property(e => e.Avatar).HasDefaultValueSql("(N'default.png')");
             entity.Property(e => e.CreateTime).HasDefaultValueSql("(getdate())");
 
-            entity.HasOne(d => d.Permission).WithMany(p => p.Users)
+            entity.HasOne(d => d.Permissions).WithMany(p => p.Users)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("users$fk_users_permissions1");
 
-            entity.HasMany(d => d.Group).WithMany(p => p.User)
+            entity.HasMany(d => d.Group).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(
                     "UsersHasGroups",
                     r => r.HasOne<Group>().WithMany()

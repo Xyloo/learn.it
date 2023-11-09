@@ -21,9 +21,6 @@ public partial class Group
     [StringLength(150, ErrorMessage = "Group's name cannot be shorter than 5 and longer than 150 characters.", MinimumLength = 5)]
     public string Name { get; set; }
 
-    [Column("owner_id")]
-    public int OwnerId { get; set; }
-
     [ForeignKey("OwnerId")]
     [InverseProperty("Group")]
     public virtual User Owner { get; set; }
@@ -33,5 +30,5 @@ public partial class Group
 
     [ForeignKey("GroupId")]
     [InverseProperty("Group")]
-    public virtual ICollection<User> User { get; set; } = new List<User>();
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

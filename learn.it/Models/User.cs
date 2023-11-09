@@ -18,9 +18,6 @@ public partial class User
     [Column("user_id")]
     public int UserId { get; set; }
 
-    [Column("permission_id")]
-    public int PermissionId { get; set; }
-
     [Required(ErrorMessage = "Username cannot be blank.")]
     [Column("username")]
     [StringLength(32, ErrorMessage = "Username cannot be shorter than 3 and longer than 32 characters.", MinimumLength = 3)]

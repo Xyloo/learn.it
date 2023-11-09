@@ -17,12 +17,6 @@ public partial class Answer
     [Column("answer_id")]
     public int AnswerId { get; set; }
 
-    [Column("user_id")]
-    public int UserId { get; set; }
-
-    [Column("flashcard_id")]
-    public int FlashcardId { get; set; }
-
     [Column("is_correct")]
     public short IsCorrect { get; set; }
 
