@@ -33,22 +33,22 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Include(u => u.Permissions).ToListAsync();
         }
 
         public async Task<User?> GetUserByEmail(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<User?> GetUserById(int userId)
         {
-            return await _context.Users.FindAsync(userId);
+            return await _context.Users.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
         public async Task<User?> GetUserByUsername(string username)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            return await _context.Users.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task<User> UpdateUser(User user)
