@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using learn.it.Models.Dtos.Response;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
@@ -15,6 +16,7 @@ namespace learn.it.Models;
 public partial class User
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("user_id")]
     public int UserId { get; private set; }
 
@@ -46,13 +48,13 @@ public partial class User
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
     [InverseProperty("Owner")]
-    public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+    public virtual ICollection<Group> GroupsOwner { get; set; } = new List<Group>();
 
     [InverseProperty("User")]
     public virtual ICollection<Login> Logins { get; set; } = new List<Login>();
 
     [ForeignKey("PermissionId")]
-    [InverseProperty("User")]
+    [InverseProperty("Users")]
     public virtual Permission Permissions { get; set; }
 
     [InverseProperty("Creator")]
@@ -68,6 +70,16 @@ public partial class User
     public virtual UserStats UserStats { get; set; }
 
     [ForeignKey("UserId")]
-    [InverseProperty("User")]
-    public virtual ICollection<Group> Group { get; set; } = new List<Group>();
+    [InverseProperty("Users")]
+    public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+    public AnonymousUserResponseDto ToAnonymousUserResponseDto()
+    {
+        return new AnonymousUserResponseDto(this);
+    }
+
+    public SelfUserResponseDto ToSelfUserResponseDto()
+    {
+        return new SelfUserResponseDto(this);
+    }
 }

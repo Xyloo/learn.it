@@ -13,6 +13,7 @@ namespace learn.it.Models;
 public partial class UserStats
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("user_id")]
     public int UserId { get; private set; }
 

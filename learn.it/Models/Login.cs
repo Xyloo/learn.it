@@ -14,6 +14,7 @@ public partial class Login
 {
     [Key]
     [Column("login_id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int LoginId { get; private set; }
 
     [Column("timestamp")]
@@ -21,6 +22,6 @@ public partial class Login
     public DateTime Timestamp { get; set; }
 
     [ForeignKey("UserId")]
-    [InverseProperty("Login")]
+    [InverseProperty("Logins")]
     public virtual User User { get; set; }
 }

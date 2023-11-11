@@ -14,6 +14,7 @@ namespace learn.it.Models;
 public partial class Answer
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("answer_id")]
     public int AnswerId { get; private set; }
 
@@ -24,10 +25,10 @@ public partial class Answer
     public int AnswerTime { get; set; }
 
     [ForeignKey("FlashcardId")]
-    [InverseProperty("Answer")]
+    [InverseProperty("Answers")]
     public virtual Flashcard Flashcard { get; set; }
 
     [ForeignKey("UserId")]
-    [InverseProperty("Answer")]
+    [InverseProperty("Answers")]
     public virtual User User { get; set; }
 }

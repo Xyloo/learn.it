@@ -13,13 +13,14 @@ public partial class Permission
 {
     [Key]
     [Column("permission_id")]
-    public int PermissionId { get; private set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int PermissionId { get; set; }
 
     [Required]
     [Column("name")]
     [StringLength(45)]
     public string Name { get; set; }
 
-    [InverseProperty("Permission")]
+    [InverseProperty("Permissions")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

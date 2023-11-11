@@ -47,14 +47,14 @@ public partial class LearnitDbContext : DbContext
         {
             entity.HasKey(e => e.AchievementId).HasName("PK_achievements_achievement_id");
 
-            entity.Property(e => e.AchievementId).ValueGeneratedNever();
+            entity.Property(e => e.AchievementId).ValueGeneratedOnAdd();
         });
 
         modelBuilder.Entity<Answer>(entity =>
         {
             entity.HasKey(e => e.AnswerId).HasName("PK_answers_answer_id");
 
-            entity.Property(e => e.AnswerId).ValueGeneratedNever();
+            entity.Property(e => e.AnswerId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Flashcard).WithMany(p => p.Answers)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -78,7 +78,7 @@ public partial class LearnitDbContext : DbContext
         {
             entity.HasKey(e => e.FlashcardId).HasName("PK_flashcards_flashcard_id");
 
-            entity.Property(e => e.FlashcardId).ValueGeneratedNever();
+            entity.Property(e => e.FlashcardId).ValueGeneratedOnAdd();
             entity.Property(e => e.IsTermText).HasDefaultValueSql("((1))");
 
             entity.HasOne(d => d.StudySet).WithMany(p => p.Flashcards).HasConstraintName("flashcards$fk_flashcards_study_sets1");
@@ -88,16 +88,16 @@ public partial class LearnitDbContext : DbContext
         {
             entity.HasKey(e => e.GroupId).HasName("PK_groups_group_id");
 
-            entity.Property(e => e.GroupId).ValueGeneratedNever();
+            entity.Property(e => e.GroupId).ValueGeneratedOnAdd();
 
-            entity.HasOne(d => d.Owner).WithMany(p => p.Groups).HasConstraintName("groups$fk_groups_users1");
+            entity.HasOne(d => d.Owner).WithMany(p => p.GroupsOwner).HasConstraintName("groups$fk_groups_users1");
         });
 
         modelBuilder.Entity<Login>(entity =>
         {
             entity.HasKey(e => e.LoginId).HasName("PK_logins_login_id");
 
-            entity.Property(e => e.LoginId).ValueGeneratedNever();
+            entity.Property(e => e.LoginId).ValueGeneratedOnAdd();
             entity.Property(e => e.Timestamp).HasDefaultValueSql("(getdate())");
 
             entity.HasOne(d => d.User).WithMany(p => p.Logins).HasConstraintName("logins$fk_logins_users");
@@ -107,11 +107,11 @@ public partial class LearnitDbContext : DbContext
         {
             entity.HasKey(e => e.PermissionId).HasName("PK_permissions_permission_id");
 
-            entity.Property(e => e.PermissionId).ValueGeneratedNever();
+            entity.Property(e => e.PermissionId).ValueGeneratedOnAdd();
             entity.HasData(new Permission[]
             {
-                new Permission() { Name = "Admin" },
-                new Permission() { Name = "User" }
+                new Permission() { Name = "Admin", PermissionId = 1 },
+                new Permission() { Name = "User", PermissionId = 2 }
             });
         });
 
@@ -119,7 +119,7 @@ public partial class LearnitDbContext : DbContext
         {
             entity.HasKey(e => e.StudySetId).HasName("PK_study_sets_study_set_id");
 
-            entity.Property(e => e.StudySetId).ValueGeneratedNever();
+            entity.Property(e => e.StudySetId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Creator).WithMany(p => p.StudySets).HasConstraintName("study_sets$fk_study_sets_users1");
 
@@ -159,7 +159,10 @@ public partial class LearnitDbContext : DbContext
         {
             entity.HasKey(e => e.UserId).HasName("PK_users_user_id");
 
-            entity.Property(e => e.UserId).ValueGeneratedNever();
+            entity.HasOne(u => u.UserStats).WithOne(us => us.User).HasForeignKey<UserStats>(us => us.UserId);
+            entity.HasOne(u => u.UserPreferences).WithOne(us => us.User).HasForeignKey<UserPreferences>(us => us.UserId);
+
+            entity.Property(e => e.UserId).ValueGeneratedOnAdd();
             entity.Property(e => e.Avatar).HasDefaultValueSql("(N'default.png')");
             entity.Property(e => e.CreateTime).HasDefaultValueSql("(getdate())");
 
@@ -167,7 +170,7 @@ public partial class LearnitDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("users$fk_users_permissions1");
 
-            entity.HasMany(d => d.Group).WithMany(p => p.Users)
+            entity.HasMany(d => d.Groups).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(
                     "UsersHasGroups",
                     r => r.HasOne<Group>().WithMany()

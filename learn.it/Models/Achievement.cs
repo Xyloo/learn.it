@@ -12,6 +12,7 @@ namespace learn.it.Models;
 public partial class Achievement
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("achievement_id")]
     public int AchievementId { get; private set; }
 

@@ -14,6 +14,7 @@ namespace learn.it.Models;
 public partial class StudySet
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("study_set_id")]
     public int StudySetId { get; private set; }
 
@@ -33,13 +34,13 @@ public partial class StudySet
     public required string Visibility { get; set; }
 
     [ForeignKey("CreatorId")]
-    [InverseProperty("StudySet")]
+    [InverseProperty("StudySets")]
     public virtual User Creator { get; set; }
 
     [InverseProperty("StudySet")]
     public virtual ICollection<Flashcard> Flashcards { get; set; } = new List<Flashcard>();
 
     [ForeignKey("GroupId")]
-    [InverseProperty("StudySet")]
+    [InverseProperty("StudySets")]
     public virtual Group Group { get; set; }
 }

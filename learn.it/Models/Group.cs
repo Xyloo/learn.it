@@ -14,6 +14,7 @@ public partial class Group
 {
     [Key]
     [Column("group_id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int GroupId { get; private set; }
 
     [Required(ErrorMessage = "Group's name cannot be blank.")]
@@ -22,13 +23,13 @@ public partial class Group
     public string Name { get; set; }
 
     [ForeignKey("OwnerId")]
-    [InverseProperty("Group")]
+    [InverseProperty("GroupsOwner")]
     public virtual User Owner { get; set; }
 
     [InverseProperty("Group")]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
 
     [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
+    [InverseProperty("Groups")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

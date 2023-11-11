@@ -13,6 +13,7 @@ namespace learn.it.Models;
 public partial class Flashcard
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("flashcard_id")]
     public int FlashcardId { get; private set; }
 
@@ -36,6 +37,6 @@ public partial class Flashcard
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
     [ForeignKey("StudySetId")]
-    [InverseProperty("Flashcard")]
+    [InverseProperty("Flashcards")]
     public virtual StudySet StudySet { get; set; }
 }
