@@ -19,13 +19,13 @@ public partial class User
     public int UserId { get; private set; }
 
     [Column("username")]
-    public required string Username { get; set; }
+    public string Username { get; set; }
 
     [Column("email")]
-    public required string Email { get; set; }
+    public string Email { get; set; }
 
     [Column("password")]
-    public required string Password { get; set; }
+    public string Password { get; set; }
 
     [Column("create_time")]
     [Precision(0)]
@@ -53,7 +53,7 @@ public partial class User
 
     [ForeignKey("PermissionId")]
     [InverseProperty("User")]
-    public required virtual Permission Permissions { get; set; }
+    public virtual Permission Permissions { get; set; }
 
     [InverseProperty("Creator")]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
@@ -62,10 +62,10 @@ public partial class User
     public virtual ICollection<UserAchievements> UserAchievements { get; set; } = new List<UserAchievements>();
 
     [InverseProperty("User")]
-    public required virtual UserPreferences UserPreferences { get; set; }
+    public virtual UserPreferences UserPreferences { get; set; }
 
     [InverseProperty("User")]
-    public required virtual UserStats UserStats { get; set; }
+    public virtual UserStats UserStats { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("User")]
