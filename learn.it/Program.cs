@@ -1,9 +1,12 @@
 using System.Reflection;
 using System.Text;
 using learn.it.Models;
+using learn.it.Repos;
+using learn.it.Services;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -28,8 +31,8 @@ builder.Services.AddDbContext<LearnitDbContext>(options =>
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo() { Title = "learn.it", Version = "v1" });
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    //var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    //c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddLogging(b =>
@@ -38,8 +41,9 @@ builder.Services.AddLogging(b =>
     b.AddDebug();
 });
 
-var jwtKey = builder.Configuration.GetSection("JwtSettings")["Key"] ?? throw new NullReferenceException("JwtSettings:Key not found in appsettings.json");
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+JwtSettings.Key = builder.Configuration.GetSection("JwtSettings")["Key"] ?? throw new NullReferenceException("JwtSettings:Key not found in appsettings.json");
+JwtSettings.Audience = builder.Configuration.GetSection("JwtSettings")["Audience"] ?? throw new NullReferenceException("JwtSettings:Audience not found in appsettings.json");
+JwtSettings.Issuer = builder.Configuration.GetSection("JwtSettings")["Issuer"] ?? throw new NullReferenceException("JwtSettings:Issuer not found in appsettings.json");
 
 builder.Services.AddAuthentication(auth => {
     auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,11 +51,13 @@ builder.Services.AddAuthentication(auth => {
     jwt.RequireHttpsMetadata = false;
     jwt.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
+        ValidateIssuer = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
+        ValidIssuer = JwtSettings.Issuer,
+        ValidAudience = JwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtSettings.Key)),
         ClockSkew = TimeSpan.Zero
     };
 });
@@ -59,8 +65,14 @@ builder.Services.AddAuthentication(auth => {
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admins", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("Users", policy => policy.RequireAuthenticatedUser());
+    options.AddPolicy("Users", policy => policy.RequireRole("User"));
 });
+
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPermissionsRepository, PermissionsRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -86,6 +98,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<JwtBlacklistMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

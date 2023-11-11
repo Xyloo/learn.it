@@ -16,10 +16,7 @@ namespace learn.it.Utils
 
         private static void ClearInvalidTokens(object? state)
         {
-            foreach (var token in _invalidTokens.Where(token => DateTime.UtcNow > new JwtSecurityToken(token).ValidTo))
-            {
-                _invalidTokens.Remove(token);
-            }
+            _invalidTokens.RemoveAll(token => DateTime.UtcNow > new JwtSecurityToken(token).ValidTo);
         }
 
         public static bool IsTokenInvalid(string token)
