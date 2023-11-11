@@ -18,13 +18,11 @@ namespace learn.it.Services
         private readonly IUserRepository _userRepository;
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly PasswordHasher<User> _passwordHasher;
-        private readonly JwtSettings _jwtSettings;
 
-        public UserService(IUserRepository userRepository, PasswordHasher<User> passwordHasher, JwtSettings jwtSettings, IPermissionsRepository permissionsRepository)
+        public UserService(IUserRepository userRepository, IPermissionsRepository permissionsRepository)
         {
             _userRepository = userRepository;
-            _passwordHasher = passwordHasher;
-            _jwtSettings = jwtSettings;
+            _passwordHasher = new PasswordHasher<User>();
             _permissionsRepository = permissionsRepository;
         }
 
@@ -57,17 +55,22 @@ namespace learn.it.Services
         public string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Key);
+            var key = Encoding.ASCII.GetBytes(JwtSettings.Key);
             var role = user.Permissions.Name;
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Role, role.Trim())
+                new(ClaimTypes.Role, role.Trim()),
+                new(ClaimTypes.Name, user.Username),
+                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.NameIdentifier, user.UserId.ToString())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims.ToArray()),
                 Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = JwtSettings.Issuer,
+                Audience = JwtSettings.Audience,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

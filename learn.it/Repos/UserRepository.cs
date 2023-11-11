@@ -33,22 +33,22 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            return await _context.Users.Include(u => u.Permissions).ToListAsync();
+            return await _context.Users.Include(u => u.Permissions).Include(u => u.UserStats).Include(u => u.UserPreferences).ToListAsync();
         }
 
         public async Task<User?> GetUserByEmail(string email)
         {
-            return await _context.Users.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users.Include(u => u.Permissions).Include(u => u.UserStats).Include(u => u.UserPreferences).FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<User?> GetUserById(int userId)
         {
-            return await _context.Users.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
+            return await _context.Users.Include(u => u.Permissions).Include(u => u.UserStats).Include(u => u.UserPreferences).FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
         public async Task<User?> GetUserByUsername(string username)
         {
-            return await _context.Users.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Username == username);
+            return await _context.Users.Include(u => u.Permissions).Include(u => u.UserStats).Include(u => u.UserPreferences).FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task<User> UpdateUser(User user)
