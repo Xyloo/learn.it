@@ -16,11 +16,11 @@ public partial class UserAchievements
 {
     [Key]
     [Column("achievement_id")]
-    public int AchievementId { get; set; }
+    public int AchievementId { get; private set; }
 
     [Key]
     [Column("user_id")]
-    public int UserId { get; set; }
+    public int UserId { get; private set; }
 
     [Column("timestamp")]
     [Precision(0)]

@@ -14,16 +14,16 @@ public partial class UserPreferences
 {
     [Key]
     [Column("user_id")]
-    public int UserId { get; set; }
+    public int UserId { get; private set; }
 
     [Column("high_contrast_mode")]
-    public short HighContrastMode { get; set; }
+    public short HighContrastMode { get; set; } = 0;
 
     [Column("email_reminders")]
-    public short EmailReminders { get; set; }
+    public short EmailReminders { get; set; } = 0;
 
     [Column("auto_tts")]
-    public short AutoTts { get; set; }
+    public short AutoTts { get; set; } = 0;
 
     [ForeignKey("UserId")]
     [InverseProperty("UserPreferences")]

@@ -13,7 +13,7 @@ public partial class Achievement
 {
     [Key]
     [Column("achievement_id")]
-    public int AchievementId { get; set; }
+    public int AchievementId { get; private set; }
 
     [Required]
     [Column("name")]

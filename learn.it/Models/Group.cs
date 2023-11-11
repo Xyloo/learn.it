@@ -14,7 +14,7 @@ public partial class Group
 {
     [Key]
     [Column("group_id")]
-    public int GroupId { get; set; }
+    public int GroupId { get; private set; }
 
     [Required(ErrorMessage = "Group's name cannot be blank.")]
     [Column("name")]

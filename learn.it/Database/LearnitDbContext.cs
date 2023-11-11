@@ -108,6 +108,11 @@ public partial class LearnitDbContext : DbContext
             entity.HasKey(e => e.PermissionId).HasName("PK_permissions_permission_id");
 
             entity.Property(e => e.PermissionId).ValueGeneratedNever();
+            entity.HasData(new Permission[]
+            {
+                new Permission() { Name = "Admin" },
+                new Permission() { Name = "User" }
+            });
         });
 
         modelBuilder.Entity<StudySet>(entity =>

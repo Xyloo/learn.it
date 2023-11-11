@@ -14,7 +14,7 @@ public partial class Login
 {
     [Key]
     [Column("login_id")]
-    public int LoginId { get; set; }
+    public int LoginId { get; private set; }
 
     [Column("timestamp")]
     [Precision(0)]

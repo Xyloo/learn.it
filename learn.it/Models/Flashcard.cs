@@ -14,7 +14,7 @@ public partial class Flashcard
 {
     [Key]
     [Column("flashcard_id")]
-    public int FlashcardId { get; set; }
+    public int FlashcardId { get; private set; }
 
     [Required(ErrorMessage = "Flashcard's term cannot be blank.")]
     [Column("term")]

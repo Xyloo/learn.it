@@ -13,7 +13,7 @@ public partial class Permission
 {
     [Key]
     [Column("permission_id")]
-    public int PermissionId { get; set; }
+    public int PermissionId { get; private set; }
 
     [Required]
     [Column("name")]

@@ -1,5 +1,4 @@
-﻿using learn.it.Exceptions;
-using learn.it.Models;
+﻿using learn.it.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Repos

@@ -4,7 +4,6 @@ using learn.it.Models;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -55,6 +54,12 @@ builder.Services.AddAuthentication(auth => {
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
         ClockSkew = TimeSpan.Zero
     };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admins", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Users", policy => policy.RequireAuthenticatedUser());
 });
 
 var app = builder.Build();

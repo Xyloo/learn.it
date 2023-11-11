@@ -15,7 +15,7 @@ public partial class StudySet
 {
     [Key]
     [Column("study_set_id")]
-    public int StudySetId { get; set; }
+    public int StudySetId { get; private set; }
 
     [Required(ErrorMessage = "Study set's name cannot be blank.")]
     [Column("name")]

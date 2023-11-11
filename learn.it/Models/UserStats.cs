@@ -14,7 +14,7 @@ public partial class UserStats
 {
     [Key]
     [Column("user_id")]
-    public int UserId { get; set; }
+    public int UserId { get; private set; }
 
     [Column("sets_completed")]
     public int SetsCompleted { get; set; }

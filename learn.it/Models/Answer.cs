@@ -15,7 +15,7 @@ public partial class Answer
 {
     [Key]
     [Column("answer_id")]
-    public int AnswerId { get; set; }
+    public int AnswerId { get; private set; }
 
     [Column("is_correct")]
     public short IsCorrect { get; set; }
