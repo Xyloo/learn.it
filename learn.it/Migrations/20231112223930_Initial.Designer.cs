@@ -12,7 +12,7 @@ using learn.it.Models;
 namespace learn.it.Migrations
 {
     [DbContext(typeof(LearnitDbContext))]
-    [Migration("20231111202701_Initial")]
+    [Migration("20231112223930_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

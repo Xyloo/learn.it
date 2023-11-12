@@ -351,6 +351,41 @@ namespace learn.it.Migrations
                     { 2, "User" }
                 });
 
+            migrationBuilder.InsertData(
+                schema: "learnitdb",
+                table: "users",
+                columns: new[]
+                {
+                    "user_id", "username", "email", "password", "create_time", "last_login", "avatar", "PermissionId"
+                },
+                values: new object[,]
+                {
+                    { -1, "testAdmin", "test@admin.com", "AQAAAAIAAYagAAAAEHgdRpl0GvK6IgRIWMN1SJfmJ2yirgRsimXNDeQx0LuSyPTqEQRenosehwnQfQSpGA==", DateTime.UtcNow, null, null, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "learnitdb",
+                table: "user_stats",
+                columns: new[]
+                {
+                    "user_id", "sets_completed", "total_login_days", "total_flashcards_mastered",
+                    "consecutive_login_days", "sets_added", "flashcards_added"
+                },
+                values: new object[,]
+                {
+                    { -1, 0, 0, 0, 0, 0, 0 }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "learnitdb",
+                table: "user_preferences",
+                columns: new[]
+                { "user_id", "high_contrast_mode", "email_reminders", "auto_tts" },
+                values: new object[,]
+                {
+                    { -1, 0, 0, 0 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "fk_answers_flashcards1_idx",
                 schema: "learnitdb",

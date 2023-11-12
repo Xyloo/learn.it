@@ -2,7 +2,9 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using learn.it.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace learn.it.Models;
 
@@ -108,11 +110,6 @@ public partial class LearnitDbContext : DbContext
             entity.HasKey(e => e.PermissionId).HasName("PK_permissions_permission_id");
 
             entity.Property(e => e.PermissionId).ValueGeneratedOnAdd();
-            entity.HasData(new Permission[]
-            {
-                new Permission() { Name = "Admin", PermissionId = 1 },
-                new Permission() { Name = "User", PermissionId = 2 }
-            });
         });
 
         modelBuilder.Entity<StudySet>(entity =>
@@ -190,7 +187,7 @@ public partial class LearnitDbContext : DbContext
                         j.IndexerProperty<int>("GroupId").HasColumnName("group_id");
                     });
         });
-
+        modelBuilder.Seed();
         OnModelCreatingPartial(modelBuilder);
     }
 
