@@ -1,10 +1,13 @@
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using learn.it.Models;
 using learn.it.Repos;
 using learn.it.Services;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -21,7 +24,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<UserNotFoundExceptionFilter>();
+});
 
 builder.Services.AddDbContext<LearnitDbContext>(options =>
     options.UseSqlServer(
@@ -40,6 +46,8 @@ builder.Services.AddLogging(b =>
     b.AddConsole();
     b.AddDebug();
 });
+
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthMiddlewareResultHandler>();
 
 JwtSettings.Key = builder.Configuration.GetSection("JwtSettings")["Key"] ?? throw new NullReferenceException("JwtSettings:Key not found in appsettings.json");
 JwtSettings.Audience = builder.Configuration.GetSection("JwtSettings")["Audience"] ?? throw new NullReferenceException("JwtSettings:Audience not found in appsettings.json");
@@ -65,7 +73,8 @@ builder.Services.AddAuthentication(auth => {
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admins", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("Users", policy => policy.RequireRole("User"));
+    options.AddPolicy("Users", policy => policy.RequireAssertion(context => context.User.HasClaim( c => 
+        c is { Type: ClaimTypes.Role, Value: "Admin" } or { Type: ClaimTypes.Role, Value: "User"} )));
 });
 
 
