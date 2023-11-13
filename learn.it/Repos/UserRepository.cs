@@ -33,7 +33,7 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            return await _context.Users.Include(u => u.Permissions).Include(u => u.UserStats).Include(u => u.UserPreferences).ToListAsync();
+            return await _context.Users.Include(u => u.Permissions).ToListAsync();
         }
 
         public async Task<User?> GetUserByEmail(string email)
