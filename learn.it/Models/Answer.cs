@@ -11,17 +11,12 @@ namespace learn.it.Models;
 [Table("answers", Schema = "learnitdb")]
 [Index("FlashcardId", Name = "fk_answers_flashcards1_idx")]
 [Index("UserId", Name = "fk_answers_users1_idx")]
-public partial class Answers
+public partial class Answer
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("answer_id")]
-    public int AnswerId { get; set; }
-
-    [Column("user_id")]
-    public int UserId { get; set; }
-
-    [Column("flashcard_id")]
-    public int FlashcardId { get; set; }
+    public int AnswerId { get; private set; }
 
     [Column("is_correct")]
     public short IsCorrect { get; set; }
@@ -31,9 +26,9 @@ public partial class Answers
 
     [ForeignKey("FlashcardId")]
     [InverseProperty("Answers")]
-    public virtual Flashcards Flashcard { get; set; }
+    public virtual Flashcard Flashcard { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("Answers")]
-    public virtual Users User { get; set; }
+    public virtual User User { get; set; }
 }

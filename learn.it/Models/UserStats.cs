@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
@@ -13,8 +14,9 @@ namespace learn.it.Models;
 public partial class UserStats
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("user_id")]
-    public int UserId { get; set; }
+    public int UserId { get; private set; }
 
     [Column("sets_completed")]
     public int SetsCompleted { get; set; }
@@ -36,5 +38,6 @@ public partial class UserStats
 
     [ForeignKey("UserId")]
     [InverseProperty("UserStats")]
-    public virtual Users User { get; set; }
+    [JsonIgnore]
+    public virtual User User { get; set; }
 }

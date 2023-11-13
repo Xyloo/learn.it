@@ -4,15 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
 [Table("permissions", Schema = "learnitdb")]
-public partial class Permissions
+public partial class Permission
 {
     [Key]
     [Column("permission_id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int PermissionId { get; set; }
 
     [Required]
@@ -20,6 +22,7 @@ public partial class Permissions
     [StringLength(45)]
     public string Name { get; set; }
 
-    [InverseProperty("Permission")]
-    public virtual ICollection<Users> Users { get; set; } = new List<Users>();
+    [InverseProperty("Permissions")]
+    [JsonIgnore]
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

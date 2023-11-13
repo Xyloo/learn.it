@@ -11,17 +11,12 @@ namespace learn.it.Models;
 [Table("study_sets", Schema = "learnitdb")]
 [Index("GroupId", Name = "fk_study_sets_groups1_idx")]
 [Index("CreatorId", Name = "fk_study_sets_users1_idx")]
-public partial class StudySets
+public partial class StudySet
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("study_set_id")]
-    public int StudySetId { get; set; }
-
-    [Column("group_id")]
-    public int? GroupId { get; set; }
-
-    [Column("creator_id")]
-    public int CreatorId { get; set; }
+    public int StudySetId { get; private set; }
 
     [Required(ErrorMessage = "Study set's name cannot be blank.")]
     [Column("name")]
@@ -40,12 +35,12 @@ public partial class StudySets
 
     [ForeignKey("CreatorId")]
     [InverseProperty("StudySets")]
-    public virtual Users Creator { get; set; }
+    public virtual User Creator { get; set; }
 
     [InverseProperty("StudySet")]
-    public virtual ICollection<Flashcards> Flashcards { get; set; } = new List<Flashcards>();
+    public virtual ICollection<Flashcard> Flashcards { get; set; } = new List<Flashcard>();
 
     [ForeignKey("GroupId")]
     [InverseProperty("StudySets")]
-    public virtual Groups Group { get; set; }
+    public virtual Group Group { get; set; }
 }

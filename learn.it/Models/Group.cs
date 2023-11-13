@@ -4,34 +4,33 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
 [Table("groups", Schema = "learnitdb")]
 [Index("OwnerId", Name = "fk_groups_users1_idx")]
-public partial class Groups
+public partial class Group
 {
     [Key]
     [Column("group_id")]
-    public int GroupId { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int GroupId { get; private set; }
 
     [Required(ErrorMessage = "Group's name cannot be blank.")]
     [Column("name")]
     [StringLength(150, ErrorMessage = "Group's name cannot be shorter than 5 and longer than 150 characters.", MinimumLength = 5)]
     public string Name { get; set; }
 
-    [Column("owner_id")]
-    public int OwnerId { get; set; }
-
     [ForeignKey("OwnerId")]
-    [InverseProperty("Groups")]
-    public virtual Users Owner { get; set; }
+    [InverseProperty("GroupsOwner")]
+    public virtual User Owner { get; set; }
 
     [InverseProperty("Group")]
-    public virtual ICollection<StudySets> StudySets { get; set; } = new List<StudySets>();
+    public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
 
     [ForeignKey("GroupId")]
-    [InverseProperty("Group")]
-    public virtual ICollection<Users> User { get; set; } = new List<Users>();
+    [InverseProperty("Groups")]
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

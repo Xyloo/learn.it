@@ -4,20 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
 [Table("flashcards", Schema = "learnitdb")]
 [Index("StudySetId", Name = "fk_flashcards_study_sets1_idx")]
-public partial class Flashcards
+public partial class Flashcard
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("flashcard_id")]
-    public int FlashcardId { get; set; }
-
-    [Column("study_set_id")]
-    public int StudySetId { get; set; }
+    public int FlashcardId { get; private set; }
 
     [Required(ErrorMessage = "Flashcard's term cannot be blank.")]
     [Column("term")]
@@ -33,12 +32,14 @@ public partial class Flashcards
     public short IsTermText { get; set; }
 
     [InverseProperty("Flashcard")]
-    public virtual ICollection<Answers> Answers { get; set; } = new List<Answers>();
+    [JsonIgnore]
+    public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
     [InverseProperty("Flashcard")]
+    [JsonIgnore]
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
     [ForeignKey("StudySetId")]
     [InverseProperty("Flashcards")]
-    public virtual StudySets StudySet { get; set; }
+    public virtual StudySet StudySet { get; set; }
 }

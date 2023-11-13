@@ -15,11 +15,11 @@ public partial class FlashcardUserProgress
 {
     [Key]
     [Column("user_id")]
-    public int UserId { get; set; }
+    public int UserId { get; private set; }
 
     [Key]
     [Column("flashcard_id")]
-    public int FlashcardId { get; set; }
+    public int FlashcardId { get; private set; }
 
     [Column("consecutive_correct_answers")]
     public int ConsecutiveCorrectAnswers { get; set; }
@@ -36,9 +36,9 @@ public partial class FlashcardUserProgress
 
     [ForeignKey("FlashcardId")]
     [InverseProperty("FlashcardUserProgress")]
-    public virtual Flashcards Flashcard { get; set; }
+    public virtual Flashcard Flashcard { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("FlashcardUserProgress")]
-    public virtual Users User { get; set; }
+    public virtual User User { get; set; }
 }

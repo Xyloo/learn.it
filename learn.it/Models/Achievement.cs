@@ -4,16 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
 [Table("achievements", Schema = "learnitdb")]
-public partial class Achievements
+public partial class Achievement
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("achievement_id")]
-    public int AchievementId { get; set; }
+    public int AchievementId { get; private set; }
 
     [Required]
     [Column("name")]
@@ -31,5 +33,6 @@ public partial class Achievements
     public string Description { get; set; }
 
     [InverseProperty("Achievement")]
+    [JsonIgnore]
     public virtual ICollection<UserAchievements> UserAchievements { get; set; } = new List<UserAchievements>();
 }
