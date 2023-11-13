@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
@@ -31,9 +32,11 @@ public partial class Flashcard
     public short IsTermText { get; set; }
 
     [InverseProperty("Flashcard")]
+    [JsonIgnore]
     public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
     [InverseProperty("Flashcard")]
+    [JsonIgnore]
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
     [ForeignKey("StudySetId")]

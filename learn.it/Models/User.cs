@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using learn.it.Models.Dtos.Response;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public partial class User
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("user_id")]
-    public int UserId { get; private set; }
+    public int UserId { get; set; }
 
     [Column("username")]
     public string Username { get; set; }
@@ -42,15 +43,19 @@ public partial class User
     public string? Avatar { get; set; }
 
     [InverseProperty("User")]
+    [JsonIgnore]
     public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
     [InverseProperty("User")]
+    [JsonIgnore]
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
     [InverseProperty("Owner")]
+    [JsonIgnore]
     public virtual ICollection<Group> GroupsOwner { get; set; } = new List<Group>();
 
     [InverseProperty("User")]
+    [JsonIgnore]
     public virtual ICollection<Login> Logins { get; set; } = new List<Login>();
 
     [ForeignKey("PermissionId")]
@@ -58,9 +63,11 @@ public partial class User
     public virtual Permission Permissions { get; set; }
 
     [InverseProperty("Creator")]
+    [JsonIgnore]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
 
     [InverseProperty("User")]
+    [JsonIgnore]
     public virtual ICollection<UserAchievements> UserAchievements { get; set; } = new List<UserAchievements>();
 
     [InverseProperty("User")]
@@ -71,6 +78,7 @@ public partial class User
 
     [ForeignKey("UserId")]
     [InverseProperty("Users")]
+    [JsonIgnore]
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 
     public AnonymousUserResponseDto ToAnonymousUserResponseDto()

@@ -7,6 +7,8 @@
         public DateTime CreateTime { get; set; }
         public DateTime? LastLogin { get; set; }
         public string Permissions { get; set; }
+        public UserPreferences UserPreferences { get; set; }
+        public UserStats UserStats { get; set; }
 
         public SelfUserResponseDto(User user) : base(user)
         {
@@ -15,6 +17,8 @@
             CreateTime = user.CreateTime;
             LastLogin = user.LastLogin;
             Permissions = user.Permissions.Name;
+            UserPreferences = user.UserPreferences;
+            UserStats = user.UserStats;
         }
     }
 }
