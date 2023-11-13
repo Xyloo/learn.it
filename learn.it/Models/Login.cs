@@ -19,6 +19,17 @@ public partial class Login
     [Precision(0)]
     public DateTime Timestamp { get; set; }
 
+    [Column("is_successful")]
+    public bool IsSuccessful { get; set; }
+
+    [Column("user_agent")]
+    [StringLength(255)]
+    public string UserAgent { get; set; }
+
+    [Column("ip_address")]
+    [StringLength(45)]
+    public string IpAddress { get; set; }
+
     [ForeignKey("UserId")]
     [InverseProperty("Logins")]
     public virtual User User { get; set; }

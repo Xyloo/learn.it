@@ -8,6 +8,45 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace learn.it.Models;
 
+/*
+ * NOTE: If you are using EF Core migrations, please note that the following code is required to seed the database with the default admin user.
+ * If modifying the db schema, add the following to the created migration BEFORE running the update-database command:
+ * migrationBuilder.InsertData(
+                schema: "learnitdb",
+                table: "users",
+                columns: new[]
+                {
+                    "user_id", "username", "email", "password", "create_time", "last_login", "avatar", "PermissionId"
+                },
+                values: new object[,]
+                {
+                    { -1, "testAdmin", "test@admin.com", "AQAAAAIAAYagAAAAEHgdRpl0GvK6IgRIWMN1SJfmJ2yirgRsimXNDeQx0LuSyPTqEQRenosehwnQfQSpGA==", DateTime.UtcNow, null, null, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "learnitdb",
+                table: "user_stats",
+                columns: new[]
+                {
+                    "user_id", "sets_completed", "total_login_days", "total_flashcards_mastered",
+                    "consecutive_login_days", "sets_added", "flashcards_added"
+                },
+                values: new object[,]
+                {
+                    { -1, 0, 0, 0, 0, 0, 0 }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "learnitdb",
+                table: "user_preferences",
+                columns: new[]
+                { "user_id", "high_contrast_mode", "email_reminders", "auto_tts" },
+                values: new object[,]
+                {
+                    { -1, 0, 0, 0 }
+                });
+ */
+
 public partial class LearnitDbContext : DbContext
 {
     public LearnitDbContext()

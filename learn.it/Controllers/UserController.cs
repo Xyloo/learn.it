@@ -1,18 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Authentication.ExtendedProtection;
 using System.Security.Claims;
 using learn.it.Exceptions;
 using learn.it.Models;
 using learn.it.Models.Dtos;
 using learn.it.Models.Dtos.Request;
-using learn.it.Models.Dtos.Response;
 using learn.it.Services;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 
 namespace learn.it.Controllers
@@ -22,40 +17,60 @@ namespace learn.it.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService) => _userService = userService;
+        private readonly ILoginsService _loginsService;
+        public UserController(IUserService userService, ILoginsService loginsService)
+        {
+            _userService = userService;
+            _loginsService = loginsService;
+        }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginRequest)
         {
             User user = await _userService.GetUserByIdOrUsername(loginRequest.Username);
+            var userAgent = Request.Headers["User-Agent"].ToString();
+            var ip = Request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
 
             if (!_userService.VerifyPassword(user, loginRequest.Password))
             {
+                var login = new Login()
+                {
+                    User = user,
+                    IpAddress = ip,
+                    UserAgent = userAgent,
+                    IsSuccessful = false,
+                    Timestamp = DateTime.UtcNow
+                };
+                await _loginsService.CreateLogin(login);
                 return Unauthorized("Username and/or password are incorrect.");
             }
 
             var lastLogin = user.LastLogin;
-            if (lastLogin == null)
+
+            if (lastLogin == null || lastLogin.Value.Date != DateTime.UtcNow.Date && lastLogin.Value.Date != DateTime.UtcNow.Date.AddDays(-1))
             {
                 user.LastLogin = DateTime.UtcNow;
                 user.UserStats.ConsecutiveLoginDays = 1;
             }
             else
             {
-                if (lastLogin.Value.Date == DateTime.UtcNow.Date)
-                {
-                    user.UserStats.ConsecutiveLoginDays++;
-                }
-                else
-                {
-                    user.UserStats.ConsecutiveLoginDays = 1;
-                }
+                user.UserStats.ConsecutiveLoginDays++;
                 user.LastLogin = DateTime.UtcNow;
             }
+
 
             await _userService.UpdateUser(user);
 
             var token = _userService.GenerateJwtToken(user);
+            var successfulLogin = new Login()
+            {
+                User = user,
+                IpAddress = ip,
+                UserAgent = userAgent,
+                IsSuccessful = true,
+                Timestamp = DateTime.UtcNow
+            };
+            await _loginsService.CreateLogin(successfulLogin);
             return Ok(new { token });
         }
 

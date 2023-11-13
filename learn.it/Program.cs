@@ -80,8 +80,10 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPermissionsRepository, PermissionsRepository>();
+builder.Services.AddScoped<ILoginsRepository, LoginsRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ILoginsService, LoginsService>();
 
 var app = builder.Build();
 
