@@ -11,14 +11,14 @@ using learn.it.Repos.Interfaces;
 
 namespace learn.it.Services
 {
-    public class UserService : IUserService
+    public class UsersService : IUsersService
     {
         private readonly IUsersRepository _usersRepository;
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UserService(IUsersRepository usersRepository, IPermissionsRepository permissionsRepository, IWebHostEnvironment webHostEnvironment)
+        public UsersService(IUsersRepository usersRepository, IPermissionsRepository permissionsRepository, IWebHostEnvironment webHostEnvironment)
         {
             _usersRepository = usersRepository;
             _passwordHasher = new PasswordHasher<User>();
