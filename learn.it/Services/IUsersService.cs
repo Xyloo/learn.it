@@ -3,7 +3,7 @@ using learn.it.Models.Dtos;
 
 namespace learn.it.Services
 {
-    public interface IUserService
+    public interface IUsersService
     {
         Task<User> CreateUser(User userData);
         Task DeleteUser(int userId);

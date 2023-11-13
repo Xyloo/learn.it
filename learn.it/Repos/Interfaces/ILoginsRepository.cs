@@ -1,6 +1,6 @@
 ﻿using learn.it.Models;
 
-namespace learn.it.Repos
+namespace learn.it.Repos.Interfaces
 {
     public interface ILoginsRepository
     {

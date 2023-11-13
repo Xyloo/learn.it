@@ -16,22 +16,22 @@ namespace learn.it.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUsersService _usersService;
         private readonly ILoginsService _loginsService;
-        public UserController(IUserService userService, ILoginsService loginsService)
+        public UserController(IUsersService usersService, ILoginsService loginsService)
         {
-            _userService = userService;
+            _usersService = usersService;
             _loginsService = loginsService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginRequest)
         {
-            User user = await _userService.GetUserByIdOrUsername(loginRequest.Username);
+            User user = await _usersService.GetUserByIdOrUsername(loginRequest.Username);
             var userAgent = Request.Headers["User-Agent"].ToString();
             var ip = Request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
 
-            if (!_userService.VerifyPassword(user, loginRequest.Password))
+            if (!_usersService.VerifyPassword(user, loginRequest.Password))
             {
                 var login = new Login()
                 {
@@ -47,21 +47,21 @@ namespace learn.it.Controllers
 
             var lastLogin = user.LastLogin;
 
-            if (lastLogin == null || lastLogin.Value.Date != DateTime.UtcNow.Date && lastLogin.Value.Date != DateTime.UtcNow.Date.AddDays(-1))
+            bool hasLoggedInToday = lastLogin.HasValue && lastLogin.Value.Date == DateTime.UtcNow.Date;
+            bool hasLoggedInYesterday = lastLogin.HasValue && lastLogin.Value.Date == DateTime.UtcNow.Date.AddDays(-1);
+
+            if (!hasLoggedInToday)
             {
-                user.LastLogin = DateTime.UtcNow;
-                user.UserStats.ConsecutiveLoginDays = 1;
+                user.UserStats.ConsecutiveLoginDays = hasLoggedInYesterday
+                    ? user.UserStats.ConsecutiveLoginDays + 1
+                    : 1;
             }
-            else
-            {
-                user.UserStats.ConsecutiveLoginDays++;
-                user.LastLogin = DateTime.UtcNow;
-            }
+            user.UserStats.TotalLoginDays += !hasLoggedInToday ? 1 : 0;
+            user.LastLogin = DateTime.UtcNow;
 
+            await _usersService.UpdateUser(user);
 
-            await _userService.UpdateUser(user);
-
-            var token = _userService.GenerateJwtToken(user);
+            var token = _usersService.GenerateJwtToken(user);
             var successfulLogin = new Login()
             {
                 User = user,
@@ -95,7 +95,7 @@ namespace learn.it.Controllers
 
             try
             {
-                await _userService.CreateUser(user);
+                await _usersService.CreateUser(user);
             }
             catch (EmailExistsException ex)
             {
@@ -120,11 +120,11 @@ namespace learn.it.Controllers
                 return BadRequest(validation);
             }
 
-            User queriedUser = await _userService.GetUserByIdOrUsername(userId.ToString());
+            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (IsUserAdminOrSelf(queriedUser))
             {
-                var updatedUser = await _userService.UpdateUser(userId, updateRequest);
+                var updatedUser = await _usersService.UpdateUser(userId, updateRequest);
                 return Ok(updatedUser.ToSelfUserResponseDto());
             }
 
@@ -135,7 +135,7 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Admins")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _userService.GetAllUsers();
+            var users = await _usersService.GetAllUsers();
             foreach (var user in users)
             {
                 user.Password = null!;
@@ -147,7 +147,7 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetUserById([FromRoute] string userId)
         {
-            User queriedUser  = await _userService.GetUserByIdOrUsername(userId);
+            User queriedUser  = await _usersService.GetUserByIdOrUsername(userId);
 
             if (IsUserAdminOrSelf(queriedUser))
             {
@@ -162,11 +162,11 @@ namespace learn.it.Controllers
         public async Task<IActionResult> DeleteUser([FromRoute] int userId)
         {
 
-            User queriedUser = await _userService.GetUserByIdOrUsername(userId.ToString());
+            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (IsUserAdminOrSelf(queriedUser))
             {
-                await _userService.DeleteUser(userId);
+                await _usersService.DeleteUser(userId);
                 return Ok();
             }
 
@@ -190,11 +190,11 @@ namespace learn.it.Controllers
                 return BadRequest("The provided file is not an image.");
             }
 
-            User queriedUser = await _userService.GetUserByIdOrUsername(userId.ToString());
+            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (IsUserAdminOrSelf(queriedUser))
             {
-                var updatedUser = await _userService.UpdateUserAvatar(queriedUser, avatar);
+                var updatedUser = await _usersService.UpdateUserAvatar(queriedUser, avatar);
                 return Ok("Avatar updated successfully.");
             }
 
@@ -208,7 +208,7 @@ namespace learn.it.Controllers
             User queriedUser;
             try
             {
-                queriedUser = await _userService.GetUserByIdOrUsername(userId.ToString());
+                queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
             }
             catch (UserNotFoundException ex)
             {
@@ -217,7 +217,7 @@ namespace learn.it.Controllers
 
             if (User.FindFirst(ClaimTypes.Role)?.Value == "Admin" || User.Identity?.Name == queriedUser.Username)
             {
-                await _userService.DeleteUserAvatar(queriedUser);
+                await _usersService.DeleteUserAvatar(queriedUser);
                 return Ok("Avatar deleted successfully.");
             }
 

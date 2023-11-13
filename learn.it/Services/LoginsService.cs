@@ -1,5 +1,5 @@
 ﻿using learn.it.Models;
-using learn.it.Repos;
+using learn.it.Repos.Interfaces;
 
 namespace learn.it.Services
 {

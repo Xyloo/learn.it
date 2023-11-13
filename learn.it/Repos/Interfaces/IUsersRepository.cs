@@ -1,8 +1,8 @@
 ﻿using learn.it.Models;
 
-namespace learn.it.Repos
+namespace learn.it.Repos.Interfaces
 {
-    public interface IUserRepository
+    public interface IUsersRepository
     {
         Task<User> CreateUser(User user);
         Task DeleteUser(int userId);
