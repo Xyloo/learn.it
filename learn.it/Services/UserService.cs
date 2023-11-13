@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using learn.it.Models;
+﻿using learn.it.Models;
 using learn.it.Repos;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +8,6 @@ using System.Security.Claims;
 using System.Text;
 using learn.it.Exceptions;
 using learn.it.Models.Dtos;
-using learn.it.Models.Dtos.Request;
 
 namespace learn.it.Services
 {
@@ -18,12 +16,15 @@ namespace learn.it.Services
         private readonly IUserRepository _userRepository;
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly PasswordHasher<User> _passwordHasher;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UserService(IUserRepository userRepository, IPermissionsRepository permissionsRepository)
+        public UserService(IUserRepository userRepository, IPermissionsRepository permissionsRepository, IWebHostEnvironment webHostEnvironment)
         {
             _userRepository = userRepository;
             _passwordHasher = new PasswordHasher<User>();
             _permissionsRepository = permissionsRepository;
+            _webHostEnvironment = webHostEnvironment;
+
         }
 
         public async Task<User> CreateUser(User userData)
@@ -43,6 +44,8 @@ namespace learn.it.Services
             userData.Password = hashedPassword;
             userData.CreateTime = DateTime.UtcNow;
             userData.Permissions = await _permissionsRepository.GetPermissionByName("User") ?? throw new InvalidOperationException("No permission was found with name 'User'");
+            userData.UserStats = new UserStats();
+            userData.UserPreferences = new UserPreferences();
             return await _userRepository.CreateUser(userData);
         }
 
@@ -50,6 +53,12 @@ namespace learn.it.Services
         {
             _ = await _userRepository.GetUserById(userId) ?? throw new UserNotFoundException(userId.ToString());
             await _userRepository.DeleteUser(userId);
+        }
+
+        public async Task DeleteUserAvatar(User user)
+        {
+            user.Avatar = null;
+            await _userRepository.UpdateUser(user);
         }
 
         public string GenerateJwtToken(User user)
@@ -134,10 +143,40 @@ namespace learn.it.Services
             return await _userRepository.UpdateUser(user);
         }
 
+        /// <summary>
+        /// This method should only be used with trusted data.
+        /// It does not check anything.
+        /// It is used to update LastLogin, UserStats and UserPreferences.
+        /// </summary>
+        /// <param name="user">User to be updated, with already new fields.</param>
+        /// <returns>The same user.</returns>
+        public async Task<User> UpdateUser(User user)
+        {
+            return await _userRepository.UpdateUser(user);
+        }
+
+        public async Task<User> UpdateUserAvatar(User user, IFormFile avatar)
+        {
+            const string avatarsDirectory = "Avatars";
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, avatarsDirectory);
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var fileName = $"{user.UserId}{Path.GetExtension(avatar.FileName)}";
+            var filePath = Path.Combine(path, fileName);
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await avatar.CopyToAsync(stream);
+            user.Avatar = fileName;
+            return await _userRepository.UpdateUser(user);
+        }
+
         public bool VerifyPassword(User user, string password)
         {
             var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
             return verificationResult == PasswordVerificationResult.Success;
         }
+
     }
 }

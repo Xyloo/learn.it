@@ -10,7 +10,10 @@ namespace learn.it.Services
         Task<User> GetUserByIdOrUsername(string userId);
         Task<IEnumerable<User>> GetAllUsers();
         Task<User> UpdateUser(int userId, UpdateUserDto userData);
+        Task<User> UpdateUser(User user);
         string GenerateJwtToken(User user);
         bool VerifyPassword(User user, string password);
+        Task<User> UpdateUserAvatar(User user, IFormFile avatar);
+        Task DeleteUserAvatar(User user);
     }
 }

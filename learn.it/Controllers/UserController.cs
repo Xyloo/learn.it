@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Claims;
 using learn.it.Exceptions;
@@ -11,6 +12,7 @@ using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 
 namespace learn.it.Controllers
@@ -25,21 +27,34 @@ namespace learn.it.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginRequest)
         {
-            User user;
-
-            try
-            {
-                user = await _userService.GetUserByIdOrUsername(loginRequest.Username);
-            }
-            catch (UserNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            User user = await _userService.GetUserByIdOrUsername(loginRequest.Username);
 
             if (!_userService.VerifyPassword(user, loginRequest.Password))
             {
-                return Unauthorized();
+                return Unauthorized("Username and/or password are incorrect.");
             }
+
+            var lastLogin = user.LastLogin;
+            if (lastLogin == null)
+            {
+                user.LastLogin = DateTime.UtcNow;
+                user.UserStats.ConsecutiveLoginDays = 1;
+            }
+            else
+            {
+                if (lastLogin.Value.Date == DateTime.UtcNow.Date)
+                {
+                    user.UserStats.ConsecutiveLoginDays++;
+                }
+                else
+                {
+                    user.UserStats.ConsecutiveLoginDays = 1;
+                }
+                user.LastLogin = DateTime.UtcNow;
+            }
+
+            await _userService.UpdateUser(user);
+
             var token = _userService.GenerateJwtToken(user);
             return Ok(new { token });
         }
@@ -67,21 +82,21 @@ namespace learn.it.Controllers
             {
                 await _userService.CreateUser(user);
             }
-            catch (EmailExistsException)
+            catch (EmailExistsException ex)
             {
-                return Conflict("Email already exists");
+                return Conflict(ex.Message);
             }
-            catch (UsernameExistsException)
+            catch (UsernameExistsException ex)
             {
-                return Conflict("Username already exists");
+                return Conflict(ex.Message);
             }
 
             return Ok();
         }
 
         [HttpPut("{userId}")]
-        [Authorize(Policy = "Admins")]
-        public async Task<IActionResult> Update([FromBody] UpdateUserDto updateRequest, [FromRoute] int userId)
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateRequest, [FromRoute] int userId)
         {
             var validationContext = new ValidationContext(updateRequest);
             var validation = updateRequest.Validate(validationContext);
@@ -90,22 +105,20 @@ namespace learn.it.Controllers
                 return BadRequest(validation);
             }
 
-            try
+            User queriedUser = await _userService.GetUserByIdOrUsername(userId.ToString());
+
+            if (IsUserAdminOrSelf(queriedUser))
             {
-                await _userService.GetUserByIdOrUsername(userId.ToString());
-            }
-            catch (UserNotFoundException ex)
-            {
-                return NotFound(ex.Message);
+                var updatedUser = await _userService.UpdateUser(userId, updateRequest);
+                return Ok(updatedUser.ToSelfUserResponseDto());
             }
 
-            var updatedUser = await _userService.UpdateUser(userId, updateRequest);
-            return Ok(updatedUser.ToSelfUserResponseDto());
+            return Unauthorized();
         }
 
         [HttpGet]
         [Authorize(Policy = "Admins")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsers();
             foreach (var user in users)
@@ -117,7 +130,65 @@ namespace learn.it.Controllers
 
         [HttpGet("{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetUserById([FromRoute] int userId)
+        public async Task<IActionResult> GetUserById([FromRoute] string userId)
+        {
+            User queriedUser  = await _userService.GetUserByIdOrUsername(userId);
+
+            if (IsUserAdminOrSelf(queriedUser))
+            {
+                return Ok(queriedUser.ToSelfUserResponseDto());
+            }
+
+            return Ok(queriedUser.ToAnonymousUserResponseDto());
+        }
+
+        [HttpDelete("{userId}")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> DeleteUser([FromRoute] int userId)
+        {
+
+            User queriedUser = await _userService.GetUserByIdOrUsername(userId.ToString());
+
+            if (IsUserAdminOrSelf(queriedUser))
+            {
+                await _userService.DeleteUser(userId);
+                return Ok();
+            }
+
+            return Unauthorized();
+        }
+
+        [HttpPost("avatar/{userId}")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> UpdateUserAvatar([FromRoute] int userId, IFormFile avatar)
+        {
+            switch (avatar.Length)
+            {
+                case 0:
+                    return BadRequest("No avatar file was provided.");
+                case > 10 * 1024 * 1024:
+                    return BadRequest("The provided file is too large.");
+            }
+
+            if (IsImage(avatar) is false)
+            { 
+                return BadRequest("The provided file is not an image.");
+            }
+
+            User queriedUser = await _userService.GetUserByIdOrUsername(userId.ToString());
+
+            if (IsUserAdminOrSelf(queriedUser))
+            {
+                var updatedUser = await _userService.UpdateUserAvatar(queriedUser, avatar);
+                return Ok("Avatar updated successfully.");
+            }
+
+            return Unauthorized();
+        }
+
+        [HttpDelete("avatar/{userId}")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> DeleteUserAvatar([FromRoute] int userId)
         {
             User queriedUser;
             try
@@ -131,10 +202,31 @@ namespace learn.it.Controllers
 
             if (User.FindFirst(ClaimTypes.Role)?.Value == "Admin" || User.Identity?.Name == queriedUser.Username)
             {
-                return Ok(queriedUser.ToSelfUserResponseDto());
+                await _userService.DeleteUserAvatar(queriedUser);
+                return Ok("Avatar deleted successfully.");
             }
 
-            return Ok(queriedUser.ToAnonymousUserResponseDto());
+            return Unauthorized();
+        }
+
+        private bool IsImage(IFormFile file)
+        {
+            // Check the file content type
+            if (file.ContentType.ToLower().StartsWith("image/"))
+            {
+                return true;
+            }
+
+            // Alternatively, check the file extension
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            return allowedExtensions.Contains(extension);
+        }
+
+        private bool IsUserAdminOrSelf(User user)
+        {
+            return User.FindFirst(ClaimTypes.Role)?.Value == "Admin" || User.Identity?.Name == user.Username;
         }
 
     }
