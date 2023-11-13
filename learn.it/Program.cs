@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using learn.it.Models;
 using learn.it.Repos;
+using learn.it.Repos.Interfaces;
 using learn.it.Services;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -78,11 +79,11 @@ builder.Services.AddAuthorization(options =>
 });
 
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IPermissionsRepository, PermissionsRepository>();
 builder.Services.AddScoped<ILoginsRepository, LoginsRepository>();
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ILoginsService, LoginsService>();
 
 var app = builder.Build();

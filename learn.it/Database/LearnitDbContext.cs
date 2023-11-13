@@ -10,7 +10,7 @@ namespace learn.it.Models;
 
 /*
  * NOTE: If you are using EF Core migrations, please note that the following code is required to seed the database with the default admin user.
- * If modifying the db schema, add the following to the created migration BEFORE running the update-database command:
+ * If modifying the db schema, add the following to the created migration **BEFORE** running the update-database command:
  * migrationBuilder.InsertData(
                 schema: "learnitdb",
                 table: "users",
