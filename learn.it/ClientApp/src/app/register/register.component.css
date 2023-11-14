@@ -1,0 +1,165 @@
+/* login.component.css */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px 35px 35px 35px;
+  background-color: var(--primary-bg-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-title-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.login-icon {
+  width: 5rem;
+  height: auto;
+  margin-left: 8px; 
+}
+
+
+.login-title {
+  color: #ffffff;
+  font-size: 2.75rem;
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+.icon-input {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 55%;
+  height: 22px; 
+  width: auto;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  padding-left: 40px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: var(--grey-text);
+  background-color: var(--green-light-main);
+}
+
+.forgot-password {
+  display: block;
+  margin: 5px 0px 15px 5px;
+  color: #ffffff; /* White text color */
+  text-decoration: none;
+  text-align:left;
+}
+
+.btn-login {
+  background-color: var(--green-light-main); /* White background */
+  color: black;
+  font-weight: bold;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+  .btn-login:hover {
+    background-color: var(--green-light-main-dark-15); /* Light grey background for hover state */
+  }
+
+.sign-up-btn {
+  width: 100%;
+}
+
+.register-link{
+    display: flex;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.register-link a {
+  text-decoration: none;
+}
+
+
+.decorator {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: space-around; 
+}
+
+.line {
+  flex-grow: 1; 
+  background: #FFFFFF; 
+  height: 1px; 
+  margin: 0 10px; 
+  width: 100%;
+}
+
+.input-label {
+  display: block;
+  text-align: start;
+  text-font: bold;
+  font-size: 1.2rem;
+  margin-bottom: 5px; 
+  color: #FFFFFF; 
+  font-size: 1rem; 
+}
+
+.text {
+  white-space: nowrap;
+  padding: 0 10px; 
+  color: #FFFFFF; 
+}
+
+.login-form-footer {
+  text-align: center; 
+}
+
+.login-form-footer span {
+  margin-right: 0.5rem;
+  color: #fff; /* or any color that fits your design */
+}
+
+.login-link {
+  color: var(--green-light-main); /* Use a color that stands out against the form background */
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+  /* Style it for hover effect */
+  .login-link:hover {
+    text-decoration: none;
+  }
+
+
+
+@media max-width: 768px) {
+  .login-panel {
+    margin: 20px;
+  }
+}
