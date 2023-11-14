@@ -16,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavLearnComponent } from './nav-learn/nav-learn.component';
 import { LearningModuleComponent } from './learning-module/learning-module.component';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { LearningModuleComponent } from './learning-module/learning-module.compo
     RegisterComponent,
     LearningsetcreatorComponent,
     NavLearnComponent,
-    LearningModuleComponent
+    LearningModuleComponent,
+    SearchComponent
   ],
   imports: [
     MatTooltipModule,
@@ -43,6 +45,7 @@ import { LearningModuleComponent } from './learning-module/learning-module.compo
       { path: 'register', component: RegisterComponent },
       { path: 'create-set', component: LearningsetcreatorComponent },
       { path: 'learn', component: LearningModuleComponent },
+      { path: 'search', component: SearchComponent},
     ]),
     BrowserAnimationsModule
   ],

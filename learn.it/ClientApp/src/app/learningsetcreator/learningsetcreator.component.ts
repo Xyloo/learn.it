@@ -36,7 +36,8 @@ export class LearningsetcreatorComponent {
 
 
   deleteFlashcard(flashcardId: number) {
-    this.flashcards = this.flashcards.filter(flashcard => flashcard.id !== flashcardId);
+    if (this.flashcards.length>1)
+      this.flashcards = this.flashcards.filter(flashcard => flashcard.id !== flashcardId);
   }
 
   getMaxId() {

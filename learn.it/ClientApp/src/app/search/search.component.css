@@ -1,0 +1,80 @@
+body {
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-bg-color);
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  border-radius: 40px;
+  padding: 50px;
+}
+.label-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.icon-btn {
+  background-color: var(--green-light-main);
+  border-radius: 25px;
+  padding: 10px;
+  margin: 0px;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  line-height: 1;
+}
+
+.label-text {
+  color: var(--text-color);
+}
+
+.icon-btn img {
+  transform: rotate(45deg);
+}
+
+.search-results-container {
+  display: flex;
+  flex-direction: column; /* Stack items in a column */
+  align-items: center; /* Center items horizontally */
+  max-height: 300px; /* Adjust to the height you want */
+  overflow-y: auto;
+  width: 100%;
+}
+
+.result-row {
+  width: 100%; /* Take full width of the container */
+  display: flex;
+  justify-content: center; /* Center the result item */
+  margin: 5px 0; /* Adjust vertical spacing as needed */
+}
+
+.result-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 80%; /* Adjust the width as needed */
+  box-sizing: border-box;
+  /* Centering the item if it's less than 100% of the container width */
+}
+
+.avatar {
+  width: 50px; /* Adjust to your preference */
+  height: 50px; /* Adjust to your preference */
+  border-radius: 50%; /* Make it round */
+}
+
+.username {
+  font-weight: bold;
+}
+
+.set-count {
+  color: #666;
+}

@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="label-wrapper">
+    <h2 class="label-text">Wyniki wyszukiwania dla frazy {{searchedText}}</h2>
+    <button routerLink="/create-set" (click)="goBack()" class="icon-btn">
+      <img src="/assets/plus-icon.svg" alt="Icon" />
+    </button>
+  </div>
+  <div class="search-results-container">
+    <div class="result-row" *ngFor="let result of searchResults">
+      <div class="result-item">
+        <!--<img [src]="result.avatarUrl" alt="Avatar" class="avatar">-->
+        <div class="username">{{ result.username }}</div>
+        <div class="set-count">{{ result.setCount }} sets</div>
+      </div>
+    </div>
+  </div>
+</div>
