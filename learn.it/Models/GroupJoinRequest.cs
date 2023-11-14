@@ -20,7 +20,7 @@ namespace learn.it.Models
         [Precision(0)]
         [Column("expires_on")]
         public DateTime ExpiresOn { get; set; }
-        [ForeignKey("UserId")]
+        [ForeignKey("CreatorId")]
         [InverseProperty("GroupJoinRequests")]
         // this might be a bit over-engineered, but using the creator's User object we can determine if this should be treated as an invitation to join or a request to join
         public virtual User Creator { get; set; }

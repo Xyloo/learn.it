@@ -28,12 +28,12 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<GroupJoinRequest>> GetAllGroupJoinRequestsForGroup(int groupId)
         {
-            return await _context.GroupJoinRequests.Where(g => g.GroupId == groupId).ToListAsync();
+            return await _context.GroupJoinRequests.Where(g => g.GroupId == groupId).Include(g => g.Creator).ToListAsync();
         }
 
         public async Task<IEnumerable<GroupJoinRequest>> GetAllGroupJoinRequestsForUser(int userId)
         {
-            return await _context.GroupJoinRequests.Where(g => g.UserId == userId).ToListAsync();
+            return await _context.GroupJoinRequests.Where(g => g.UserId == userId).Include(g => g.Creator).ToListAsync();
         }
     }
 }
