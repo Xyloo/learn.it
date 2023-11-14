@@ -32,6 +32,11 @@ namespace learn.it.Repos
             return await _context.StudySets.Include(g => g.Creator.ToAnonymousUserResponseDto()).ToListAsync();
         }
 
+        public async Task<IEnumerable<StudySet>> GetStudySetsContainingName(string studySetName)
+        {
+            return await _context.StudySets.Where(g => g.Name.Contains(studySetName)).ToListAsync();
+        }
+
         public async Task<IEnumerable<StudySet>> GetAllStudySetsByCreator(int creatorId)
         {
             return await _context.StudySets.Where(g => g.Creator.UserId == creatorId).ToListAsync();

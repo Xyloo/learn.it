@@ -6,6 +6,7 @@ using learn.it.Models;
 using learn.it.Repos;
 using learn.it.Repos.Interfaces;
 using learn.it.Services;
+using learn.it.Services.Interfaces;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

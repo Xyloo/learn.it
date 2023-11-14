@@ -4,7 +4,7 @@ using learn.it.Exceptions;
 using learn.it.Models;
 using learn.it.Models.Dtos;
 using learn.it.Models.Dtos.Request;
-using learn.it.Services;
+using learn.it.Services.Interfaces;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -122,7 +122,7 @@ namespace learn.it.Controllers
 
             User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
-            if (IsUserAdminOrSelf(queriedUser))
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 var updatedUser = await _usersService.UpdateUser(userId, updateRequest);
                 return Ok(updatedUser.ToSelfUserResponseDto());
@@ -149,7 +149,7 @@ namespace learn.it.Controllers
         {
             User queriedUser  = await _usersService.GetUserByIdOrUsername(userId);
 
-            if (IsUserAdminOrSelf(queriedUser))
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 return Ok(queriedUser.ToSelfUserResponseDto());
             }
@@ -164,7 +164,7 @@ namespace learn.it.Controllers
 
             User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
-            if (IsUserAdminOrSelf(queriedUser))
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 await _usersService.DeleteUser(userId);
                 return Ok();
@@ -185,14 +185,14 @@ namespace learn.it.Controllers
                     return BadRequest("The provided file is too large.");
             }
 
-            if (IsImage(avatar) is false)
+            if (ControllerUtils.IsImage(avatar) is false)
             { 
                 return BadRequest("The provided file is not an image.");
             }
 
             User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
-            if (IsUserAdminOrSelf(queriedUser))
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 var updatedUser = await _usersService.UpdateUserAvatar(queriedUser, avatar);
                 return Ok("Avatar updated successfully.");
@@ -215,7 +215,7 @@ namespace learn.it.Controllers
                 return NotFound(ex.Message);
             }
 
-            if (User.FindFirst(ClaimTypes.Role)?.Value == "Admin" || User.Identity?.Name == queriedUser.Username)
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 await _usersService.DeleteUserAvatar(queriedUser);
                 return Ok("Avatar deleted successfully.");
@@ -223,26 +223,5 @@ namespace learn.it.Controllers
 
             return Unauthorized();
         }
-
-        private bool IsImage(IFormFile file)
-        {
-            // Check the file content type
-            if (file.ContentType.ToLower().StartsWith("image/"))
-            {
-                return true;
-            }
-
-            // Alternatively, check the file extension
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
-            var extension = Path.GetExtension(file.FileName).ToLower();
-
-            return allowedExtensions.Contains(extension);
-        }
-
-        private bool IsUserAdminOrSelf(User user)
-        {
-            return User.FindFirst(ClaimTypes.Role)?.Value == "Admin" || User.Identity?.Name == user.Username;
-        }
-
     }
 }

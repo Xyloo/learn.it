@@ -8,6 +8,7 @@ using System.Text;
 using learn.it.Exceptions;
 using learn.it.Models.Dtos;
 using learn.it.Repos.Interfaces;
+using learn.it.Services.Interfaces;
 
 namespace learn.it.Services
 {

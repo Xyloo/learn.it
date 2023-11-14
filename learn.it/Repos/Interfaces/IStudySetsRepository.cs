@@ -8,6 +8,7 @@ namespace learn.it.Repos.Interfaces
         Task DeleteStudySet(StudySet studySet);
         Task<StudySet?> GetStudySetById(int studySetId);
         Task<StudySet?> GetStudySetByName(string studySetName);
+        Task<IEnumerable<StudySet>> GetStudySetsContainingName(string studySetName);
         Task<IEnumerable<StudySet>> GetAllStudySetsByCreator(int creatorId);
         Task<IEnumerable<StudySet>> GetAllStudySetsForGroup(int groupId);
         Task<IEnumerable<StudySet>> GetAllStudySets();

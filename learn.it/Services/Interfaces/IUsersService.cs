@@ -1,7 +1,7 @@
 ﻿using learn.it.Models;
 using learn.it.Models.Dtos;
 
-namespace learn.it.Services
+namespace learn.it.Services.Interfaces
 {
     public interface IUsersService
     {
