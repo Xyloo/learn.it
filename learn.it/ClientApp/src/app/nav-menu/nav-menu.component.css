@@ -6,7 +6,30 @@ a.navbar-brand {
 
 html {
   font-size: 14px;
+  color: var(--text-color);
 }
+
+.navbar {
+  color: white;
+}
+
+.nav-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.logo-icon {
+  height: 3.5rem;
+  width: auto;
+  margin-left: 10px;
+}
+
+a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -15,4 +38,135 @@ html {
 
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+.search-container {
+  display: flex;
+  flex-grow: 1; /* Allow the container to grow and fill the space */
+  max-width: 600px; /* Maximum width you want the search bar to be */
+  margin: 0 auto; /* Center the search bar */
+  background-color: #ffffff;
+  border-radius: 20px;
+}
+
+.search-container input[type="search"] {
+  width: 100%;
+  border: 0px;
+  border-radius: 20px;
+}
+
+.search-container input[type="search"]:focus {
+  outline: none;
+  /*border-color: #4e7a5a;*/
+}
+
+.search-icon {
+  height: 2.5rem;
+  width: auto;
+  margin-left: 10px;
+}
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+  .search-container {
+    width: 90%; /* You can adjust this value to give some margin on smaller screens */
+    max-width: none; /* On small screens, the max-width no longer applies */
+  }
+}
+
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+}
+
+.icon-btn {
+  background-color: var(--green-light-main);
+  border-radius: 25px;
+  padding: 10px; 
+  margin: 0px;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  line-height: 1; 
+}
+
+.icon-btn img {
+  vertical-align: middle;
+  width: 25px; 
+  height: 25px;
+  margin-bottom: 2px;
+}
+
+
+.user-avatar {
+  width: 75px; 
+  height: 75px; 
+  border-radius: 50%; 
+  border: 1px solid black;
+  overflow: hidden;
+  margin-left: 5rem; 
+  background: white;
+}
+
+  .user-avatar img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+    display: block;
+  }
+
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 8px; 
+}
+
+.dropdown-menu {
+  display: none; 
+  position: absolute;
+  background-color: var(--primary-bg-color);
+  min-width: 160px;
+  margin-top: 15px;
+  padding: 12px 10px;
+  z-index: 1;
+  right: 0;
+
+}
+
+.dropdown-menu a {
+  color: black;
+  background-color: var(--green-light-main);
+  padding: 8px 16px;
+  text-decoration: none;
+  width: 100%;
+  display: block;
+  white-space: nowrap;
+  border-bottom: 1px solid #000;
+}
+.dropdown-menu a:hover {
+    background-color: #ddd;
+
+}
+  .dropdown-menu a:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  .dropdown-menu a:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+
+
+.show .dropdown-menu {
+  display: block;
 }

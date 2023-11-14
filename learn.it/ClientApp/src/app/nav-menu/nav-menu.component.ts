@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-nav-menu',
@@ -6,13 +6,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./nav-menu.component.css']
 })
 export class NavMenuComponent {
-  isExpanded = false;
 
-  collapse() {
-    this.isExpanded = false;
+  showDropdown: boolean = false;
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
   }
 
-  toggle() {
-    this.isExpanded = !this.isExpanded;
+  closeDropdown() {
+    this.showDropdown = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: { target: { closest: (arg0: string) => any; }; }) {
+    if (!event.target.closest('.dropdown')) {
+      this.closeDropdown();
+    }
   }
 }
