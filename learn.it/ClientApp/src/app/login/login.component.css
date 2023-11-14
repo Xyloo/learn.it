@@ -109,21 +109,21 @@
   display: flex;
   align-items: center;
   text-align: center;
-  justify-content: space-around; /* This will ensure the lines and text are spaced evenly */
+  justify-content: space-around; 
 }
 
 .line {
-  flex-grow: 1; /* Lines will take up fill all available space */
-  background: #FFFFFF; /* Adjust color to match your design */
-  height: 1px; /* Adjust thickness of the line */
-  margin: 0 10px; /* Adjust spacing around the text */
+  flex-grow: 1;
+  background: #FFFFFF;
+  height: 1px; 
+  margin: 0 10px;
 }
 
 
 .text {
   white-space: nowrap;
-  padding: 0 10px; /* Adjust to ensure it doesn't overlap with the lines on smaller screens */
-  color: #FFFFFF; /* Adjust color to match your design */
+  padding: 0 10px; 
+  color: #FFFFFF; 
 }
 
 
