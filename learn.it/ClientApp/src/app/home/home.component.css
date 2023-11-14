@@ -1,0 +1,40 @@
+body {
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-bg-color);
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  border-radius: 40px;
+}
+
+.label-wrapper{
+    width: 100%;
+  display: flex;
+  padding: 10px 50px;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.label-text{
+    color: white;
+}
+
+.last-activity{
+
+}
+
+
+.newset-btn {
+  background-color: var(--green-light-main); /* White background */
+  color: var(--text-black);
+  font-weight: bold;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}

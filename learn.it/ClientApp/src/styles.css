@@ -2,10 +2,13 @@
 
 
 :root {
-  --primary-bg-color: #4e7a5a;
+  --primary-bg-color: #32533D;
   --secondary-bg-color: #8ccfff;
   --text-color: #ffffff;
+  --text-black: #000000;
+  --light-gray: #e0e0e0;
   --login-button-bg: #ffffff;
+  --white: #ffffff;
   --login-button-text-color: #4e7a5a;
   --link-text-color: #c2ffb0;
   --grey-text: #504646;
@@ -15,11 +18,20 @@
   --green-light-main-dark-60: #1d7a3f;
   --green-light-main-dark-15: #67db91;
   --green-dark-main: #32533D;
+  --light-blue-main: #C4E7F2;
 }
 
 
 a {
   color: #0366d6;
+}
+
+nav{
+  background-color: var(--primary-bg-color);  
+}
+
+.navbar{
+    color: white;
 }
 
 
@@ -40,3 +52,6 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
