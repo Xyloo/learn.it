@@ -31,4 +31,7 @@ public partial class Group
     [ForeignKey("GroupId")]
     [InverseProperty("Groups")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    [InverseProperty("Group")]
+    public virtual ICollection<GroupJoinRequest> GroupJoinRequests { get; set; } = new List<GroupJoinRequest>();
 }

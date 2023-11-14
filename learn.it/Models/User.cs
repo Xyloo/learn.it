@@ -81,6 +81,10 @@ public partial class User
     [JsonIgnore]
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 
+    [InverseProperty("Creator")]
+    [JsonIgnore]
+    public virtual ICollection<GroupJoinRequest> GroupJoinRequests { get; set; } = new List<GroupJoinRequest>();
+
     public AnonymousUserResponseDto ToAnonymousUserResponseDto()
     {
         return new AnonymousUserResponseDto(this);

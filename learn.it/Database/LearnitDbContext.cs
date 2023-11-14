@@ -68,6 +68,8 @@ public partial class LearnitDbContext : DbContext
 
     public virtual DbSet<Group> Groups { get; set; }
 
+    public virtual DbSet<GroupJoinRequest> GroupJoinRequests { get; set; }
+
     public virtual DbSet<Login> Logins { get; set; }
 
     public virtual DbSet<Permission> Permissions { get; set; }
@@ -160,6 +162,15 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(d => d.Creator).WithMany(p => p.StudySets).HasConstraintName("study_sets$fk_study_sets_users1");
 
             entity.HasOne(d => d.Group).WithMany(p => p.StudySets).HasConstraintName("study_sets$fk_study_sets_groups1");
+        });
+
+        modelBuilder.Entity<GroupJoinRequest>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.GroupId }).HasName("PK_group_join_requests_user_id");
+
+            entity.HasOne(d => d.Group).WithMany(p => p.GroupJoinRequests).HasConstraintName("group_join_requests$fk_group_join_requests_groups1");
+
+            entity.HasOne(d => d.Creator).WithMany(p => p.GroupJoinRequests).HasConstraintName("group_join_requests$fk_group_join_requests_users1");
         });
 
         modelBuilder.Entity<UserAchievements>(entity =>
