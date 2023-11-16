@@ -168,7 +168,11 @@ namespace learn.it.Services
 
             var groupJoinRequest = await _groupsRepository.GetGroupJoinRequest(userId, groupId)
                                    ?? throw new GroupJoinRequestNotFoundException(userId.ToString(), groupId.ToString());
-
+            if (groupJoinRequest.ExpiresAt < DateTime.UtcNow)
+            {
+                await _groupsRepository.RemoveGroupJoinRequest(groupJoinRequest);
+                throw new ArgumentException("Group join request has expired.");
+            }
             group.Users.Add(user);
             await _groupsRepository.UpdateGroup(group);
             await _groupsRepository.RemoveGroupJoinRequest(groupJoinRequest);
@@ -177,14 +181,30 @@ namespace learn.it.Services
         public async Task<IEnumerable<GroupJoinRequestDto>> GetAllGroupJoinRequestsForGroup(int groupId)
         {
             await GetGroupByIdOrThrow(groupId);
-            var requests = await _groupsRepository.GetAllGroupJoinRequestsForGroup(groupId);
+            var requests = (await _groupsRepository.GetAllGroupJoinRequestsForGroup(groupId)).ToList();
+            requests.ForEach(async r =>
+            {
+                if (r.ExpiresAt < DateTime.UtcNow)
+                {
+                    await _groupsRepository.RemoveGroupJoinRequest(r);
+                    requests.Remove(r);
+                }
+            });
             return requests.Select(r => r.ToGroupJoinRequestDto());
         }
 
         public async Task<IEnumerable<GroupJoinRequestDto>> GetAllGroupJoinRequestsForUser(int userId)
         {
             await GetUserByIdOrThrow(userId);
-            var requests = await _groupsRepository.GetAllGroupJoinRequestsForUser(userId);
+            var requests = (await _groupsRepository.GetAllGroupJoinRequestsForUser(userId)).ToList();
+            requests.ForEach(async r =>
+            {
+                if (r.ExpiresAt < DateTime.UtcNow)
+                {
+                    await _groupsRepository.RemoveGroupJoinRequest(r);
+                    requests.Remove(r);
+                }
+            });
             return requests.Select(r => r.ToGroupJoinRequestDto());
         }
 
