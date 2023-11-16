@@ -28,20 +28,25 @@ namespace learn.it.Repos
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<GroupDto>> GetAllGroups()
+        public async Task<IEnumerable<BasicGroupDto>> GetAllGroups()
         {
-            return await _context.Groups.Select(g => new GroupDto(g)).ToListAsync();
+            return await _context.Groups.Select(g => g.ToBasicGroupDto()).ToListAsync();
         }
 
         public async Task<IEnumerable<GroupDto>> GetAllOwnedGroups(int ownerId)
         {
-            return await _context.Groups.Where(g => g.Owner.UserId == ownerId).Select(g => new GroupDto(g)).ToListAsync();
+            return await _context.Groups.Where(g => g.Creator.UserId == ownerId).Select(g => g.ToGroupDto()).ToListAsync();
         }
 
-        public async Task<GroupDto?> GetGroupById(int groupId)
+        public async Task<GroupDto> GetGroupDtoById(int groupId)
         {
             var group = await _context.Groups.FindAsync(groupId) ?? throw new GroupNotFoundException(groupId.ToString());
             return new GroupDto(group);
+        }
+
+        public async Task<Group?> GetGroupById(int groupId)
+        {
+            return await _context.Groups.FindAsync(groupId);
         }
 
         public async Task<Group> UpdateGroup(Group group)
@@ -49,6 +54,34 @@ namespace learn.it.Repos
             _context.Groups.Update(group);
             await _context.SaveChangesAsync();
             return group;
+        }
+
+        public async Task<GroupJoinRequest> CreateGroupJoinRequest(GroupJoinRequest groupJoinRequest)
+        {
+            await _context.GroupJoinRequests.AddAsync(groupJoinRequest);
+            await _context.SaveChangesAsync();
+            return groupJoinRequest;
+        }
+
+        public async Task RemoveGroupJoinRequest(GroupJoinRequest groupJoinRequest)
+        {
+            _context.GroupJoinRequests.Remove(groupJoinRequest);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<GroupJoinRequest>> GetAllGroupJoinRequestsForGroup(int groupId)
+        {
+            return await _context.GroupJoinRequests.Where(request => request.GroupId == groupId).Include(g => g.Creator.ToAnonymousUserResponseDto()).ToListAsync();
+        }
+
+        public async Task<IEnumerable<GroupJoinRequest>> GetAllGroupJoinRequestsForUser(int userId)
+        {
+            return await _context.GroupJoinRequests.Where(request => request.UserId == userId).Include(g => g.Creator.ToAnonymousUserResponseDto()).ToListAsync();
+        }
+
+        public async Task<GroupJoinRequest?> GetGroupJoinRequest(int userId, int groupId)
+        {
+            return await _context.GroupJoinRequests.FindAsync(userId, groupId);
         }
     }
 }

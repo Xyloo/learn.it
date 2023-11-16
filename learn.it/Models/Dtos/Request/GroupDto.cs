@@ -14,7 +14,7 @@ namespace learn.it.Models.Dtos.Request
         {
             GroupId = group.GroupId;
             Name = group.Name;
-            Owner = new AnonymousUserResponseDto(group.Owner);
+            Owner = new AnonymousUserResponseDto(group.Creator);
             Users = group.Users.Select(user => new AnonymousUserResponseDto(user)).ToList();
             StudySets = group.StudySets;
         }

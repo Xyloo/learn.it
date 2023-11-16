@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using learn.it.Models.Dtos.Request;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
@@ -21,9 +22,9 @@ public partial class Group
     [Column("name")]
     public string Name { get; set; }
 
-    [ForeignKey("OwnerId")]
-    [InverseProperty("GroupsOwner")]
-    public virtual User Owner { get; set; }
+    [ForeignKey("CreatorId")]
+    [InverseProperty("GroupCreator")]
+    public virtual User Creator { get; set; }
 
     [InverseProperty("Group")]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
@@ -34,4 +35,14 @@ public partial class Group
 
     [InverseProperty("Group")]
     public virtual ICollection<GroupJoinRequest> GroupJoinRequests { get; set; } = new List<GroupJoinRequest>();
+
+    public BasicGroupDto ToBasicGroupDto()
+    {
+        return new BasicGroupDto(this);
+    }
+
+    public GroupDto ToGroupDto()
+    {
+        return new GroupDto(this);
+    }
 }

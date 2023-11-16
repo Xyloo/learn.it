@@ -6,11 +6,13 @@ namespace learn.it.Models.Dtos.Request
     {
         public int GroupId { get; set; }
         public string Name { get; set; } = null!;
+        public AnonymousUserResponseDto Creator { get; set; } = null!;
 
         public BasicGroupDto(Group group)
         {
             GroupId = group.GroupId;
             Name = group.Name;
+            Creator = new AnonymousUserResponseDto(group.Creator);
         }
     }
 }
