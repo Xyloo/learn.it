@@ -28,9 +28,9 @@ namespace learn.it.Services
             return await _groupsRepository.CreateGroup(group);
         }
 
-        public async Task DeleteGroup(Group group)
+        public async Task RemoveGroup(int groupId)
         {
-            await GetGroupByIdOrThrow(group.GroupId);
+            var group = await GetGroupByIdOrThrow(groupId);
             await _groupsRepository.DeleteGroup(group);
         }
 
@@ -44,7 +44,12 @@ namespace learn.it.Services
             return await _groupsRepository.GetAllOwnedGroups(ownerId);
         }
 
-        public async Task<GroupDto> GetGroupById(int groupId)
+        public async Task<Group> GetGroupById(int groupId)
+        {
+            return await GetGroupByIdOrThrow(groupId);
+        }
+
+        public async Task<GroupDto> GetGroupDtoById(int groupId)
         {
             var group = await GetGroupByIdOrThrow(groupId);
             return group.ToGroupDto();
@@ -74,18 +79,61 @@ namespace learn.it.Services
             return await UpdateGroup(group);
         }
 
+        public async Task<IEnumerable<BasicGroupDto>> FindGroups(string name)
+        {
+            return await _groupsRepository.FindGroups(name);
+        }
+
+        public async Task<Group> AddUserToGroup(int userId, int groupId)
+        {
+            var group = await GetGroupByIdOrThrow(groupId);
+            var user = await GetUserByIdOrThrow(userId);
+
+            if (group.Users.Any(u => u.UserId == user.UserId))
+            {
+                throw new ArgumentException("User is already a member of this group.");
+            }
+
+            group.Users.Add(user);
+            return await _groupsRepository.UpdateGroup(group);
+        }
+
+        public async Task<Group?> RemoveUserFromGroup(int userId, int groupId)
+        {
+            var group = await GetGroupByIdOrThrow(groupId);
+            var user = await GetUserByIdOrThrow(userId);
+
+            if (group.Users.All(u => u.UserId != user.UserId))
+            {
+                throw new ArgumentException("User is not a member of this group.");
+            }
+
+            group.Users.Remove(user);
+            if (group.Creator.UserId == userId)
+            {
+                await RemoveGroup(groupId);
+                return default;
+            }
+            return await _groupsRepository.UpdateGroup(group);
+        }
+
         public async Task<GroupJoinRequest> CreateGroupJoinRequest(int groupId, int userId, int creatorId)
         {
             var group = await GetGroupByIdOrThrow(groupId);
             await GetUserByIdOrThrow(userId);
             var creator = await GetUserByIdOrThrow(creatorId);
 
-            if (group.Creator.UserId == userId || group.Users.Any(u => u.UserId == userId))
+            if (group.Users.Any(u => u.UserId == userId))
             {
                 throw new ArgumentException("User is already a member of this group.");
             }
 
-            if (await _groupsRepository.GetGroupJoinRequest(groupId, userId) != null)
+            if (userId != creatorId && group.Creator.UserId != creatorId)
+            {
+                throw new ArgumentException("Only the group creator can create an invitation.");
+            }
+
+            if (await _groupsRepository.GetGroupJoinRequest(userId, groupId) != null)
             {
                 throw new ArgumentException("User has already requested to join this group.");
             }
@@ -107,7 +155,7 @@ namespace learn.it.Services
             await GetGroupByIdOrThrow(groupId);
             await GetUserByIdOrThrow(userId);
 
-            var groupJoinRequest = await _groupsRepository.GetGroupJoinRequest(groupId, userId)
+            var groupJoinRequest = await _groupsRepository.GetGroupJoinRequest(userId, groupId)
                                    ?? throw new GroupJoinRequestNotFoundException(userId.ToString(), groupId.ToString());
 
             await _groupsRepository.RemoveGroupJoinRequest(groupJoinRequest);
@@ -118,7 +166,7 @@ namespace learn.it.Services
             var group = await GetGroupByIdOrThrow(groupId);
             var user = await GetUserByIdOrThrow(userId);
 
-            var groupJoinRequest = await _groupsRepository.GetGroupJoinRequest(groupId, userId)
+            var groupJoinRequest = await _groupsRepository.GetGroupJoinRequest(userId, groupId)
                                    ?? throw new GroupJoinRequestNotFoundException(userId.ToString(), groupId.ToString());
 
             group.Users.Add(user);
@@ -128,12 +176,14 @@ namespace learn.it.Services
 
         public async Task<IEnumerable<GroupJoinRequestDto>> GetAllGroupJoinRequestsForGroup(int groupId)
         {
+            await GetGroupByIdOrThrow(groupId);
             var requests = await _groupsRepository.GetAllGroupJoinRequestsForGroup(groupId);
             return requests.Select(r => r.ToGroupJoinRequestDto());
         }
 
         public async Task<IEnumerable<GroupJoinRequestDto>> GetAllGroupJoinRequestsForUser(int userId)
         {
+            await GetUserByIdOrThrow(userId);
             var requests = await _groupsRepository.GetAllGroupJoinRequestsForUser(userId);
             return requests.Select(r => r.ToGroupJoinRequestDto());
         }

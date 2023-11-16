@@ -12,7 +12,7 @@ using learn.it.Models;
 namespace learn.it.Migrations
 {
     [DbContext(typeof(LearnitDbContext))]
-    [Migration("20231112223930_Initial")]
+    [Migration("20231116210443_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -206,21 +206,52 @@ namespace learn.it.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupId"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("name");
-
-                    b.Property<int?>("OwnerId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("name");
 
                     b.HasKey("GroupId")
                         .HasName("PK_groups_group_id");
 
-                    b.HasIndex(new[] { "OwnerId" }, "fk_groups_users1_idx");
+                    b.HasIndex(new[] { "CreatorId" }, "fk_groups_users1_idx");
 
                     b.ToTable("groups", "learnitdb");
+                });
+
+            modelBuilder.Entity("learn.it.Models.GroupJoinRequest", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int")
+                        .HasColumnName("group_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime2(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime2(0)")
+                        .HasColumnName("expires_at");
+
+                    b.HasKey("UserId", "GroupId")
+                        .HasName("PK_group_join_requests_user_id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("group_join_request", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.Login", b =>
@@ -232,12 +263,28 @@ namespace learn.it.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoginId"));
 
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnName("ip_address");
+
+                    b.Property<bool>("IsSuccessful")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_successful");
+
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(0)
                         .HasColumnType("datetime2(0)")
                         .HasColumnName("timestamp")
                         .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("user_agent");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -481,13 +528,14 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.Group", null)
                         .WithMany()
                         .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("users_has_groups$fk_users_has_groups_groups1");
 
                     b.HasOne("learn.it.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("users_has_groups$fk_users_has_groups_users1");
                 });
@@ -497,6 +545,7 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.Flashcard", "Flashcard")
                         .WithMany("Answers")
                         .HasForeignKey("FlashcardId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .HasConstraintName("answers$fk_answers_flashcards1");
 
                     b.HasOne("learn.it.Models.User", "User")
@@ -514,6 +563,7 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.StudySet", "StudySet")
                         .WithMany("Flashcards")
                         .HasForeignKey("StudySetId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .HasConstraintName("flashcards$fk_flashcards_study_sets1");
 
                     b.Navigation("StudySet");
@@ -524,13 +574,14 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.Flashcard", "Flashcard")
                         .WithMany("FlashcardUserProgress")
                         .HasForeignKey("FlashcardId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("flashcard_user_progress$fk_flashcard_user_progress_flashcards1");
 
                     b.HasOne("learn.it.Models.User", "User")
                         .WithMany("FlashcardUserProgress")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("flashcard_user_progress$fk_flashcard_user_progress_users1");
 
@@ -541,12 +592,34 @@ namespace learn.it.Migrations
 
             modelBuilder.Entity("learn.it.Models.Group", b =>
                 {
-                    b.HasOne("learn.it.Models.User", "Owner")
-                        .WithMany("GroupsOwner")
-                        .HasForeignKey("OwnerId")
+                    b.HasOne("learn.it.Models.User", "Creator")
+                        .WithMany("GroupCreator")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .HasConstraintName("groups$fk_groups_users1");
 
-                    b.Navigation("Owner");
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("learn.it.Models.GroupJoinRequest", b =>
+                {
+                    b.HasOne("learn.it.Models.User", "Creator")
+                        .WithMany("GroupJoinRequests")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired()
+                        .HasConstraintName("group_join_requests$fk_group_join_requests_users1");
+
+                    b.HasOne("learn.it.Models.Group", "Group")
+                        .WithMany("GroupJoinRequests")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired()
+                        .HasConstraintName("group_join_requests$fk_group_join_requests_groups1");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("learn.it.Models.Login", b =>
@@ -564,14 +637,13 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.User", "Creator")
                         .WithMany("StudySets")
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("study_sets$fk_study_sets_users1");
 
                     b.HasOne("learn.it.Models.Group", "Group")
                         .WithMany("StudySets")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("study_sets$fk_study_sets_groups1");
 
@@ -596,14 +668,14 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.Achievement", "Achievement")
                         .WithMany("UserAchievements")
                         .HasForeignKey("AchievementId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("user_achievements$fk_user_achievements_achievements1");
 
                     b.HasOne("learn.it.Models.User", "User")
                         .WithMany("UserAchievements")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("user_achievements$fk_user_achievements_users1");
 
@@ -617,7 +689,7 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.User", "User")
                         .WithOne("UserPreferences")
                         .HasForeignKey("learn.it.Models.UserPreferences", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("user_preferences$fk_user_preferences_users1");
 
@@ -629,7 +701,7 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.User", "User")
                         .WithOne("UserStats")
                         .HasForeignKey("learn.it.Models.UserStats", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired()
                         .HasConstraintName("user_stats$fk_user_stats_users1");
 
@@ -650,6 +722,8 @@ namespace learn.it.Migrations
 
             modelBuilder.Entity("learn.it.Models.Group", b =>
                 {
+                    b.Navigation("GroupJoinRequests");
+
                     b.Navigation("StudySets");
                 });
 
@@ -669,7 +743,9 @@ namespace learn.it.Migrations
 
                     b.Navigation("FlashcardUserProgress");
 
-                    b.Navigation("GroupsOwner");
+                    b.Navigation("GroupCreator");
+
+                    b.Navigation("GroupJoinRequests");
 
                     b.Navigation("Logins");
 

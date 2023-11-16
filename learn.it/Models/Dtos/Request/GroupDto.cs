@@ -6,7 +6,7 @@ namespace learn.it.Models.Dtos.Request
     {
         public int GroupId { get; set; }
         public string Name { get; set; } = null!;
-        public AnonymousUserResponseDto Owner { get; set; } = null!;
+        public AnonymousUserResponseDto Creator { get; set; } = null!;
         public ICollection<AnonymousUserResponseDto> Users { get; set; } = null!;
         public ICollection<StudySet> StudySets { get; set; } = null!;
 
@@ -14,7 +14,7 @@ namespace learn.it.Models.Dtos.Request
         {
             GroupId = group.GroupId;
             Name = group.Name;
-            Owner = new AnonymousUserResponseDto(group.Creator);
+            Creator = new AnonymousUserResponseDto(group.Creator);
             Users = group.Users.Select(user => new AnonymousUserResponseDto(user)).ToList();
             StudySets = group.StudySets;
         }

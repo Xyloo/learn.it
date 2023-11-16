@@ -13,6 +13,7 @@ namespace learn.it.Repos.Interfaces
         Task<IEnumerable<GroupDto>> GetAllOwnedGroups(int ownerId);
         Task<IEnumerable<BasicGroupDto>> GetAllGroups();
         Task<Group> UpdateGroup(Group group);
+        Task<IEnumerable<BasicGroupDto>> FindGroups(string name);
 
         // Group join requests related methods
         Task<GroupJoinRequest> CreateGroupJoinRequest(GroupJoinRequest groupJoinRequest);

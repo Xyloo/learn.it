@@ -18,10 +18,13 @@ namespace learn.it.Controllers
     {
         private readonly IUsersService _usersService;
         private readonly ILoginsService _loginsService;
-        public UserController(IUsersService usersService, ILoginsService loginsService)
+        private readonly IGroupsService _groupsService;
+        public UserController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService)
         {
             _usersService = usersService;
             _loginsService = loginsService;
+            _groupsService = groupsService;
+
         }
 
         [HttpPost("login")]
@@ -106,7 +109,7 @@ namespace learn.it.Controllers
                 return Conflict(ex.Message);
             }
 
-            return Ok();
+            return CreatedAtAction(nameof(GetUserById), new { userId = user.UserId }, user.ToSelfUserResponseDto());
         }
 
         [HttpPut("{userId}")]
@@ -219,6 +222,21 @@ namespace learn.it.Controllers
             {
                 await _usersService.DeleteUserAvatar(queriedUser);
                 return Ok("Avatar deleted successfully.");
+            }
+
+            return Unauthorized();
+        }
+
+        [HttpGet("{userId}/join-requests")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetUserJoinRequests([FromRoute] int userId)
+        {
+            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
+            {
+                var joinRequests = await _groupsService.GetAllGroupJoinRequestsForUser(userId);
+                return Ok(joinRequests);
             }
 
             return Unauthorized();

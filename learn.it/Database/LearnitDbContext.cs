@@ -100,7 +100,7 @@ public partial class LearnitDbContext : DbContext
             entity.Property(e => e.AnswerId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Flashcard).WithMany(p => p.Answers)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.ClientCascade)
                 .HasConstraintName("answers$fk_answers_flashcards1");
 
             entity.HasOne(d => d.User).WithMany(p => p.Answers).HasConstraintName("answers$fk_answers_users1");
@@ -111,10 +111,10 @@ public partial class LearnitDbContext : DbContext
             entity.HasKey(e => new { e.UserId, e.FlashcardId }).HasName("PK_flashcard_user_progress_user_id");
 
             entity.HasOne(d => d.Flashcard).WithMany(p => p.FlashcardUserProgress)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.ClientCascade)
                 .HasConstraintName("flashcard_user_progress$fk_flashcard_user_progress_flashcards1");
 
-            entity.HasOne(d => d.User).WithMany(p => p.FlashcardUserProgress).HasConstraintName("flashcard_user_progress$fk_flashcard_user_progress_users1");
+            entity.HasOne(d => d.User).WithMany(p => p.FlashcardUserProgress).HasConstraintName("flashcard_user_progress$fk_flashcard_user_progress_users1").OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<Flashcard>(entity =>
@@ -124,7 +124,7 @@ public partial class LearnitDbContext : DbContext
             entity.Property(e => e.FlashcardId).ValueGeneratedOnAdd();
             entity.Property(e => e.IsTermText).HasDefaultValueSql("((1))");
 
-            entity.HasOne(d => d.StudySet).WithMany(p => p.Flashcards).HasConstraintName("flashcards$fk_flashcards_study_sets1");
+            entity.HasOne(d => d.StudySet).WithMany(p => p.Flashcards).HasConstraintName("flashcards$fk_flashcards_study_sets1").OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<Group>(entity =>
@@ -133,7 +133,7 @@ public partial class LearnitDbContext : DbContext
 
             entity.Property(e => e.GroupId).ValueGeneratedOnAdd();
 
-            entity.HasOne(d => d.Owner).WithMany(p => p.GroupsOwner).HasConstraintName("groups$fk_groups_users1");
+            entity.HasOne(d => d.Creator).WithMany(p => p.GroupCreator).HasConstraintName("groups$fk_groups_users1").OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<Login>(entity =>
@@ -143,7 +143,7 @@ public partial class LearnitDbContext : DbContext
             entity.Property(e => e.LoginId).ValueGeneratedOnAdd();
             entity.Property(e => e.Timestamp).HasDefaultValueSql("(getdate())");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Logins).HasConstraintName("logins$fk_logins_users");
+            entity.HasOne(d => d.User).WithMany(p => p.Logins).HasConstraintName("logins$fk_logins_users").OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Permission>(entity =>
@@ -159,18 +159,18 @@ public partial class LearnitDbContext : DbContext
 
             entity.Property(e => e.StudySetId).ValueGeneratedOnAdd();
 
-            entity.HasOne(d => d.Creator).WithMany(p => p.StudySets).HasConstraintName("study_sets$fk_study_sets_users1");
+            entity.HasOne(d => d.Creator).WithMany(p => p.StudySets).HasConstraintName("study_sets$fk_study_sets_users1").OnDelete(DeleteBehavior.ClientCascade);
 
-            entity.HasOne(d => d.Group).WithMany(p => p.StudySets).HasConstraintName("study_sets$fk_study_sets_groups1");
+            entity.HasOne(d => d.Group).WithMany(p => p.StudySets).HasConstraintName("study_sets$fk_study_sets_groups1").OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<GroupJoinRequest>(entity =>
         {
             entity.HasKey(e => new { e.UserId, e.GroupId }).HasName("PK_group_join_requests_user_id");
 
-            entity.HasOne(d => d.Group).WithMany(p => p.GroupJoinRequests).HasConstraintName("group_join_requests$fk_group_join_requests_groups1");
+            entity.HasOne(d => d.Group).WithMany(p => p.GroupJoinRequests).HasConstraintName("group_join_requests$fk_group_join_requests_groups1").OnDelete(DeleteBehavior.ClientCascade);
 
-            entity.HasOne(d => d.Creator).WithMany(p => p.GroupJoinRequests).HasConstraintName("group_join_requests$fk_group_join_requests_users1");
+            entity.HasOne(d => d.Creator).WithMany(p => p.GroupJoinRequests).HasConstraintName("group_join_requests$fk_group_join_requests_users1").OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<UserAchievements>(entity =>
@@ -179,9 +179,9 @@ public partial class LearnitDbContext : DbContext
 
             entity.Property(e => e.Timestamp).HasDefaultValueSql("(getdate())");
 
-            entity.HasOne(d => d.Achievement).WithMany(p => p.UserAchievements).HasConstraintName("user_achievements$fk_user_achievements_achievements1");
+            entity.HasOne(d => d.Achievement).WithMany(p => p.UserAchievements).HasConstraintName("user_achievements$fk_user_achievements_achievements1").OnDelete(DeleteBehavior.ClientCascade);
 
-            entity.HasOne(d => d.User).WithMany(p => p.UserAchievements).HasConstraintName("user_achievements$fk_user_achievements_users1");
+            entity.HasOne(d => d.User).WithMany(p => p.UserAchievements).HasConstraintName("user_achievements$fk_user_achievements_users1").OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<UserPreferences>(entity =>
@@ -190,7 +190,7 @@ public partial class LearnitDbContext : DbContext
 
             entity.Property(e => e.UserId).ValueGeneratedNever();
 
-            entity.HasOne(d => d.User).WithOne(p => p.UserPreferences).HasConstraintName("user_preferences$fk_user_preferences_users1");
+            entity.HasOne(d => d.User).WithOne(p => p.UserPreferences).HasConstraintName("user_preferences$fk_user_preferences_users1").OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<UserStats>(entity =>
@@ -199,15 +199,15 @@ public partial class LearnitDbContext : DbContext
 
             entity.Property(e => e.UserId).ValueGeneratedNever();
 
-            entity.HasOne(d => d.User).WithOne(p => p.UserStats).HasConstraintName("user_stats$fk_user_stats_users1");
+            entity.HasOne(d => d.User).WithOne(p => p.UserStats).HasConstraintName("user_stats$fk_user_stats_users1").OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK_users_user_id");
 
-            entity.HasOne(u => u.UserStats).WithOne(us => us.User).HasForeignKey<UserStats>(us => us.UserId);
-            entity.HasOne(u => u.UserPreferences).WithOne(us => us.User).HasForeignKey<UserPreferences>(us => us.UserId);
+            entity.HasOne(u => u.UserStats).WithOne(us => us.User).HasForeignKey<UserStats>(us => us.UserId).OnDelete(DeleteBehavior.ClientCascade);
+            entity.HasOne(u => u.UserPreferences).WithOne(us => us.User).HasForeignKey<UserPreferences>(us => us.UserId).OnDelete(DeleteBehavior.ClientCascade);
 
             entity.Property(e => e.UserId).ValueGeneratedOnAdd();
             entity.Property(e => e.Avatar).HasDefaultValueSql("(N'default.png')");
@@ -222,10 +222,11 @@ public partial class LearnitDbContext : DbContext
                     "UsersHasGroups",
                     r => r.HasOne<Group>().WithMany()
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .HasConstraintName("users_has_groups$fk_users_has_groups_groups1"),
                     l => l.HasOne<User>().WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .HasConstraintName("users_has_groups$fk_users_has_groups_users1"),
                     j =>
                     {

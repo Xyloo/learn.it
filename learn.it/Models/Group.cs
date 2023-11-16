@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace learn.it.Models;
 
 [Table("groups", Schema = "learnitdb")]
-[Index("OwnerId", Name = "fk_groups_users1_idx")]
+[Index("CreatorId", Name = "fk_groups_users1_idx")]
 public partial class Group
 {
     [Key]

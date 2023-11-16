@@ -1,4 +1,5 @@
-﻿using learn.it.Models;
+﻿using System.Security.Authentication;
+using learn.it.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,16 @@ namespace learn.it.Utils
         public static bool IsUserAdminOrSelf(User user, ClaimsPrincipal data)
         {
             return data.FindFirst(ClaimTypes.Role)?.Value == "Admin" || data.Identity?.Name == user.Username;
+        }
+
+        public static int GetUserIdFromClaims(ClaimsPrincipal data)
+        {
+            var parseSuccessful = int.TryParse(data.FindFirst(ClaimTypes.NameIdentifier)?.Value!, out int creatorId);
+            if (!parseSuccessful)
+            {
+                throw new InvalidCredentialException("Could not parse user id from token");
+            }
+            return creatorId;
         }
     }
 }
