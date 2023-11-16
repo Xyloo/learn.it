@@ -1,5 +1,4 @@
 ﻿using learn.it.Models;
-using learn.it.Repos;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -8,19 +7,21 @@ using System.Security.Claims;
 using System.Text;
 using learn.it.Exceptions;
 using learn.it.Models.Dtos;
+using learn.it.Repos.Interfaces;
+using learn.it.Services.Interfaces;
 
 namespace learn.it.Services
 {
-    public class UserService : IUserService
+    public class UsersService : IUsersService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUsersRepository _usersRepository;
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UserService(IUserRepository userRepository, IPermissionsRepository permissionsRepository, IWebHostEnvironment webHostEnvironment)
+        public UsersService(IUsersRepository usersRepository, IPermissionsRepository permissionsRepository, IWebHostEnvironment webHostEnvironment)
         {
-            _userRepository = userRepository;
+            _usersRepository = usersRepository;
             _passwordHasher = new PasswordHasher<User>();
             _permissionsRepository = permissionsRepository;
             _webHostEnvironment = webHostEnvironment;
@@ -29,12 +30,12 @@ namespace learn.it.Services
 
         public async Task<User> CreateUser(User userData)
         {
-            var existingUser = await _userRepository.GetUserByEmail(userData.Email);
+            var existingUser = await _usersRepository.GetUserByEmail(userData.Email);
             if (existingUser is not null)
             {
                 throw new EmailExistsException();
             }
-            existingUser = await _userRepository.GetUserByUsername(userData.Username);
+            existingUser = await _usersRepository.GetUserByUsername(userData.Username);
             if (existingUser is not null)
             {
                 throw new UsernameExistsException();
@@ -46,19 +47,19 @@ namespace learn.it.Services
             userData.Permissions = await _permissionsRepository.GetPermissionByName("User") ?? throw new InvalidOperationException("No permission was found with name 'User'");
             userData.UserStats = new UserStats();
             userData.UserPreferences = new UserPreferences();
-            return await _userRepository.CreateUser(userData);
+            return await _usersRepository.CreateUser(userData);
         }
 
         public async Task DeleteUser(int userId)
         {
-            _ = await _userRepository.GetUserById(userId) ?? throw new UserNotFoundException(userId.ToString());
-            await _userRepository.DeleteUser(userId);
+            _ = await _usersRepository.GetUserById(userId) ?? throw new UserNotFoundException(userId.ToString());
+            await _usersRepository.DeleteUser(userId);
         }
 
         public async Task DeleteUserAvatar(User user)
         {
             user.Avatar = null;
-            await _userRepository.UpdateUser(user);
+            await _usersRepository.UpdateUser(user);
         }
 
         public string GenerateJwtToken(User user)
@@ -88,7 +89,7 @@ namespace learn.it.Services
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            return await _userRepository.GetAllUsers();
+            return await _usersRepository.GetAllUsers();
         }
 
         public async Task<User> GetUserByIdOrUsername(string userId)
@@ -97,11 +98,11 @@ namespace learn.it.Services
             User? user;
             if (idParseSuccessful)
             {
-                user = await _userRepository.GetUserById(id);
+                user = await _usersRepository.GetUserById(id);
             }
             else
             {
-                user = await _userRepository.GetUserByUsername(userId);
+                user = await _usersRepository.GetUserByUsername(userId);
             }
 
             if (user is null)
@@ -113,10 +114,10 @@ namespace learn.it.Services
 
         public async Task<User> UpdateUser(int userId, UpdateUserDto userData)
         {
-            var user = await _userRepository.GetUserById(userId) ?? throw new UserNotFoundException(userId.ToString());
+            var user = await _usersRepository.GetUserById(userId) ?? throw new UserNotFoundException(userId.ToString());
             if (userData.Username is not null)
             {
-                var existingUser = await _userRepository.GetUserByUsername(userData.Username);
+                var existingUser = await _usersRepository.GetUserByUsername(userData.Username);
                 if (existingUser is not null && existingUser.UserId != userId)
                 {
                     throw new UsernameExistsException();
@@ -126,7 +127,7 @@ namespace learn.it.Services
 
             if (userData.Email is not null)
             {
-                var existingUser = await _userRepository.GetUserByEmail(userData.Email);
+                var existingUser = await _usersRepository.GetUserByEmail(userData.Email);
                 if (existingUser is not null && existingUser.UserId != userId)
                 {
                     throw new EmailExistsException();
@@ -140,7 +141,7 @@ namespace learn.it.Services
                 user.Password = hashedPassword;
             }
 
-            return await _userRepository.UpdateUser(user);
+            return await _usersRepository.UpdateUser(user);
         }
 
         /// <summary>
@@ -152,7 +153,7 @@ namespace learn.it.Services
         /// <returns>The same user.</returns>
         public async Task<User> UpdateUser(User user)
         {
-            return await _userRepository.UpdateUser(user);
+            return await _usersRepository.UpdateUser(user);
         }
 
         public async Task<User> UpdateUserAvatar(User user, IFormFile avatar)
@@ -169,7 +170,7 @@ namespace learn.it.Services
             await using var stream = new FileStream(filePath, FileMode.Create);
             await avatar.CopyToAsync(stream);
             user.Avatar = fileName;
-            return await _userRepository.UpdateUser(user);
+            return await _usersRepository.UpdateUser(user);
         }
 
         public bool VerifyPassword(User user, string password)

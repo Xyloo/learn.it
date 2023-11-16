@@ -91,15 +91,15 @@ namespace learn.it.Migrations
                 {
                     group_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    OwnerId = table.Column<int>(type: "int", nullable: true)
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatorId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_groups_group_id", x => x.group_id);
                     table.ForeignKey(
                         name: "groups$fk_groups_users1",
-                        column: x => x.OwnerId,
+                        column: x => x.CreatorId,
                         principalSchema: "learnitdb",
                         principalTable: "users",
                         principalColumn: "user_id");
@@ -113,6 +113,9 @@ namespace learn.it.Migrations
                     login_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     timestamp = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false, defaultValueSql: "(getdate())"),
+                    is_successful = table.Column<bool>(type: "bit", nullable: false),
+                    user_agent = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ip_address = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -143,15 +146,13 @@ namespace learn.it.Migrations
                         column: x => x.achievement_id,
                         principalSchema: "learnitdb",
                         principalTable: "achievements",
-                        principalColumn: "achievement_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "achievement_id");
                     table.ForeignKey(
                         name: "user_achievements$fk_user_achievements_users1",
                         column: x => x.user_id,
                         principalSchema: "learnitdb",
                         principalTable: "users",
-                        principalColumn: "user_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "user_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -172,8 +173,7 @@ namespace learn.it.Migrations
                         column: x => x.user_id,
                         principalSchema: "learnitdb",
                         principalTable: "users",
-                        principalColumn: "user_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "user_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -197,8 +197,35 @@ namespace learn.it.Migrations
                         column: x => x.user_id,
                         principalSchema: "learnitdb",
                         principalTable: "users",
-                        principalColumn: "user_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "user_id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "group_join_request",
+                schema: "learnitdb",
+                columns: table => new
+                {
+                    group_id = table.Column<int>(type: "int", nullable: false),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    expires_at = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_group_join_requests_user_id", x => new { x.user_id, x.group_id });
+                    table.ForeignKey(
+                        name: "group_join_requests$fk_group_join_requests_groups1",
+                        column: x => x.group_id,
+                        principalSchema: "learnitdb",
+                        principalTable: "groups",
+                        principalColumn: "group_id");
+                    table.ForeignKey(
+                        name: "group_join_requests$fk_group_join_requests_users1",
+                        column: x => x.CreatorId,
+                        principalSchema: "learnitdb",
+                        principalTable: "users",
+                        principalColumn: "user_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -222,15 +249,13 @@ namespace learn.it.Migrations
                         column: x => x.GroupId,
                         principalSchema: "learnitdb",
                         principalTable: "groups",
-                        principalColumn: "group_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "group_id");
                     table.ForeignKey(
                         name: "study_sets$fk_study_sets_users1",
                         column: x => x.CreatorId,
                         principalSchema: "learnitdb",
                         principalTable: "users",
-                        principalColumn: "user_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "user_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -255,8 +280,7 @@ namespace learn.it.Migrations
                         column: x => x.user_id,
                         principalSchema: "learnitdb",
                         principalTable: "users",
-                        principalColumn: "user_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "user_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -337,8 +361,7 @@ namespace learn.it.Migrations
                         column: x => x.user_id,
                         principalSchema: "learnitdb",
                         principalTable: "users",
-                        principalColumn: "user_id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "user_id");
                 });
 
             migrationBuilder.InsertData(
@@ -350,7 +373,6 @@ namespace learn.it.Migrations
                     { 1, "Admin" },
                     { 2, "User" }
                 });
-
             migrationBuilder.InsertData(
                 schema: "learnitdb",
                 table: "users",
@@ -380,7 +402,7 @@ namespace learn.it.Migrations
                 schema: "learnitdb",
                 table: "user_preferences",
                 columns: new[]
-                { "user_id", "high_contrast_mode", "email_reminders", "auto_tts" },
+                    { "user_id", "high_contrast_mode", "email_reminders", "auto_tts" },
                 values: new object[,]
                 {
                     { -1, 0, 0, 0 }
@@ -411,10 +433,22 @@ namespace learn.it.Migrations
                 column: "StudySetId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_group_join_request_CreatorId",
+                schema: "learnitdb",
+                table: "group_join_request",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_group_join_request_group_id",
+                schema: "learnitdb",
+                table: "group_join_request",
+                column: "group_id");
+
+            migrationBuilder.CreateIndex(
                 name: "fk_groups_users1_idx",
                 schema: "learnitdb",
                 table: "groups",
-                column: "OwnerId");
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "fk_logins_users_idx",
@@ -500,6 +534,10 @@ namespace learn.it.Migrations
 
             migrationBuilder.DropTable(
                 name: "flashcard_user_progress",
+                schema: "learnitdb");
+
+            migrationBuilder.DropTable(
+                name: "group_join_request",
                 schema: "learnitdb");
 
             migrationBuilder.DropTable(

@@ -16,22 +16,22 @@ public partial class StudySet
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("study_set_id")]
-    public int StudySetId { get; private set; }
+    public int StudySetId { get; set; }
 
     [Required(ErrorMessage = "Study set's name cannot be blank.")]
     [Column("name")]
     [StringLength(100, ErrorMessage = "Study set's name cannot be shorter than 4 and longer than 100 characters.", MinimumLength = 4)]
-    public required string Name { get; set; }
+    public string Name { get; set; }
 
     [Column("description")]
     [StringLength(250, ErrorMessage = "Study set's description cannot be longer than 250 characters.")]
-    public required string? Description { get; set; }
+    public string? Description { get; set; }
 
     //use the static Visibility class as values for this field
     [Required]
     [Column("visibility")]
     [StringLength(7)]
-    public required string Visibility { get; set; }
+    public string Visibility { get; set; }
 
     [ForeignKey("CreatorId")]
     [InverseProperty("StudySets")]

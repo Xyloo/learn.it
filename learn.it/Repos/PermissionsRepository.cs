@@ -1,4 +1,5 @@
 ﻿using learn.it.Models;
+using learn.it.Repos.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Repos

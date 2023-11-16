@@ -50,9 +50,9 @@ public partial class User
     [JsonIgnore]
     public virtual ICollection<FlashcardUserProgress> FlashcardUserProgress { get; set; } = new List<FlashcardUserProgress>();
 
-    [InverseProperty("Owner")]
+    [InverseProperty("Creator")]
     [JsonIgnore]
-    public virtual ICollection<Group> GroupsOwner { get; set; } = new List<Group>();
+    public virtual ICollection<Group> GroupCreator { get; set; } = new List<Group>();
 
     [InverseProperty("User")]
     [JsonIgnore]
@@ -80,6 +80,10 @@ public partial class User
     [InverseProperty("Users")]
     [JsonIgnore]
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+    [InverseProperty("Creator")]
+    [JsonIgnore]
+    public virtual ICollection<GroupJoinRequest> GroupJoinRequests { get; set; } = new List<GroupJoinRequest>();
 
     public AnonymousUserResponseDto ToAnonymousUserResponseDto()
     {

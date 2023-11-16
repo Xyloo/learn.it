@@ -1,4 +1,5 @@
 ﻿using learn.it.Models;
+using learn.it.Repos.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Repos
@@ -8,11 +9,11 @@ namespace learn.it.Repos
     /// It is assumed all methods are called from within a try-catch block.
     /// It is also assumed that the provided data is valid.
     /// </summary>
-    public class UserRepository : IUserRepository
+    public class UsersRepository : IUsersRepository
     {
         private readonly LearnitDbContext _context;
 
-        public UserRepository(LearnitDbContext context)
+        public UsersRepository(LearnitDbContext context)
         {
             _context = context;
         }

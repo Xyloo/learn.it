@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using learn.it.Models.Dtos.Request;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
 [Table("groups", Schema = "learnitdb")]
-[Index("OwnerId", Name = "fk_groups_users1_idx")]
+[Index("CreatorId", Name = "fk_groups_users1_idx")]
 public partial class Group
 {
     [Key]
@@ -18,14 +19,12 @@ public partial class Group
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int GroupId { get; private set; }
 
-    [Required(ErrorMessage = "Group's name cannot be blank.")]
     [Column("name")]
-    [StringLength(150, ErrorMessage = "Group's name cannot be shorter than 5 and longer than 150 characters.", MinimumLength = 5)]
     public string Name { get; set; }
 
-    [ForeignKey("OwnerId")]
-    [InverseProperty("GroupsOwner")]
-    public virtual User Owner { get; set; }
+    [ForeignKey("CreatorId")]
+    [InverseProperty("GroupCreator")]
+    public virtual User Creator { get; set; }
 
     [InverseProperty("Group")]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
@@ -33,4 +32,17 @@ public partial class Group
     [ForeignKey("GroupId")]
     [InverseProperty("Groups")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    [InverseProperty("Group")]
+    public virtual ICollection<GroupJoinRequest> GroupJoinRequests { get; set; } = new List<GroupJoinRequest>();
+
+    public BasicGroupDto ToBasicGroupDto()
+    {
+        return new BasicGroupDto(this);
+    }
+
+    public GroupDto ToGroupDto()
+    {
+        return new GroupDto(this);
+    }
 }

@@ -4,7 +4,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using learn.it.Models;
 using learn.it.Repos;
+using learn.it.Repos.Interfaces;
 using learn.it.Services;
+using learn.it.Services.Interfaces;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -78,12 +80,14 @@ builder.Services.AddAuthorization(options =>
 });
 
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IPermissionsRepository, PermissionsRepository>();
 builder.Services.AddScoped<ILoginsRepository, LoginsRepository>();
+builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ILoginsService, LoginsService>();
+builder.Services.AddScoped<IGroupsService, GroupsService>();
 
 var app = builder.Build();
 
@@ -96,7 +100,13 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+        {
+            swaggerDoc.Servers = new List<OpenApiServer> { new() { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
+        });
+    });
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("v1/swagger.json", "learn.it API V1");
