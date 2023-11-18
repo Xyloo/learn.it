@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Azure.Core.Pipeline;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -58,6 +59,7 @@ namespace learn.it.Controllers
             {
                 return BadRequest(validationResults);
             }
+
             //this should never be null since [Authorize] is used
             var creator = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             var group = new Group()
