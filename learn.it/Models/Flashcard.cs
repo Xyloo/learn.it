@@ -29,7 +29,7 @@ public partial class Flashcard
     public string Definition { get; set; }
 
     [Column("is_term_text")]
-    public short IsTermText { get; set; }
+    public bool IsTermText { get; set; }
 
     [InverseProperty("Flashcard")]
     [JsonIgnore]

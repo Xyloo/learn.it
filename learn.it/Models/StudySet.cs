@@ -27,11 +27,9 @@ public partial class StudySet
     [StringLength(250, ErrorMessage = "Study set's description cannot be longer than 250 characters.")]
     public string? Description { get; set; }
 
-    //use the static Visibility class as values for this field
     [Required]
     [Column("visibility")]
-    [StringLength(7)]
-    public string Visibility { get; set; }
+    public Visibility Visibility { get; set; }
 
     [ForeignKey("CreatorId")]
     [InverseProperty("StudySets")]
@@ -42,5 +40,5 @@ public partial class StudySet
 
     [ForeignKey("GroupId")]
     [InverseProperty("StudySets")]
-    public virtual Group Group { get; set; }
+    public virtual Group? Group { get; set; }
 }
