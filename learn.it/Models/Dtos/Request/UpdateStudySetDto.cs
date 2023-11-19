@@ -10,11 +10,14 @@ namespace learn.it.Models.Dtos.Request
 
         public Visibility? Visibility { get; set; }
 
+        public int? GroupId { get; set; }
+
         public UpdateStudySetDto(StudySet studySet)
         {
             Name = studySet.Name;
             Description = studySet.Description;
             Visibility = studySet.Visibility;
+            GroupId = studySet.Group?.GroupId;
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

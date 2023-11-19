@@ -5,8 +5,9 @@ namespace learn.it.Services.Interfaces
 {
     public interface IStudySetsService
     {
-        Task<StudySetDto> GetStudySetById(int id);
-        Task<StudySetDto> GetStudySetByName(string name);
+        Task<StudySet> GetStudySetById(int id);
+        Task<StudySetDto> GetStudySetDtoById(int id);
+        Task<StudySetDto> GetStudySetDtoByName(string name);
         Task<StudySet> AddFlashcardToStudySet(int studySetId, Flashcard flashcard);
         Task<StudySet> RemoveFlashcardFromStudySet(int studySetId, Flashcard flashcard);
         Task<IEnumerable<BasicStudySetDto>> GetStudySetsContainingName(string name);

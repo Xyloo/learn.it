@@ -15,13 +15,19 @@ namespace learn.it.Services
             _studySetsRepository = studySetsRepository;
         }
 
-        public async Task<StudySetDto> GetStudySetById(int id)
+        public async Task<StudySet> GetStudySetById(int id)
+        {
+            var set = await _studySetsRepository.GetStudySetById(id) ?? throw new StudySetNotFoundException(id.ToString());
+            return set;
+        }
+
+        public async Task<StudySetDto> GetStudySetDtoById(int id)
         {
             var set = await _studySetsRepository.GetStudySetDtoById(id) ?? throw new StudySetNotFoundException(id.ToString());
             return set;
         }
 
-        public async Task<StudySetDto> GetStudySetByName(string name)
+        public async Task<StudySetDto> GetStudySetDtoByName(string name)
         {
             var set = await _studySetsRepository.GetStudySetDtoByName(name) ?? throw new StudySetNotFoundException(name);
             return set;

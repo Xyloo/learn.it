@@ -14,11 +14,14 @@ namespace learn.it.Models.Dtos.Request
         [Required]
         public Visibility Visibility { get; set; }
 
+        public int? GroupId { get; set; }
+
         public CreateStudySetDto(StudySet studySet)
         {
             Name = studySet.Name;
             Description = studySet.Description;
             Visibility = studySet.Visibility;
+            GroupId = studySet.Group?.GroupId;
         }
     }
 }
