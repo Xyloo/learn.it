@@ -187,11 +187,5 @@ namespace learn.it.Controllers
             return ControllerUtils.IsUserAdmin(User) ||
                    studySet.Group != null && await _groupsService.IsUserInGroup(user.UserId, studySet.Group.GroupId);
         }
-
-        private async Task<bool> IsUserAdminOrInGroup(User user, StudySet studySet)
-        {
-            return ControllerUtils.IsUserAdmin(User) ||
-                   studySet.Group != null && await _groupsService.IsUserInGroup(user.UserId, studySet.Group.GroupId);
-        }
     }
 }

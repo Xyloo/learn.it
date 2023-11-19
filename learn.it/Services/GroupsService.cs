@@ -23,7 +23,7 @@ namespace learn.it.Services
         {
             if (await _usersRepository.GetUserById(group.Creator.UserId) == null)
             {
-                throw new ArgumentException("Creator does not exist");
+                throw new UserNotFoundException("Creator does not exist");
             }
 
             return await _groupsRepository.CreateGroup(group);
@@ -63,7 +63,7 @@ namespace learn.it.Services
             var nameValidation = new CreateOrUpdateGroupDto(group.Name).Validate(validationContext);
             if (nameValidation.Any())
             {
-                throw new ArgumentException(nameValidation.ToString());
+                throw new InvalidInputDataException(nameValidation.ToString());
             }
             return await _groupsRepository.UpdateGroup(group);
         }
@@ -75,7 +75,7 @@ namespace learn.it.Services
             var validationResults = groupDto.Validate(validationContext);
             if (validationResults.Any())
             {
-                throw new ArgumentException(validationResults.ToString());
+                throw new InvalidInputDataException(validationResults.ToString());
             }
             group.Name = groupDto.Name!;
             return await UpdateGroup(group);
@@ -93,7 +93,7 @@ namespace learn.it.Services
 
             if (group.Users.Any(u => u.UserId == user.UserId))
             {
-                throw new ArgumentException("User is already a member of this group.");
+                throw new InvalidInputDataException("User is already a member of this group.");
             }
 
             group.Users.Add(user);
@@ -107,7 +107,7 @@ namespace learn.it.Services
 
             if (group.Users.All(u => u.UserId != user.UserId))
             {
-                throw new ArgumentException("User is not a member of this group.");
+                throw new InvalidInputDataException("User is not a member of this group.");
             }
 
             group.Users.Remove(user);
@@ -127,17 +127,17 @@ namespace learn.it.Services
 
             if (group.Users.Any(u => u.UserId == userId))
             {
-                throw new ArgumentException("User is already a member of this group.");
+                throw new InvalidInputDataException("User is already a member of this group.");
             }
 
             if (userId != creatorId && group.Creator.UserId != creatorId)
             {
-                throw new ArgumentException("Only the group creator can create an invitation.");
+                throw new InvalidInputDataException("Only the group creator can create an invitation.");
             }
 
             if (await _groupsRepository.GetGroupJoinRequest(userId, groupId) != null)
             {
-                throw new ArgumentException("User has already requested to join this group.");
+                throw new InvalidInputDataException("User has already requested to join this group.");
             }
 
             var groupJoinRequest = new GroupJoinRequest
@@ -173,7 +173,7 @@ namespace learn.it.Services
             if (groupJoinRequest.ExpiresAt < DateTime.UtcNow)
             {
                 await _groupsRepository.RemoveGroupJoinRequest(groupJoinRequest);
-                throw new ArgumentException("Group join request has expired.");
+                throw new InvalidInputDataException("Group join request has expired.");
             }
             group.Users.Add(user);
             await _groupsRepository.UpdateGroup(group);

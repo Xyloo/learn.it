@@ -28,7 +28,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews(options =>
 {
-    options.Filters.Add<UserNotFoundExceptionFilter>();
+    options.Filters.Add<LearnitExceptionFilter>();
 });
 
 builder.Services.AddDbContext<LearnitDbContext>(options =>
