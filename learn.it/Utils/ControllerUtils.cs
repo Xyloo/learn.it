@@ -27,6 +27,11 @@ namespace learn.it.Utils
             return data.FindFirst(ClaimTypes.Role)?.Value == "Admin" || data.Identity?.Name == user.Username;
         }
 
+        public static bool IsUserAdmin(ClaimsPrincipal data)
+        {
+            return data.FindFirst(ClaimTypes.Role)?.Value == "Admin";
+        }
+
         public static int GetUserIdFromClaims(ClaimsPrincipal data)
         {
             var parseSuccessful = int.TryParse(data.FindFirst(ClaimTypes.NameIdentifier)?.Value!, out int creatorId);

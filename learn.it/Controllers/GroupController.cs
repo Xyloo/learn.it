@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Azure.Core.Pipeline;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -35,8 +36,13 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetGroupDetails([FromRoute] int groupId)
         {
-            var group = await _groupsService.GetGroupDtoById(groupId);
-            return Ok(group);
+            var group = await _groupsService.GetGroupById(groupId);
+            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
+            if (ControllerUtils.IsUserAdmin(User) || group.Users.Contains(user))
+            {
+                return Ok(group.ToGroupDto());
+            }
+            return Ok(group.ToBasicGroupDto());
         }
 
         [HttpGet("find/{groupName}")]
@@ -58,6 +64,7 @@ namespace learn.it.Controllers
             {
                 return BadRequest(validationResults);
             }
+
             //this should never be null since [Authorize] is used
             var creator = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             var group = new Group()
@@ -67,6 +74,9 @@ namespace learn.it.Controllers
             };
             group.Users.Add(creator);
             group = await _groupsService.CreateGroup(group);
+
+            creator.Groups.Add(group);
+            creator.GroupCreator.Add(group);
             return CreatedAtAction(nameof(GetGroupDetails), new { groupId = group.GroupId }, new GroupDto(group));
         }
 
@@ -170,7 +180,7 @@ namespace learn.it.Controllers
             if (IsCreatorOrAdmin(group))
             {
                 group = await _groupsService.UpdateGroup(groupDto, groupId);
-                return Ok(group);
+                return Ok(group.ToGroupDto());
             }
             return Forbid();
         }

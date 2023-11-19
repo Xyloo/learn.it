@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models

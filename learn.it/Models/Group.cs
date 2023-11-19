@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
@@ -27,6 +27,7 @@ public partial class Group
     public virtual User Creator { get; set; }
 
     [InverseProperty("Group")]
+    [JsonIgnore]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
 
     [ForeignKey("GroupId")]

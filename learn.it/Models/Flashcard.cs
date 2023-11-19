@@ -18,18 +18,14 @@ public partial class Flashcard
     [Column("flashcard_id")]
     public int FlashcardId { get; private set; }
 
-    [Required(ErrorMessage = "Flashcard's term cannot be blank.")]
     [Column("term")]
-    [StringLength(500, ErrorMessage = "Flashcard's term cannot be longer than 500 characters.")]
     public string Term { get; set; }
 
-    [Required(ErrorMessage = "Flashcard's definition cannot be blank.")]
     [Column("definition")]
-    [StringLength(500, ErrorMessage = "Flashcard's defintion cannot be longer than 500 characters.")]
     public string Definition { get; set; }
 
     [Column("is_term_text")]
-    public short IsTermText { get; set; }
+    public bool IsTermText { get; set; }
 
     [InverseProperty("Flashcard")]
     [JsonIgnore]

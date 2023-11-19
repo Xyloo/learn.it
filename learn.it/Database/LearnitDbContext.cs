@@ -122,7 +122,6 @@ public partial class LearnitDbContext : DbContext
             entity.HasKey(e => e.FlashcardId).HasName("PK_flashcards_flashcard_id");
 
             entity.Property(e => e.FlashcardId).ValueGeneratedOnAdd();
-            entity.Property(e => e.IsTermText).HasDefaultValueSql("((1))");
 
             entity.HasOne(d => d.StudySet).WithMany(p => p.Flashcards).HasConstraintName("flashcards$fk_flashcards_study_sets1").OnDelete(DeleteBehavior.ClientCascade);
         });

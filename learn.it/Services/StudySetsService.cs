@@ -1,5 +1,6 @@
 ﻿using learn.it.Exceptions;
 using learn.it.Models;
+using learn.it.Models.Dtos.Response;
 using learn.it.Repos.Interfaces;
 using learn.it.Services.Interfaces;
 
@@ -20,28 +21,34 @@ namespace learn.it.Services
             return set;
         }
 
-        public async Task<StudySet> GetStudySetByName(string name)
+        public async Task<StudySetDto> GetStudySetDtoById(int id)
         {
-            var set = await _studySetsRepository.GetStudySetByName(name) ?? throw new StudySetNotFoundException(name);
+            var set = await _studySetsRepository.GetStudySetDtoById(id) ?? throw new StudySetNotFoundException(id.ToString());
             return set;
         }
 
-        public async Task<IEnumerable<StudySet>> GetStudySetsContainingName(string name)
+        public async Task<StudySetDto> GetStudySetDtoByName(string name)
+        {
+            var set = await _studySetsRepository.GetStudySetDtoByName(name) ?? throw new StudySetNotFoundException(name);
+            return set;
+        }
+
+        public async Task<IEnumerable<BasicStudySetDto>> GetStudySetsContainingName(string name)
         {
             return await _studySetsRepository.GetStudySetsContainingName(name);
         }
 
-        public async Task<IEnumerable<StudySet>> GetAllStudySetsByCreator(int creatorId)
+        public async Task<IEnumerable<BasicStudySetDto>> GetAllStudySetsByCreator(int creatorId)
         {
             return await _studySetsRepository.GetAllStudySetsByCreator(creatorId);
         }
 
-        public async Task<IEnumerable<StudySet>> GetAllStudySetsForGroup(int groupId)
+        public async Task<IEnumerable<BasicStudySetDto>> GetAllStudySetsForGroup(int groupId)
         {
             return await _studySetsRepository.GetAllStudySetsForGroup(groupId);
         }
 
-        public async Task<IEnumerable<StudySet>> GetAllStudySets()
+        public async Task<IEnumerable<BasicStudySetDto>> GetAllStudySets()
         { 
             return await _studySetsRepository.GetAllStudySets();
         }
@@ -53,7 +60,7 @@ namespace learn.it.Services
 
         public async Task<StudySet> UpdateStudySet(StudySet studySet)
         {
-            throw new NotImplementedException();
+            return await _studySetsRepository.UpdateStudySet(studySet);
         }
 
         public async Task DeleteStudySet(int id)
@@ -66,6 +73,14 @@ namespace learn.it.Services
         {
             var set = await _studySetsRepository.GetStudySetById(studySetId) ?? throw new StudySetNotFoundException(studySetId.ToString());
             set.Flashcards.Add(flashcard);
+            await _studySetsRepository.UpdateStudySet(set);
+            return set;
+        }
+
+        public async Task<StudySet> RemoveFlashcardFromStudySet(int studySetId, Flashcard flashcard)
+        {
+            var set = await _studySetsRepository.GetStudySetById(studySetId) ?? throw new StudySetNotFoundException(studySetId.ToString());
+            set.Flashcards.Remove(flashcard);
             await _studySetsRepository.UpdateStudySet(set);
             return set;
         }

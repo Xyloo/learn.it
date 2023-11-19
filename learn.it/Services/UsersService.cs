@@ -44,7 +44,7 @@ namespace learn.it.Services
             var hashedPassword = _passwordHasher.HashPassword(userData, userData.Password);
             userData.Password = hashedPassword;
             userData.CreateTime = DateTime.UtcNow;
-            userData.Permissions = await _permissionsRepository.GetPermissionByName("User") ?? throw new InvalidOperationException("No permission was found with name 'User'");
+            userData.Permissions = await _permissionsRepository.GetPermissionByName("User") ?? throw new InvalidInputDataException("No permission was found with name 'User'");
             userData.UserStats = new UserStats();
             userData.UserPreferences = new UserPreferences();
             return await _usersRepository.CreateUser(userData);

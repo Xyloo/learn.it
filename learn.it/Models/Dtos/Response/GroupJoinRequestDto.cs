@@ -1,6 +1,4 @@
-﻿using learn.it.Models.Dtos.Response;
-
-namespace learn.it.Models.Dtos.Request
+﻿namespace learn.it.Models.Dtos.Response
 {
     public class GroupJoinRequestDto
     {

@@ -1,5 +1,6 @@
 ﻿using learn.it.Models;
 using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using learn.it.Repos.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,32 +28,50 @@ namespace learn.it.Repos
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<StudySet>> GetAllStudySets()
+        public async Task<IEnumerable<BasicStudySetDto>> GetAllStudySets()
         {
-            return await _context.StudySets.Include(g => g.Creator.ToAnonymousUserResponseDto()).ToListAsync();
+            return await _context.StudySets
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .Select(g => new BasicStudySetDto(g))
+                .ToListAsync();
         }
 
-        public async Task<IEnumerable<StudySet>> GetStudySetsContainingName(string studySetName)
+        public async Task<IEnumerable<BasicStudySetDto>> GetStudySetsContainingName(string studySetName)
         {
-            return await _context.StudySets.Where(g => g.Name.Contains(studySetName)).ToListAsync();
+            return await _context.StudySets.Where(g => g.Name.Contains(studySetName))
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .Select(g => new BasicStudySetDto(g))
+                .ToListAsync();
         }
 
-        public async Task<IEnumerable<StudySet>> GetAllStudySetsByCreator(int creatorId)
+        public async Task<IEnumerable<BasicStudySetDto>> GetAllStudySetsByCreator(int creatorId)
         {
-            return await _context.StudySets.Where(g => g.Creator.UserId == creatorId).ToListAsync();
+            return await _context.StudySets
+                .Where(g => g.Creator.UserId == creatorId)
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .Select(g => new BasicStudySetDto(g))
+                .ToListAsync();
         }
 
-        public async Task<IEnumerable<StudySet>> GetAllStudySetsForGroup(int groupId)
+        public async Task<IEnumerable<BasicStudySetDto>> GetAllStudySetsForGroup(int groupId)
         {
-            return await _context.StudySets.Where(g => g.Group.GroupId == groupId).Include(g => g.Creator.ToAnonymousUserResponseDto()).ToListAsync();
+            return await _context.StudySets
+                .Where(g => g.Group != null && g.Group.GroupId == groupId)
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .Select(g => new BasicStudySetDto(g))
+                .ToListAsync();
         }
 
         public async Task<StudySet?> GetStudySetById(int studySetId)
         {
             return await _context.StudySets
                 .Where(g => g.StudySetId == studySetId)
-                .Include(g => g.Creator.ToAnonymousUserResponseDto())
-                .Include(g => new BasicGroupDto(g.Group))
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
                 .Include(g => g.Flashcards)
                 .FirstOrDefaultAsync();
         }
@@ -61,9 +80,31 @@ namespace learn.it.Repos
         {
             return await _context.StudySets
                 .Where(g => g.Name == studySetName)
-                .Include(g => g.Creator.ToAnonymousUserResponseDto())
-                .Include(g => new BasicGroupDto(g.Group))
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
                 .Include(g => g.Flashcards)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<StudySetDto?> GetStudySetDtoById(int studySetId)
+        {
+            return await _context.StudySets
+                .Where(g => g.StudySetId == studySetId)
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .Include(g => g.Flashcards)
+                .Select(g => new StudySetDto(g))
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<StudySetDto?> GetStudySetDtoByName(string studySetName)
+        {
+            return await _context.StudySets
+                .Where(g => g.Name == studySetName)
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .Include(g => g.Flashcards)
+                .Select(g => new StudySetDto(g))
                 .FirstOrDefaultAsync();
         }
 

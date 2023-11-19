@@ -116,7 +116,7 @@ namespace learn.it.Migrations
                     is_successful = table.Column<bool>(type: "bit", nullable: false),
                     user_agent = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ip_address = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -237,9 +237,9 @@ namespace learn.it.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
-                    visibility = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    visibility = table.Column<int>(type: "int", nullable: false),
                     CreatorId = table.Column<int>(type: "int", nullable: false),
-                    GroupId = table.Column<int>(type: "int", nullable: false)
+                    GroupId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -290,9 +290,9 @@ namespace learn.it.Migrations
                 {
                     flashcard_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    term = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    definition = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    is_term_text = table.Column<short>(type: "smallint", nullable: false, defaultValueSql: "((1))"),
+                    term = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    definition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    is_term_text = table.Column<bool>(type: "bit", nullable: false),
                     StudySetId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

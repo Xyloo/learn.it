@@ -1,6 +1,6 @@
 ﻿using learn.it.Exceptions;
 using learn.it.Models;
-using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using learn.it.Repos.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,7 +44,10 @@ namespace learn.it.Repos
 
         public async Task<GroupDto> GetGroupDtoById(int groupId)
         {
-            var group = await _context.Groups.FindAsync(groupId) ?? throw new GroupNotFoundException(groupId.ToString());
+            var group = await _context.Groups.Include(g => g.Creator)
+                .Include(g => g.Users)
+                .Include(g => g.StudySets)
+                .FirstOrDefaultAsync(g => g.GroupId == groupId) ?? throw new GroupNotFoundException(groupId.ToString());
             return new GroupDto(group);
         }
 
