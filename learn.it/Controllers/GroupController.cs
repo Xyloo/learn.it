@@ -36,8 +36,13 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetGroupDetails([FromRoute] int groupId)
         {
-            var group = await _groupsService.GetGroupDtoById(groupId);
-            return Ok(group);
+            var group = await _groupsService.GetGroupById(groupId);
+            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
+            if (ControllerUtils.IsUserAdmin(User) || group.Users.Contains(user))
+            {
+                return Ok(group.ToGroupDto());
+            }
+            return Ok(group.ToBasicGroupDto());
         }
 
         [HttpGet("find/{groupName}")]
@@ -69,6 +74,9 @@ namespace learn.it.Controllers
             };
             group.Users.Add(creator);
             group = await _groupsService.CreateGroup(group);
+
+            creator.Groups.Add(group);
+            creator.GroupCreator.Add(group);
             return CreatedAtAction(nameof(GetGroupDetails), new { groupId = group.GroupId }, new GroupDto(group));
         }
 

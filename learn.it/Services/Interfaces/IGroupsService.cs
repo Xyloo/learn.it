@@ -9,7 +9,7 @@ namespace learn.it.Services.Interfaces
         Task<Group> CreateGroup(Group group);
         Task RemoveGroup(int groupId);
         Task<IEnumerable<BasicGroupDto>> GetAllGroups();
-        Task<IEnumerable<GroupDto>> GetAllOwnedGroups(int ownerId);
+        Task<bool> IsUserInGroup(int userId, int groupId);
         Task<Group> GetGroupById(int groupId);
         Task<GroupDto> GetGroupDtoById(int groupId);
         Task<Group> UpdateGroup(Group group);

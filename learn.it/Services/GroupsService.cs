@@ -40,9 +40,10 @@ namespace learn.it.Services
             return await _groupsRepository.GetAllGroups();
         }
 
-        public async Task<IEnumerable<GroupDto>> GetAllOwnedGroups(int ownerId)
+        public async Task<bool> IsUserInGroup(int userId, int groupId)
         {
-            return await _groupsRepository.GetAllOwnedGroups(ownerId);
+            var group = await GetGroupByIdOrThrow(groupId);
+            return group.Users.Any(u => u.UserId == userId);
         }
 
         public async Task<Group> GetGroupById(int groupId)
