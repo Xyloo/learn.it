@@ -70,8 +70,8 @@ namespace learn.it.Repos
         {
             return await _context.StudySets
                 .Where(g => g.StudySetId == studySetId)
-                .Include(g => g.Creator.ToAnonymousUserResponseDto())
-                .Include(g => g.Group == null ? null : new BasicGroupDto(g.Group))
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
                 .Include(g => g.Flashcards)
                 .FirstOrDefaultAsync();
         }
@@ -80,8 +80,8 @@ namespace learn.it.Repos
         {
             return await _context.StudySets
                 .Where(g => g.Name == studySetName)
-                .Include(g => g.Creator.ToAnonymousUserResponseDto())
-                .Include(g => g.Group == null ? null : new BasicGroupDto(g.Group))
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
                 .Include(g => g.Flashcards)
                 .FirstOrDefaultAsync();
         }
@@ -90,8 +90,8 @@ namespace learn.it.Repos
         {
             return await _context.StudySets
                 .Where(g => g.StudySetId == studySetId)
-                .Include(g => g.Creator.ToAnonymousUserResponseDto())
-                .Include(g => g.Group == null ? null : new BasicGroupDto(g.Group))
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
                 .Include(g => g.Flashcards)
                 .Select(g => new StudySetDto(g))
                 .FirstOrDefaultAsync();
@@ -101,8 +101,8 @@ namespace learn.it.Repos
         {
             return await _context.StudySets
                 .Where(g => g.Name == studySetName)
-                .Include(g => g.Creator.ToAnonymousUserResponseDto())
-                .Include(g => g.Group == null ? null : new BasicGroupDto(g.Group))
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
                 .Include(g => g.Flashcards)
                 .Select(g => new StudySetDto(g))
                 .FirstOrDefaultAsync();

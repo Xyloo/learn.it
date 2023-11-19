@@ -12,16 +12,9 @@ namespace learn.it.Models.Dtos.Request
         public string? Description { get; set; }
 
         [Required]
+        [Range(0, 2, ErrorMessage="Visibility must be 0, 1 or 2.")]
         public Visibility Visibility { get; set; }
 
         public int? GroupId { get; set; }
-
-        public CreateStudySetDto(StudySet studySet)
-        {
-            Name = studySet.Name;
-            Description = studySet.Description;
-            Visibility = studySet.Visibility;
-            GroupId = studySet.Group?.GroupId;
-        }
     }
 }

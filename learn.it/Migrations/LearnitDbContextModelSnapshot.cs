@@ -131,24 +131,18 @@ namespace learn.it.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FlashcardId"));
 
                     b.Property<string>("Definition")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("definition");
 
-                    b.Property<short>("IsTermText")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint")
-                        .HasColumnName("is_term_text")
-                        .HasDefaultValueSql("((1))");
+                    b.Property<bool>("IsTermText")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_term_text");
 
                     b.Property<int?>("StudySetId")
                         .HasColumnType("int");
 
                     b.Property<string>("Term")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("term");
 
                     b.HasKey("FlashcardId")
@@ -283,7 +277,7 @@ namespace learn.it.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("user_agent");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("LoginId")
@@ -344,7 +338,7 @@ namespace learn.it.Migrations
                         .HasColumnType("nvarchar(250)")
                         .HasColumnName("description");
 
-                    b.Property<int>("GroupId")
+                    b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -353,10 +347,8 @@ namespace learn.it.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("name");
 
-                    b.Property<string>("Visibility")
-                        .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)")
+                    b.Property<int>("Visibility")
+                        .HasColumnType("int")
                         .HasColumnName("visibility");
 
                     b.HasKey("StudySetId")
@@ -624,6 +616,7 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.User", "User")
                         .WithMany("Logins")
                         .HasForeignKey("UserId")
+                        .IsRequired()
                         .HasConstraintName("logins$fk_logins_users");
 
                     b.Navigation("User");
@@ -641,7 +634,6 @@ namespace learn.it.Migrations
                     b.HasOne("learn.it.Models.Group", "Group")
                         .WithMany("StudySets")
                         .HasForeignKey("GroupId")
-                        .IsRequired()
                         .HasConstraintName("study_sets$fk_study_sets_groups1");
 
                     b.Navigation("Creator");

@@ -27,6 +27,7 @@ public partial class Group
     public virtual User Creator { get; set; }
 
     [InverseProperty("Group")]
+    [JsonIgnore]
     public virtual ICollection<StudySet> StudySets { get; set; } = new List<StudySet>();
 
     [ForeignKey("GroupId")]

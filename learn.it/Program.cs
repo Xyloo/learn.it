@@ -84,10 +84,12 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IPermissionsRepository, PermissionsRepository>();
 builder.Services.AddScoped<ILoginsRepository, LoginsRepository>();
 builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
+builder.Services.AddScoped<IStudySetsRepository, StudySetsRepository>();
 
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ILoginsService, LoginsService>();
 builder.Services.AddScoped<IGroupsService, GroupsService>();
+builder.Services.AddScoped<IStudySetsService, StudySetsService>();
 
 var app = builder.Build();
 
