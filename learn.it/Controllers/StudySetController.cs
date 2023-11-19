@@ -69,7 +69,7 @@ namespace learn.it.Controllers
             User? user;
             try
             {
-                var userId = ControllerUtils.GetUserIdFromClaims(User);
+                var userId = ControllerUtils.GetUserIdFromClaims(User); //throws InvalidCredentialException
                 user = await _usersService.GetUserByIdOrUsername(userId.ToString());
             }
             catch (InvalidCredentialException)
@@ -139,7 +139,7 @@ namespace learn.it.Controllers
             //it ensures consistency
             group?.StudySets.Add(createdStudySet);
             return CreatedAtAction(nameof(GetStudySetDetails), new { studySetId = createdStudySet.StudySetId },
-                               createdStudySet);
+                               new StudySetDto(createdStudySet));
         }
 
         [HttpPut("{studySetId}")]
@@ -163,7 +163,7 @@ namespace learn.it.Controllers
                     ? null
                     : await _groupsService.GetGroupById(studySet.GroupId.Value);
                 var updatedStudySet = await _studySetsService.UpdateStudySet(studySetToUpdate);
-                return Ok(updatedStudySet);
+                return Ok(new StudySetDto(updatedStudySet));
             }
             return NotFound();
         }

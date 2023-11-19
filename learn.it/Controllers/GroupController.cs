@@ -180,7 +180,7 @@ namespace learn.it.Controllers
             if (IsCreatorOrAdmin(group))
             {
                 group = await _groupsService.UpdateGroup(groupDto, groupId);
-                return Ok(group);
+                return Ok(group.ToGroupDto());
             }
             return Forbid();
         }
