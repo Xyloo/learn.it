@@ -34,6 +34,8 @@ namespace learn.it.Utils
                         Message = ex.Message
                     });
                     break;
+                default:
+                    return;
             }
             context.ExceptionHandled = true;
         }
