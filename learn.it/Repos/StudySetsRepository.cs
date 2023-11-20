@@ -68,12 +68,21 @@ namespace learn.it.Repos
 
         public async Task<StudySet?> GetStudySetById(int studySetId)
         {
-            return await _context.StudySets
+            var set = await _context.StudySets
                 .Where(g => g.StudySetId == studySetId)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
                 .Include(g => g.Flashcards)
                 .FirstOrDefaultAsync();
+            if (set != null && set.Group != null)
+            {
+                set.Group = await _context.Groups
+                    .Where(g => g.GroupId == set.Group.GroupId)
+                    .Include(g => g.Creator)
+                    .Include(g => g.Users)
+                    .FirstOrDefaultAsync();
+            }
+            return set;
         }
 
         public async Task<StudySet?> GetStudySetByName(string studySetName)

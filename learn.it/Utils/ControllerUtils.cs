@@ -41,5 +41,13 @@ namespace learn.it.Utils
             }
             return creatorId;
         }
+
+        public static bool CanUserAccessStudySet(User user, StudySet studySet)
+        {
+            return user.Permissions.Name == "Admin" ||
+                   (studySet.Group != null && studySet.Group.Users.Contains(user) && studySet.Visibility == Visibility.Group) ||
+                   studySet.Creator.Username == user.Username ||
+                   studySet.Visibility == Visibility.Public;
+        }
     }
 }
