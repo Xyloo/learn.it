@@ -9,7 +9,7 @@ body {
   justify-content: center;
   height: 80vh;
   border-radius: 40px;
-  padding: 50px;
+  padding: 2rem 3rem 3rem 3rem;
 }
 .label-wrapper {
   width: 100%;
@@ -26,7 +26,6 @@ body {
   padding: 10px;
   margin: 0px;
   border: none;
-  color: white;
   font-size: 1.5rem;
   cursor: pointer;
   margin-left: 0.5rem;
@@ -43,38 +42,88 @@ body {
 
 .search-results-container {
   display: flex;
-  flex-direction: column; /* Stack items in a column */
-  align-items: center; /* Center items horizontally */
-  max-height: 300px; /* Adjust to the height you want */
-  overflow-y: auto;
+  flex-wrap: wrap;
   width: 100%;
+  height: 80%;
+  overflow-y: auto;
+  padding: 10px 0px;
 }
 
 .result-row {
-  width: 100%; /* Take full width of the container */
-  display: flex;
-  justify-content: center; /* Center the result item */
-  margin: 5px 0; /* Adjust vertical spacing as needed */
+  flex-basis: calc(33.333% - 10px); 
+  margin: 5px;
+  box-sizing: border-box;
+ 
 }
 
 .result-item {
+  background-color: var(--light-blue-main);
+  border-radius: 25px;
   border: 1px solid #ccc;
   padding: 10px;
-  width: 80%; /* Adjust the width as needed */
-  box-sizing: border-box;
-  /* Centering the item if it's less than 100% of the container width */
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px 40px;
 }
 
 .avatar {
-  width: 50px; /* Adjust to your preference */
-  height: 50px; /* Adjust to your preference */
-  border-radius: 50%; /* Make it round */
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
 }
 
-.username {
-  font-weight: bold;
+.set-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+
 }
 
 .set-count {
   color: #666;
+  padding-bottom: 5rem;
+
+}
+
+.user-info{
+    display: flex;
+    gap: 1rem;
+    align-items:center;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid black;
+  overflow: hidden;
+  background: white;
+}
+
+.expand-button-wrapper{
+    width: 100%;
+    display:flex;
+    justify-content: flex-end;
+}
+
+.toggle-button{
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+}
+
+
+@media (max-width: 768px) {
+  .result-row {
+    flex-basis: 100%; 
+    margin: 5px 0; 
+    justify-content: center; 
+  }
+
+  .result-item {
+    margin: 10px; 
+    width: auto; 
+    max-width: 500px;
+  }
 }
