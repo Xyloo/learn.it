@@ -13,12 +13,12 @@ namespace learn.it.Controllers
 {
     [ApiController]
     [Route("api/groups")]
-    public class GroupController : ControllerBase
+    public class GroupsController : ControllerBase
     {
         private readonly IGroupsService _groupsService;
         private readonly IUsersService _usersService;
 
-        public GroupController(IGroupsService groupsService, IUsersService usersService)
+        public GroupsController(IGroupsService groupsService, IUsersService usersService)
         {
             _groupsService = groupsService;
             _usersService = usersService;

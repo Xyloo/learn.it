@@ -12,8 +12,6 @@ namespace learn.it.Models.Dtos.Request
         [StringLength(500, ErrorMessage = "Flashcard's defintion cannot be longer than 500 characters.")]
         public string Definition { get; set; } = null!;
 
-        public bool IsTermText { get; set; } = true;
-
         [Required(ErrorMessage = "Flashcard must belong to a study set.")]
         public int StudySetId { get; set; }
     }

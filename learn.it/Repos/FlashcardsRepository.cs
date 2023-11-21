@@ -42,6 +42,7 @@ namespace learn.it.Repos
         {
             var flashcard = await _context.Flashcards.FindAsync(id) ?? throw new FlashcardNotFoundException(id);
             _context.Flashcards.Remove(flashcard);
+            await _context.SaveChangesAsync();
         }
     }
 }

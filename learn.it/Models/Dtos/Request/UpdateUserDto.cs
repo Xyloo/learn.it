@@ -1,15 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace learn.it.Models.Dtos
+namespace learn.it.Models.Dtos.Request
 {
     public partial class UpdateUserDto : IValidatableObject
     {
         public string? Username { get; set; }
+
         public string? Email { get; set; }
+
         public string? Password { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (Username is null && Email is null && Password is null)
+            {
+                yield return new ValidationResult("At least one field must be filled.", new[] { nameof(Username), nameof(Email), nameof(Password) });
+            }
+
             if (Username is not null)
             {
                 if (Username.Length < 3 || Username.Length > 32)
@@ -49,6 +56,7 @@ namespace learn.it.Models.Dtos
 
         [System.Text.RegularExpressions.GeneratedRegex("^[A-Za-z][A-Za-z0-9_]*$")]
         private static partial System.Text.RegularExpressions.Regex UsernameRegex();
+
         [System.Text.RegularExpressions.GeneratedRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")]
         private static partial System.Text.RegularExpressions.Regex PasswordRegex();
     }

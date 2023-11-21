@@ -13,7 +13,7 @@ namespace learn.it.Controllers
 {
     [ApiController]
     [Route("api/studysets")]
-    public class StudySetController : ControllerBase
+    public class StudySetsController : ControllerBase
     {
         private readonly IStudySetsService _studySetsService;
 
@@ -21,7 +21,7 @@ namespace learn.it.Controllers
 
         private readonly IGroupsService _groupsService;
 
-        public StudySetController(IStudySetsService studySetsService, IUsersService usersService,
+        public StudySetsController(IStudySetsService studySetsService, IUsersService usersService,
             IGroupsService groupsService)
         {
             _studySetsService = studySetsService;
