@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,6 +7,8 @@ import { Component, HostListener } from '@angular/core';
 })
 export class NavMenuComponent {
 
+  @ViewChild('searchInput') searchInput: ElementRef;
+
   showDropdown: boolean = false;
   toggleDropdown() {
     this.showDropdown = !this.showDropdown;
@@ -14,6 +16,13 @@ export class NavMenuComponent {
 
   closeDropdown() {
     this.showDropdown = false;
+  }
+
+  focusOnSearchInput(): void {
+    if (this.searchInput) {
+      this.searchInput.nativeElement.focus();
+      this.closeDropdown();
+    }
   }
 
   @HostListener('document:click', ['$event'])

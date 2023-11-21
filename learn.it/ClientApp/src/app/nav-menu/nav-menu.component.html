@@ -8,7 +8,7 @@
         <label for="search" class="search-icon-label">
           <img src="/assets/search-icon.svg" alt="Icon" class="search-icon" />
         </label>
-        <input type="search" placeholder="Wyszukaj materiały do nauki">
+        <input #searchInput type="search" placeholder="Wyszukaj materiały do nauki">
       </div>
 
       <div class="nav-icons">
@@ -27,12 +27,12 @@
           </button>
           <div class="dropdown-menu" *ngIf="showDropdown">
             <div class="dropdown-wrapper">
-            <a href="#">Profil</a>
-            <a href="#">Ustawienia</a>
-            <a href="#">Wyszukaj</a>
-            <a href="#">Dodaj zestaw</a>
-            <a href="#">Pomoc</a>
-            <a routerLink="/login">Wyloguj</a>
+              <a href="#">Profil</a>
+              <a href="#">Ustawienia</a>
+              <a href="#" (click)="focusOnSearchInput(); $event.preventDefault()">Wyszukaj</a>
+              <a href="#">Dodaj zestaw</a>
+              <a href="#">Pomoc</a>
+              <a routerLink="/login">Wyloguj</a>
             </div>
           </div>
         </div>
