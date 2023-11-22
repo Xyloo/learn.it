@@ -6,5 +6,10 @@
                          [options]="currentOptions"
                          (answerSelected)="onAnswerSelected($event)">
     </app-multiple-choice>
+    <app-flashcard *ngIf="currentMethod === 'flashcard'"
+                         [term]="currentTerm"
+                         [definition]="currentDefinition"
+                         (answerSelected)="onAnswerSelected($event)">
+    </app-flashcard>
   </div>
 </div>

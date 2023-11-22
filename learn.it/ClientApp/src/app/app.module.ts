@@ -18,6 +18,7 @@ import { NavLearnComponent } from './nav-learn/nav-learn.component';
 import { LearningModuleComponent } from './learning-module/learning-module.component';
 import { SearchComponent } from './search/search.component';
 import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
+import { FlashcardComponent } from './flashcard/flashcard.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.compo
     NavLearnComponent,
     LearningModuleComponent,
     SearchComponent,
-    MultipleChoiceComponent
+    MultipleChoiceComponent,
+    FlashcardComponent
   ],
   imports: [
     MatTooltipModule,
