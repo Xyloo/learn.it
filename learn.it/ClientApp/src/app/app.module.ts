@@ -17,6 +17,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavLearnComponent } from './nav-learn/nav-learn.component';
 import { LearningModuleComponent } from './learning-module/learning-module.component';
 import { SearchComponent } from './search/search.component';
+import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
+
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { SearchComponent } from './search/search.component';
     LearningsetcreatorComponent,
     NavLearnComponent,
     LearningModuleComponent,
-    SearchComponent
+    SearchComponent,
+    MultipleChoiceComponent
   ],
   imports: [
     MatTooltipModule,

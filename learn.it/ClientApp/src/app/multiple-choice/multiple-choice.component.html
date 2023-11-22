@@ -1,0 +1,27 @@
+<div class="multiple-choice">
+  <div class="term-wrapper">
+    <div class="term-top">
+      <button (click)="goBack()" class="icon-btn">
+        <img src="/assets/star-icon.svg" alt="Icon" />
+      </button>
+      <button (click)="goBack()" class="icon-btn">
+        <img src="/assets/sound-max-icon.svg" alt="Icon" />
+      </button>        <button (click)="goBack()" class="icon-btn">
+        <img src="/assets/edit-icon.svg" alt="Icon" />
+      </button>
+    </div>
+    <div class="term-data">
+        <h3>{{ term }}</h3>
+    </div>
+    <div class="term-bottom">
+      <button (click)="goBack()" class="icon-btn">
+        <img src="/assets/arrow-right-icon.svg" alt="Icon" />
+      </button>
+    </div>
+  </div>
+  <div class="buttons-wrapper">
+    <div *ngFor="let option of options">
+      <button (click)="checkAnswer(option)">{{ option }}</button>
+    </div>
+  </div>
+</div>

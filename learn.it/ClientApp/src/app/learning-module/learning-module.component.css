@@ -1,6 +1,5 @@
 body {
 }
-
 .container {
   display: flex;
   flex-direction: column;
@@ -9,4 +8,11 @@ body {
   justify-content: center;
   height: 80vh;
   border-radius: 40px;
+  padding: 50px;
 }
+
+.learn-container{
+    width: 100%;
+    height: 100%;
+}
+
