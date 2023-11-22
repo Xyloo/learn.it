@@ -9,17 +9,18 @@ using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UpdateUserDto = learn.it.Models.Dtos.Request.UpdateUserDto;
 
 namespace learn.it.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUsersService _usersService;
         private readonly ILoginsService _loginsService;
         private readonly IGroupsService _groupsService;
-        public UserController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService)
+        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService)
         {
             _usersService = usersService;
             _loginsService = loginsService;
@@ -185,7 +186,7 @@ namespace learn.it.Controllers
                 case 0:
                     return BadRequest("No avatar file was provided.");
                 case > 10 * 1024 * 1024:
-                    return BadRequest("The provided file is too large.");
+                    return BadRequest("The provided file is too large (max 10 MB).");
             }
 
             if (ControllerUtils.IsImage(avatar) is false)

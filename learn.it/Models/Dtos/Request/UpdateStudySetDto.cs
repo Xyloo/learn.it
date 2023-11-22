@@ -12,16 +12,12 @@ namespace learn.it.Models.Dtos.Request
 
         public int? GroupId { get; set; }
 
-        public UpdateStudySetDto(StudySet studySet)
-        {
-            Name = studySet.Name;
-            Description = studySet.Description;
-            Visibility = studySet.Visibility;
-            GroupId = studySet.Group?.GroupId;
-        }
-
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (Name == null && Description == null && Visibility == null && GroupId == null)
+            {
+                yield return new ValidationResult("At least one field must be provided.", new[] { nameof(Name), nameof(Description), nameof(Visibility), nameof(GroupId) });
+            }
             if (Name != null && Name.Length < 4)
             {
                 yield return new ValidationResult("Study set's name cannot be shorter than 4 characters.", new[] { nameof(Name) });

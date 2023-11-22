@@ -15,6 +15,7 @@ namespace learn.it.Utils
                 case GroupJoinRequestNotFoundException:
                 case GroupNotFoundException:
                 case StudySetNotFoundException:
+                case FlashcardNotFoundException:
                     context.Result = new NotFoundObjectResult(new
                     {
                         Message = ex.Message

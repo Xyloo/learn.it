@@ -13,7 +13,7 @@ namespace learn.it.Controllers
 {
     [ApiController]
     [Route("api/studysets")]
-    public class StudySetController : ControllerBase
+    public class StudySetsController : ControllerBase
     {
         private readonly IStudySetsService _studySetsService;
 
@@ -21,7 +21,7 @@ namespace learn.it.Controllers
 
         private readonly IGroupsService _groupsService;
 
-        public StudySetController(IStudySetsService studySetsService, IUsersService usersService,
+        public StudySetsController(IStudySetsService studySetsService, IUsersService usersService,
             IGroupsService groupsService)
         {
             _studySetsService = studySetsService;
@@ -41,18 +41,16 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetStudySetDetails([FromRoute] int studySetId)
         {
-            var studySet = await _studySetsService.GetStudySetDtoById(studySetId);
+            var studySetDto = await _studySetsService.GetStudySetDtoById(studySetId);
+            var studySet = await _studySetsService.GetStudySetById(studySetId);
             var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             //if user is an admin, or:
             //the set is private - but the user is the creator, return the set
             //the set belongs to a group - but the user is in the group, return the set
             //the set is public - return the set
-            if (ControllerUtils.IsUserAdmin(User) ||
-                (await IsUserAdminOrInGroup(user, studySet) && studySet.Visibility == Visibility.Group) ||
-                studySet.Creator.Username == user.Username ||
-                studySet.Visibility == Visibility.Public)
+            if (ControllerUtils.CanUserAccessStudySet(user, studySet))
             {
-                return Ok(studySet);
+                return Ok(studySetDto);
             }
             //this is a 404 because we don't want to leak the existence of the study set
             //actually recommended by HTTP Specification

@@ -9,6 +9,7 @@ using learn.it.Exceptions;
 using learn.it.Models.Dtos;
 using learn.it.Repos.Interfaces;
 using learn.it.Services.Interfaces;
+using UpdateUserDto = learn.it.Models.Dtos.Request.UpdateUserDto;
 
 namespace learn.it.Services
 {
