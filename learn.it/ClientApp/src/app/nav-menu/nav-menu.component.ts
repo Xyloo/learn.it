@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-menu',
@@ -8,6 +9,8 @@ import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 export class NavMenuComponent {
 
   @ViewChild('searchInput') searchInput: ElementRef;
+
+  constructor(private router: Router) { }
 
   showDropdown: boolean = false;
   toggleDropdown() {
@@ -24,6 +27,11 @@ export class NavMenuComponent {
       this.closeDropdown();
     }
   }
+  redirectTo(url: string) {
+    this.router.navigateByUrl(url);
+    this.closeDropdown();
+  }
+
 
   @HostListener('document:click', ['$event'])
   clickOutside(event: { target: { closest: (arg0: string) => any; }; }) {
