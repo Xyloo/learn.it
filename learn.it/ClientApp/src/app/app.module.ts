@@ -19,6 +19,8 @@ import { LearningModuleComponent } from './learning-module/learning-module.compo
 import { SearchComponent } from './search/search.component';
 import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
 import { FlashcardComponent } from './flashcard/flashcard.component';
+import { InputQuizComponent } from './input-quiz/input-quiz.component';
+import { UserSetsComponent } from './user-sets/user-sets.component';
 
 
 @NgModule({
@@ -35,7 +37,9 @@ import { FlashcardComponent } from './flashcard/flashcard.component';
     LearningModuleComponent,
     SearchComponent,
     MultipleChoiceComponent,
-    FlashcardComponent
+    FlashcardComponent,
+    InputQuizComponent,
+    UserSetsComponent
   ],
   imports: [
     MatTooltipModule,
@@ -50,7 +54,8 @@ import { FlashcardComponent } from './flashcard/flashcard.component';
       { path: 'register', component: RegisterComponent },
       { path: 'create-set', component: LearningsetcreatorComponent },
       { path: 'learn', component: LearningModuleComponent },
-      { path: 'search', component: SearchComponent},
+      { path: 'search', component: SearchComponent },
+      { path: 'set', component: UserSetsComponent}
     ]),
     BrowserAnimationsModule
   ],
