@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./learning-module.component.css']
 })
 export class LearningModuleComponent {
-  currentMethod: string = 'flashcard';
+  currentMethod: string = 'input-quiz';
   currentTerm: string = 'currentTerm';
   currentDefinition: string = 'currentDefinition';
   currentOptions: string[] = ['currentOptions', '2', '3', 'a'];
