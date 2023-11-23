@@ -71,7 +71,9 @@ export class UserSetsComponent {
       }
     });
   }*/
-
+  deleteSet(itemId: number) {
+    console.log(itemId);
+  }
 
   goBack() {
     this.location.back(); 

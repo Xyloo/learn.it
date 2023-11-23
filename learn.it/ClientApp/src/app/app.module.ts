@@ -11,7 +11,7 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { LearningsetcreatorComponent } from './learningsetcreator/learningsetcreator.component';
+import { LearningSetManagerComponent } from './learning-set-manager/learningSetManager.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavLearnComponent } from './nav-learn/nav-learn.component';
@@ -32,7 +32,7 @@ import { UserSetsComponent } from './user-sets/user-sets.component';
     FetchDataComponent,
     LoginComponent,
     RegisterComponent,
-    LearningsetcreatorComponent,
+    LearningSetManagerComponent,
     NavLearnComponent,
     LearningModuleComponent,
     SearchComponent,
@@ -52,10 +52,11 @@ import { UserSetsComponent } from './user-sets/user-sets.component';
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      { path: 'create-set', component: LearningsetcreatorComponent },
+      { path: 'set', component: LearningSetManagerComponent },
+      { path: 'set/:id', component: LearningSetManagerComponent },
       { path: 'learn', component: LearningModuleComponent },
       { path: 'search', component: SearchComponent },
-      { path: 'set', component: UserSetsComponent}
+      { path: 'sets', component: UserSetsComponent}
     ]),
     BrowserAnimationsModule
   ],

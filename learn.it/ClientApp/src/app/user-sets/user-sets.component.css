@@ -73,6 +73,7 @@
   padding: 12px 10px 12px 20px;
   margin-right: 15px;
   counter-increment: sets-counter;
+  gap: 10px;
 }
 
 .sets-row::before{

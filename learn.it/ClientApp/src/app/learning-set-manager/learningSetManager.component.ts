@@ -1,15 +1,32 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-learningsetcreator',
-  templateUrl: './learningsetcreator.component.html',
-  styleUrls: ['./learningsetcreator.component.css']
+  selector: 'app-learningSetManager',
+  templateUrl: './learningSetManager.component.html',
+  styleUrls: ['./learningSetManager.component.css']
 })
-export class LearningsetcreatorComponent {
+export class LearningSetManagerComponent {
   @ViewChild('newFlashcard') newFlashcardElement: ElementRef | undefined;
   @ViewChild('flashcardContainer') flashcardContainerElement: ElementRef | undefined;
-  constructor(private location: Location) { }
+  constructor(private location: Location, private router: Router, private route: ActivatedRoute) { }
+
+  isEditMode: boolean = false;
+
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      if (params.has('id')) {
+        this.isEditMode = true;
+        const id = params.get('id');
+
+          //set service - load data, fill title, desc, flashcards it
+      } else {
+        this.isEditMode = false;        
+      }
+    });
+  }
+
 
   showAddError = false;
   flashcards = [
@@ -52,7 +69,7 @@ export class LearningsetcreatorComponent {
     this.location.back();
   }
 
-  createSet() {
+  saveSet() {
     //set creation logic
   }
 
