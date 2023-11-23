@@ -101,11 +101,15 @@ namespace learn.it.Migrations
                         .HasColumnType("int")
                         .HasColumnName("answer_time");
 
+                    b.Property<DateTime>("AnswerTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("answer_timestamp");
+
                     b.Property<int?>("FlashcardId")
                         .HasColumnType("int");
 
-                    b.Property<short>("IsCorrect")
-                        .HasColumnType("smallint")
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit")
                         .HasColumnName("is_correct");
 
                     b.Property<int?>("UserId")

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using learn.it.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 
 namespace learn.it.Utils
@@ -15,18 +16,16 @@ namespace learn.it.Utils
         {
             if (authorizeResult.Challenged)
             {
-                context.Response.StatusCode = 401;
-                await context.Response.WriteAsync("Unauthorized - please log in.");
+                throw new UnauthorizedAccessException("Unauthorized - please log in.");
             }
-            else if (authorizeResult.Forbidden)
+
+            if (authorizeResult.Forbidden)
             {
-                context.Response.StatusCode = 403;
-                await context.Response.WriteAsync("Forbidden - you do not have access to this endpoint.");
+                throw new ForbiddenAccessException("Forbidden - you do not have access to this endpoint.");
+
             }
-            else
-            {
-                await defaultHandler.HandleAsync(next, context, policy, authorizeResult);
-            }
+            
+            await defaultHandler.HandleAsync(next, context, policy, authorizeResult);
         }
     }
 }

@@ -63,6 +63,20 @@ builder.Services.AddProblemDetails(options =>
         Status = StatusCodes.Status400BadRequest
     });
 
+    options.Map<UnauthorizedAccessException>(ex => new ProblemDetails
+    {
+        Title = "User unathorized",
+        Detail = ex.Message,
+        Status = StatusCodes.Status401Unauthorized
+    });
+
+    options.Map<ForbiddenAccessException>(ex => new ProblemDetails
+    {
+        Title = "Access forbidden",
+        Detail = ex.Message,
+        Status = StatusCodes.Status403Forbidden
+    });
+
     options.MapToStatusCode<Exception>(StatusCodes.Status500InternalServerError);
 });
 
