@@ -1,4 +1,4 @@
-﻿using learn.it.Exceptions;
+﻿using learn.it.Exceptions.NotFound;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
 using learn.it.Models.Dtos.Response;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Authentication;
+using learn.it.Exceptions;
 
 namespace learn.it.Controllers
 {
@@ -54,7 +55,7 @@ namespace learn.it.Controllers
             }
             //this is a 404 because we don't want to leak the existence of the study set
             //actually recommended by HTTP Specification
-            return NotFound("Study set not found.");
+            throw new StudySetNotFoundException(studySetId);
         }
 
         [HttpGet("find/{name}")]
@@ -62,7 +63,7 @@ namespace learn.it.Controllers
         {
             var studySets = (await _studySetsService.GetStudySetsContainingName(name)).ToList();
             if (studySets.Count == 0)
-                return NotFound($"No study sets containing [{name}] found.");
+                throw new InvalidInputDataException($"No study sets containing [{name}] found.");
 
             User? user;
             try
@@ -113,7 +114,7 @@ namespace learn.it.Controllers
                 {
                     group = await _groupsService.GetGroupById(studySet.GroupId.Value);
                     if (!await _groupsService.IsUserInGroup(user.UserId, group.GroupId))
-                        return BadRequest("User is not a member of the group.");
+                        throw new InvalidInputDataException("User is not a member of the group.");
                 }
                 catch (GroupNotFoundException)
                 {
@@ -122,7 +123,7 @@ namespace learn.it.Controllers
             }
 
             if (group is null && studySet.Visibility == Visibility.Group)
-                return BadRequest("Cannot create a group study set without a group.");
+                throw new InvalidInputDataException("Cannot create a group study set without a group.");
 
             var newStudySet = new StudySet()
             {
@@ -153,7 +154,8 @@ namespace learn.it.Controllers
                 var validationContext = new ValidationContext(studySet);
                 var validationResults = studySet.Validate(validationContext);
                 if (validationResults.Any())
-                    return BadRequest(validationResults);
+                    throw new InvalidInputDataException(validationResults.ToString());
+
                 studySetToUpdate.Name = studySet.Name ?? studySetToUpdate.Name;
                 studySetToUpdate.Description = studySet.Description ?? studySetToUpdate.Description;
                 studySetToUpdate.Visibility = studySet.Visibility ?? studySetToUpdate.Visibility;
@@ -163,7 +165,8 @@ namespace learn.it.Controllers
                 var updatedStudySet = await _studySetsService.UpdateStudySet(studySetToUpdate);
                 return Ok(new StudySetDto(updatedStudySet));
             }
-            return NotFound();
+
+            throw new StudySetNotFoundException(studySetId);
         }
 
         [HttpDelete("{studySetId}")]
@@ -177,13 +180,7 @@ namespace learn.it.Controllers
                 await _studySetsService.DeleteStudySet(studySet.StudySetId);
                 return NoContent();
             }
-            return NotFound();
-        }
-
-        private async Task<bool> IsUserAdminOrInGroup(User user, StudySetDto studySet)
-        {
-            return ControllerUtils.IsUserAdmin(User) ||
-                   studySet.Group != null && await _groupsService.IsUserInGroup(user.UserId, studySet.Group.GroupId);
+            throw new StudySetNotFoundException(studySetId);
         }
     }
 }

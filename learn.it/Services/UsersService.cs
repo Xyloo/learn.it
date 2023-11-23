@@ -6,10 +6,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using learn.it.Exceptions;
-using learn.it.Models.Dtos;
+using learn.it.Exceptions.Conflict;
+using learn.it.Exceptions.NotFound;
+using learn.it.Models.Dtos.Request;
 using learn.it.Repos.Interfaces;
 using learn.it.Services.Interfaces;
-using UpdateUserDto = learn.it.Models.Dtos.Request.UpdateUserDto;
 
 namespace learn.it.Services
 {

@@ -10,6 +10,12 @@ namespace learn.it.Models.Dtos.Request
 
         public string? Password { get; set; }
 
+        [System.Text.RegularExpressions.GeneratedRegex("^[A-Za-z][A-Za-z0-9_]*$")]
+        private static partial System.Text.RegularExpressions.Regex UsernameRegex();
+
+        [System.Text.RegularExpressions.GeneratedRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")]
+        private static partial System.Text.RegularExpressions.Regex PasswordRegex();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (Username is null && Email is null && Password is null)
@@ -53,11 +59,5 @@ namespace learn.it.Models.Dtos.Request
                 }
             }
         }
-
-        [System.Text.RegularExpressions.GeneratedRegex("^[A-Za-z][A-Za-z0-9_]*$")]
-        private static partial System.Text.RegularExpressions.Regex UsernameRegex();
-
-        [System.Text.RegularExpressions.GeneratedRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")]
-        private static partial System.Text.RegularExpressions.Regex PasswordRegex();
     }
 }

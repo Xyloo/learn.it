@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using learn.it.Exceptions;
+using learn.it.Exceptions.NotFound;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
 using learn.it.Models.Dtos.Response;
@@ -37,7 +38,8 @@ namespace learn.it.Controllers
             {
                 return Ok(flashcardDto);
             }
-            return NotFound();
+
+            throw new FlashcardNotFoundException(flashcardId);
         }
 
         [HttpGet("fromSet/{studySetId}")]
@@ -51,7 +53,7 @@ namespace learn.it.Controllers
                 var flashcards = await _flashcardsService.GetFlashcardsInSet(studySetId);
                 return Ok(flashcards);
             }
-            return NotFound();
+            throw new StudySetNotFoundException(studySetId);
         }
 
         [HttpPost]
@@ -72,26 +74,15 @@ namespace learn.it.Controllers
                 var createdFlashcard = await _flashcardsService.AddFlashcard(flashcard);
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
-            return BadRequest();
+
+            throw new StudySetNotFoundException(studySet.StudySetId);
         }
 
         [HttpPost("withImage")]
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> CreateImageFlashcard([FromForm] CreateImageFlashcardDto newFlashcard, IFormFile image)
         {
-            switch (image.Length)
-            {
-                case 0:
-                    return BadRequest("No file was provided.");
-                case > 10 * 1024 * 1024:
-                    return BadRequest("The provided file is too large (max 10 MB).");
-            }
-
-            if (ControllerUtils.IsImage(image) is false)
-            {
-                return BadRequest("The provided file is not an image.");
-            }
-
+            ControllerUtils.CheckIfValidImage(image);
 
             var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             var studySet = await _studySetsService.GetStudySetById(newFlashcard.StudySetId);
@@ -106,7 +97,8 @@ namespace learn.it.Controllers
                 var createdFlashcard = await _flashcardsService.AddImageFlashcard(flashcard, image);
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
-            return BadRequest();
+
+            throw new StudySetNotFoundException(studySet.StudySetId);
         }
 
         [HttpPut("{flashcardId}")]
@@ -118,7 +110,7 @@ namespace learn.it.Controllers
             var validationResult = updatedFlashcard.Validate(validationContext);
             if (validationResult.Any())
             {
-                return BadRequest(validationResult);
+                throw new InvalidInputDataException(validationResult.ToString());
             }
 
             var flashcard = await _flashcardsService.GetFlashcard(flashcardId);
@@ -129,9 +121,9 @@ namespace learn.it.Controllers
             if (updatedFlashcard.StudySetId is not null)
             {
                 newStudySet = await _studySetsService.GetStudySetById(updatedFlashcard.StudySetId.Value);
-                if (ControllerUtils.IsUserAdminOrSelf(studySet.Creator, User) is false)
+                if (ControllerUtils.IsUserAdminOrSelf(newStudySet.Creator, User) is false)
                 {
-                    return NotFound();
+                    throw new StudySetNotFoundException(newStudySet.StudySetId);
                 }
             }
             else
@@ -157,7 +149,7 @@ namespace learn.it.Controllers
                 var updated = await _flashcardsService.UpdateFlashcard(flashcard);
                 return Ok(new FlashcardDto(updated));
             }
-            return NotFound();
+            throw new StudySetNotFoundException(studySet.StudySetId);
         }
 
         [HttpPut("{flashcardId}/withImage")]
@@ -168,24 +160,13 @@ namespace learn.it.Controllers
             //because it should be anyway
             updatedFlashcard.Term = null;
 
-            switch (image.Length)
-            {
-                case 0:
-                    return BadRequest("No file was provided.");
-                case > 10 * 1024 * 1024:
-                    return BadRequest("The provided file is too large (max 10 MB).");
-            }
-
-            if (ControllerUtils.IsImage(image) is false)
-            {
-                return BadRequest("The provided file is not an image.");
-            }
+            ControllerUtils.CheckIfValidImage(image);
 
             var validationContext = new ValidationContext(updatedFlashcard);
             var validationResult = updatedFlashcard.Validate(validationContext);
             if (validationResult.Any())
             {
-                return BadRequest(validationResult);
+                throw new InvalidInputDataException(validationResult.ToString());
             }
 
             var flashcard = await _flashcardsService.GetFlashcard(flashcardId);
@@ -196,9 +177,9 @@ namespace learn.it.Controllers
             if (updatedFlashcard.StudySetId is not null)
             {
                 newStudySet = await _studySetsService.GetStudySetById(updatedFlashcard.StudySetId.Value);
-                if (ControllerUtils.IsUserAdminOrSelf(studySet.Creator, User) is false)
+                if (ControllerUtils.IsUserAdminOrSelf(newStudySet.Creator, User) is false)
                 {
-                    return NotFound();
+                    throw new StudySetNotFoundException(newStudySet.StudySetId);
                 }
             }
             else
@@ -223,7 +204,7 @@ namespace learn.it.Controllers
                 var updated = await _flashcardsService.UpdateFlashcard(flashcard);
                 return Ok(new FlashcardDto(updated));
             }
-            return NotFound();
+            throw new StudySetNotFoundException(studySet.StudySetId);
         }
 
         [HttpDelete("{flashcardId}")]
@@ -232,13 +213,13 @@ namespace learn.it.Controllers
         {
             var flashcard = await _flashcardsService.GetFlashcard(flashcardId);
             var studySet = await _studySetsService.GetStudySetById(flashcard.StudySet.StudySetId);
-            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             if (ControllerUtils.IsUserAdminOrSelf(studySet.Creator, User))
             {
                 await _flashcardsService.RemoveFlashcard(flashcardId);
                 return NoContent();
             }
-            return NotFound();
+
+            throw new FlashcardNotFoundException(flashcardId);
         }
     }
 }

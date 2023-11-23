@@ -1,6 +1,6 @@
-﻿namespace learn.it.Exceptions
+﻿namespace learn.it.Exceptions.Conflict
 {
-    public class EmailExistsException : Exception
+    public class EmailExistsException : AlreadyExistsException
     {
         public EmailExistsException() : base("Email already exists.")
         {

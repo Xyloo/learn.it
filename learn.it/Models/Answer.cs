@@ -19,10 +19,13 @@ public partial class Answer
     public int AnswerId { get; private set; }
 
     [Column("is_correct")]
-    public short IsCorrect { get; set; }
+    public bool IsCorrect { get; set; }
 
     [Column("answer_time")]
     public int AnswerTime { get; set; }
+
+    [Column("answer_timestamp")]
+    public DateTime AnswerTimestamp { get; set; }
 
     [ForeignKey("FlashcardId")]
     [InverseProperty("Answers")]

@@ -1,25 +1,34 @@
 ﻿using System.Security.Authentication;
 using learn.it.Models;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
+using learn.it.Exceptions;
 
 namespace learn.it.Utils
 {
     public static class ControllerUtils
     {
-        public static bool IsImage(IFormFile file)
+        public static void CheckIfValidImage(IFormFile file)
         {
+            switch (file.Length)
+            {
+                case 0:
+                    throw new InvalidInputDataException("No file was provided.");
+                case > 10 * 1024 * 1024:
+                    throw new InvalidInputDataException("The provided file is too large (max 10 MB).");
+            }
+
             // Check the file content type
             if (file.ContentType.ToLower().StartsWith("image/"))
             {
-                return true;
+                return;
             }
 
             // Alternatively, check the file extension
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
             var extension = Path.GetExtension(file.FileName).ToLower();
 
-            return allowedExtensions.Contains(extension);
+            if(!allowedExtensions.Contains(extension))
+                throw new InvalidInputDataException("The provided file is not an image.");
         }
 
         public static bool IsUserAdminOrSelf(User user, ClaimsPrincipal data)
