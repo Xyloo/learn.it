@@ -25,14 +25,14 @@ public partial class FlashcardUserProgress
     public int ConsecutiveCorrectAnswers { get; set; }
 
     [Column("is_mastered")]
-    public short IsMastered { get; set; }
+    public bool IsMastered { get; set; }
 
     [Column("mastered_timestamp")]
     [Precision(0)]
     public DateTime? MasteredTimestamp { get; set; }
 
     [Column("needs_more_repetitions")]
-    public short NeedsMoreRepetitions { get; set; }
+    public bool NeedsMoreRepetitions { get; set; }
 
     [ForeignKey("FlashcardId")]
     [InverseProperty("FlashcardUserProgress")]

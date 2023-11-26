@@ -15,15 +15,20 @@ namespace learn.it.Controllers
     public class AnswersController : ControllerBase
     {
         private readonly IAnswersService _answersService;
+
         private readonly IFlashcardsService _flashcardsService;
+
         private readonly IUsersService _usersService;
 
+        private readonly IFlashcardUserProgressService _flashcardUserProgressService;
+
         public AnswersController(IAnswersService answersService, IFlashcardsService flashcardsService,
-            IUsersService usersService)
+            IUsersService usersService, IFlashcardUserProgressService flashcardUserProgressService)
         {
             _answersService = answersService;
             _flashcardsService = flashcardsService;
             _usersService = usersService;
+            _flashcardUserProgressService = flashcardUserProgressService;
         }
 
         [HttpPost]
@@ -42,7 +47,41 @@ namespace learn.it.Controllers
                     AnswerTime = answer.AnswerTime,
                     AnswerTimestamp = DateTime.UtcNow
                 };
-                //TODO: Update flashcard user progress
+
+                FlashcardUserProgress progress;
+                try
+                {
+                    progress = await _flashcardUserProgressService.GetFlashcardUserProgressByFlashcardIdAndUserId(
+                            flashcard.FlashcardId, user.UserId);
+                    if (answer.IsCorrect)
+                    {
+                        progress.ConsecutiveCorrectAnswers++;
+                        if (progress is { ConsecutiveCorrectAnswers: >= 5, NeedsMoreRepetitions: false } or { ConsecutiveCorrectAnswers: >= 7, NeedsMoreRepetitions: true })
+                        {
+                            progress.IsMastered = true;
+                            progress.MasteredTimestamp = DateTime.UtcNow;
+                        }
+                    }
+                    else
+                    {
+                        progress.ConsecutiveCorrectAnswers = 0;
+                    }
+                    await _flashcardUserProgressService.UpdateFlashcardUserProgress(progress);
+                }
+                catch (FlashcardUserProgressNotFoundException)
+                {
+                    progress = new FlashcardUserProgress
+                    {
+                        Flashcard = flashcard,
+                        User = user,
+                        ConsecutiveCorrectAnswers = answer.IsCorrect ? 1 : 0,
+                        IsMastered = false,
+                        MasteredTimestamp = null,
+                        NeedsMoreRepetitions = false
+                    };
+                    await _flashcardUserProgressService.AddFlashcardUserProgress(progress);
+                }
+
                 var addedAnswer = await _answersService.AddAnswer(newAnswer);
                 return CreatedAtAction(nameof(GetAnswerById), new { answerId = addedAnswer.AnswerId }, new AnswerDto(addedAnswer));
             }
