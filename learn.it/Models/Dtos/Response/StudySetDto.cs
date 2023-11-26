@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace learn.it.Models.Dtos.Response
+﻿namespace learn.it.Models.Dtos.Response
 {
     public class StudySetDto
     {

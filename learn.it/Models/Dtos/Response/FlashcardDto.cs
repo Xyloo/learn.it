@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace learn.it.Models.Dtos.Response
+﻿namespace learn.it.Models.Dtos.Response
 {
     public class FlashcardDto
     {

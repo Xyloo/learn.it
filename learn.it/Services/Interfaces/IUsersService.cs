@@ -1,5 +1,4 @@
 ﻿using learn.it.Models;
-using learn.it.Models.Dtos;
 using UpdateUserDto = learn.it.Models.Dtos.Request.UpdateUserDto;
 
 namespace learn.it.Services.Interfaces

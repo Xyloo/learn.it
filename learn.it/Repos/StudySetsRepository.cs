@@ -1,5 +1,4 @@
 ﻿using learn.it.Models;
-using learn.it.Models.Dtos.Request;
 using learn.it.Models.Dtos.Response;
 using learn.it.Repos.Interfaces;
 using Microsoft.EntityFrameworkCore;

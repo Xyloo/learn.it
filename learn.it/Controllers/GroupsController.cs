@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using Azure.Core.Pipeline;
+using learn.it.Exceptions;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
 using learn.it.Models.Dtos.Response;
@@ -62,7 +62,7 @@ namespace learn.it.Controllers
             var isValid = Validator.TryValidateObject(groupDto, validationContext, validationResults, true);
             if (!isValid)
             {
-                return BadRequest(validationResults);
+                throw new InvalidInputDataException(validationResults.ToString());
             }
 
             //this should never be null since [Authorize] is used

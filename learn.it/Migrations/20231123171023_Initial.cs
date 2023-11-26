@@ -313,8 +313,9 @@ namespace learn.it.Migrations
                 {
                     answer_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    is_correct = table.Column<short>(type: "smallint", nullable: false),
+                    is_correct = table.Column<bool>(type: "bit", nullable: false),
                     answer_time = table.Column<int>(type: "int", nullable: false),
+                    answer_timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FlashcardId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true)
                 },

@@ -1,7 +1,5 @@
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json.Serialization;
 using learn.it.Models;
 using learn.it.Repos;
 using learn.it.Repos.Interfaces;
@@ -11,9 +9,11 @@ using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Hellang.Middleware.ProblemDetails;
+using learn.it.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 
 /*
  * Modifications to launchSettings.json (found in Properties):
@@ -26,10 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Filters.Add<LearnitExceptionFilter>();
-});
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<LearnitDbContext>(options =>
     options.UseSqlServer(
@@ -41,6 +38,46 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo() { Title = "learn.it", Version = "v1" });
     //var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     //c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+builder.Services.AddProblemDetails(options =>
+{
+    options.Map<NotFoundException>(ex => new ProblemDetails
+    {
+        Title = "Not found",
+        Detail = ex.Message,
+        Status = StatusCodes.Status404NotFound
+    });
+
+    options.Map<AlreadyExistsException>(ex => new ProblemDetails
+    {
+        Title = "Data already exists",
+        Detail = ex.Message,
+        Status = StatusCodes.Status409Conflict
+    });
+
+    options.Map<InvalidInputDataException>(ex => new ProblemDetails
+    {
+        Title = "Invalid data",
+        Detail = ex.Message,
+        Status = StatusCodes.Status400BadRequest
+    });
+
+    options.Map<UnauthorizedAccessException>(ex => new ProblemDetails
+    {
+        Title = "User unathorized",
+        Detail = ex.Message,
+        Status = StatusCodes.Status401Unauthorized
+    });
+
+    options.Map<ForbiddenAccessException>(ex => new ProblemDetails
+    {
+        Title = "Access forbidden",
+        Detail = ex.Message,
+        Status = StatusCodes.Status403Forbidden
+    });
+
+    options.MapToStatusCode<Exception>(StatusCodes.Status500InternalServerError);
 });
 
 builder.Services.AddLogging(b =>
@@ -118,6 +155,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+app.UseProblemDetails();
 app.UseStaticFiles();
 app.UseRouting();
 

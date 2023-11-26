@@ -1,6 +1,6 @@
-﻿namespace learn.it.Exceptions
+﻿namespace learn.it.Exceptions.Conflict
 {
-    public class UsernameExistsException : Exception
+    public class UsernameExistsException : AlreadyExistsException
     {
         public UsernameExistsException() : base("Username already exists.")
         {

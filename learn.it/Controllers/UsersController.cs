@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 using learn.it.Exceptions;
 using learn.it.Models;
-using learn.it.Models.Dtos;
 using learn.it.Models.Dtos.Request;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;
@@ -31,7 +29,7 @@ namespace learn.it.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginRequest)
         {
-            User user = await _usersService.GetUserByIdOrUsername(loginRequest.Username);
+            var user = await _usersService.GetUserByIdOrUsername(loginRequest.Username);
             var userAgent = Request.Headers["User-Agent"].ToString();
             var ip = Request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
 
@@ -46,7 +44,7 @@ namespace learn.it.Controllers
                     Timestamp = DateTime.UtcNow
                 };
                 await _loginsService.CreateLogin(login);
-                return Unauthorized("Username and/or password are incorrect.");
+                throw new InvalidInputDataException("Username and/or password are incorrect.");
             }
 
             var lastLogin = user.LastLogin;
@@ -97,18 +95,7 @@ namespace learn.it.Controllers
                 Password = registerRequest.Password
             };
 
-            try
-            {
-                await _usersService.CreateUser(user);
-            }
-            catch (EmailExistsException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (UsernameExistsException ex)
-            {
-                return Conflict(ex.Message);
-            }
+            await _usersService.CreateUser(user);
 
             return CreatedAtAction(nameof(GetUserById), new { userId = user.UserId }, user.ToSelfUserResponseDto());
         }
@@ -121,10 +108,10 @@ namespace learn.it.Controllers
             var validation = updateRequest.Validate(validationContext);
             if (validation.Any())
             { 
-                return BadRequest(validation);
+                throw new InvalidInputDataException(validation.ToString());
             }
 
-            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -132,7 +119,7 @@ namespace learn.it.Controllers
                 return Ok(updatedUser.ToSelfUserResponseDto());
             }
 
-            return Unauthorized();
+            return Forbid();
         }
 
         [HttpGet]
@@ -151,7 +138,7 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetUserById([FromRoute] string userId)
         {
-            User queriedUser  = await _usersService.GetUserByIdOrUsername(userId);
+            var queriedUser  = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -166,7 +153,7 @@ namespace learn.it.Controllers
         public async Task<IActionResult> DeleteUser([FromRoute] int userId)
         {
 
-            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -174,27 +161,16 @@ namespace learn.it.Controllers
                 return Ok();
             }
 
-            return Unauthorized();
+            return Forbid();
         }
 
         [HttpPost("avatar/{userId}")]
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> UpdateUserAvatar([FromRoute] int userId, IFormFile avatar)
         {
-            switch (avatar.Length)
-            {
-                case 0:
-                    return BadRequest("No avatar file was provided.");
-                case > 10 * 1024 * 1024:
-                    return BadRequest("The provided file is too large (max 10 MB).");
-            }
+            ControllerUtils.CheckIfValidImage(avatar);
 
-            if (ControllerUtils.IsImage(avatar) is false)
-            { 
-                return BadRequest("The provided file is not an image.");
-            }
-
-            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -202,22 +178,14 @@ namespace learn.it.Controllers
                 return Ok("Avatar updated successfully.");
             }
 
-            return Unauthorized();
+            return Forbid();
         }
 
         [HttpDelete("avatar/{userId}")]
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> DeleteUserAvatar([FromRoute] int userId)
         {
-            User queriedUser;
-            try
-            {
-                queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
-            }
-            catch (UserNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -225,14 +193,14 @@ namespace learn.it.Controllers
                 return Ok("Avatar deleted successfully.");
             }
 
-            return Unauthorized();
+            return Forbid();
         }
 
         [HttpGet("{userId}/join-requests")]
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetUserJoinRequests([FromRoute] int userId)
         {
-            User queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -240,7 +208,7 @@ namespace learn.it.Controllers
                 return Ok(joinRequests);
             }
 
-            return Unauthorized();
+            return Forbid();
         }
     }
 }
