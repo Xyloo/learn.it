@@ -1,8 +1,51 @@
-<div class="wrapper">
-  <div class="label-wrapper">
-    <h2 class="label-text">Nowy zestaw fiszek</h2>
-    <button class="newset-btn">Stwórz nowy zestaw</button>
+  <div class="wrapper">
+    <div class="label-wrapper">
+      <h2 class="label-text">Strona główna</h2>
+      <button routerLink="/set" class="newset-btn">Stwórz nowy zestaw</button>
+    </div>
+
+    <div class="data-wrapper">
+      <div class="row">
+          <div class="data-label">
+            <span>Ostatnia aktywność</span>
+          </div>
+          <div class="data-item" *ngFor="let item of usersLastActivity; let i = index">
+            <div class="item-left">
+              <img src="/assets/expand-down-icon.svg" alt="Icon" class="rotate270"/>
+              {{item.name}}
+            </div>
+            <div class="item-right min-width-250">
+              <img src="{{item.avatarUrl}}" alt="userAvatar" class="user-avatar"/>
+              {{item.username}}
+              <img *ngIf="item.isPrivate; else privatePlaceholder" src="/assets/lock-icon.svg" alt="Private Icon" class="private-icon-placeholder" />
+              <ng-template #privatePlaceholder>
+                <div class="private-icon-placeholder"></div>
+              </ng-template>
+            </div>
+          </div>
+      </div>
+      <div class="main-content">
+        <div class="recommended row">
+          <div class="data-label">
+            <span>Polecane dla Ciebie!</span>
+          </div>
+          <div class="data-item" *ngFor="let item of usersLastActivity; let i = index">
+            <div class="item-left">
+              <img src="/assets/expand-down-icon.svg" alt="Icon" class="rotate270" />
+              {{item.name}}
+            </div>
+            <div class="item-right">
+              {{item.username}}
+              <img src="{{item.avatarUrl}}" alt="userAvatar" class="user-avatar" />
+            </div>
+          </div>
+        </div>
+        <div class="achievements row">
+          <div class="data-label">
+            <span>Twoje osiągnięcia</span>
+          </div>
+          
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="last-activity">
-  </div>
-</div>
