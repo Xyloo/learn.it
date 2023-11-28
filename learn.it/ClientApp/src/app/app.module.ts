@@ -21,7 +21,9 @@ import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.compo
 import { FlashcardComponent } from './flashcard/flashcard.component';
 import { InputQuizComponent } from './input-quiz/input-quiz.component';
 import { UserSetsComponent } from './user-sets/user-sets.component';
-
+import { SettingsComponent } from './settings/settings.component';
+import { DynamicHostDirective } from './dynamic-host.directive';
+import { ProfileComponent } from './settings/components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,10 @@ import { UserSetsComponent } from './user-sets/user-sets.component';
     MultipleChoiceComponent,
     FlashcardComponent,
     InputQuizComponent,
-    UserSetsComponent
+    UserSetsComponent,
+    SettingsComponent,
+    DynamicHostDirective,
+    ProfileComponent
   ],
   imports: [
     MatTooltipModule,
@@ -56,7 +61,8 @@ import { UserSetsComponent } from './user-sets/user-sets.component';
       { path: 'set/:id', component: LearningSetManagerComponent },
       { path: 'learn', component: LearningModuleComponent },
       { path: 'search', component: SearchComponent },
-      { path: 'sets', component: UserSetsComponent}
+      { path: 'sets', component: UserSetsComponent },
+      { path: 'settings', component: SettingsComponent }
     ]),
     BrowserAnimationsModule
   ],

@@ -1,0 +1,36 @@
+<div class="wrapper">
+  <div class="label-wrapper">
+    <div class="label-text">
+      <img src="/assets/settings-icon.svg" alt="Icon" class="settings-icon"/>
+      <h2>Ustawienia </h2>
+    </div>
+    <button routerLink="/set" (click)="goBack()" class="icon-btn rotate45">
+      <img src="/assets/plus-icon.svg" alt="Icon" />
+    </button>
+  </div>
+  <div class="comoponents-wrapper">
+    <div class="components-list">
+      <div class="list-item" (click)="loadComponent('profile')" [class.selected]="selectedTab === 'profile'">
+        Profil  
+      </div>
+      <div class="list-item">
+       Grupy
+      </div>
+      <div class="list-item">
+        Hasło
+      </div>
+      <div class="list-item">
+        Pomoc
+      </div>
+      <div class="list-item">
+        Dostępność
+      </div>
+    </div>
+    <div class="template-wrapper">
+      <ng-template appDynamicHost></ng-template>
+    </div>
+  </div>
+</div>
+
+
+
