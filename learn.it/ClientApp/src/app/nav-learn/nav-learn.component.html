@@ -1,0 +1,30 @@
+<header>
+  <nav
+       class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+    <div class="container">
+      <img src="/assets/project-logo.svg" alt="Icon" class="logo-icon" />
+      <div class="progress-counter">
+        {{currentItem}}/{{totalItems}}
+      </div>
+
+      <div class="progress-wrapper">
+        <div class="progress-title">
+          Nauka - {{learningSetTitle}}
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" [style.width]="getProgressWidth()"></div>
+          <div class="progress-fill" [style.width]="getProgressWidth()"></div>
+        </div>
+      </div>
+
+      <div class="nav-icons">
+        <button routerLink="/" class="icon-btn settings-btn">
+          Opcje
+        </button>
+        <button (click)="goBack()" class="icon-btn">
+          <img src="/assets/plus-icon.svg" alt="Icon" />
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>

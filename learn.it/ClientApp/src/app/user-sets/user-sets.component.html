@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="label-wrapper">
+    <h2 class="label-text">Dostępne zestawy do nauki </h2>
+    <button routerLink="/set" (click)="goBack()" class="icon-btn rotate45">
+      <img src="/assets/plus-icon.svg" alt="Icon" />
+    </button>
+  </div>
+   <div class="sets-wrapper">
+     <div class="sets-row" *ngFor="let result of userSets">
+       <div class="set-info">
+          {{result.setName}}
+       </div>
+        <div class="set-info">
+          {{result.description}}
+       </div>
+        <div class="set-buttons">
+          <button (click)="deleteSet(result.id)" class="icon-btn-clear rotate45">
+            <img src="/assets/plus-icon.svg" alt="Icon" />
+          </button>
+          <button [routerLink]="['/set/', result.id]" class="icon-btn-clear">
+            <img src="/assets/edit-icon.svg" alt="Icon" />
+          </button>
+        </div>
+     </div>
+   </div>
+</div>

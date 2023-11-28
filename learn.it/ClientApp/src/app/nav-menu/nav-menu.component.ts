@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-menu',
@@ -6,13 +7,36 @@ import { Component } from '@angular/core';
   styleUrls: ['./nav-menu.component.css']
 })
 export class NavMenuComponent {
-  isExpanded = false;
 
-  collapse() {
-    this.isExpanded = false;
+  @ViewChild('searchInput') searchInput: ElementRef;
+
+  constructor(private router: Router) { }
+
+  showDropdown: boolean = false;
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
   }
 
-  toggle() {
-    this.isExpanded = !this.isExpanded;
+  closeDropdown() {
+    this.showDropdown = false;
+  }
+
+  focusOnSearchInput(): void {
+    if (this.searchInput) {
+      this.searchInput.nativeElement.focus();
+      this.closeDropdown();
+    }
+  }
+  redirectTo(url: string) {
+    this.router.navigateByUrl(url);
+    this.closeDropdown();
+  }
+
+
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: { target: { closest: (arg0: string) => any; }; }) {
+    if (!event.target.closest('.dropdown')) {
+      this.closeDropdown();
+    }
   }
 }

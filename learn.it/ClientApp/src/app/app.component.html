@@ -1,5 +1,7 @@
+<!-- app.component.html -->
 <body>
-  <app-nav-menu></app-nav-menu>
+  <app-nav-menu *ngIf="showNavMenu"></app-nav-menu>
+  <app-nav-learn *ngIf="showNavLearn"></app-nav-learn>
   <main class="container">
     <router-outlet></router-outlet>
   </main>
