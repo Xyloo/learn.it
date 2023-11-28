@@ -28,7 +28,7 @@
           <div class="dropdown-menu" *ngIf="showDropdown">
             <div class="dropdown-wrapper">
               <a href="#">Profil</a>
-              <a href="#">Ustawienia</a>
+              <a (click)="redirectTo('/settings')">Ustawienia</a>
               <a href="#" (click)="focusOnSearchInput(); $event.preventDefault()">Wyszukaj</a>
               <a (click)="redirectTo('/set')">Dodaj zestaw</a>
               <a href="#">Pomoc</a>
