@@ -1,0 +1,11 @@
+<div class="wrapper">
+    <h3>Twoje grupy</h3>
+    <div *ngFor="let group of userGroups; let i = index" class="item">
+      <div class="center-text">{{ i + 1 }}. {{ group.name }}</div>
+      <div>
+        <button (click)="leaveGroup(group.id)" class="icon-btn-clear rotate45">
+          <img src="/assets/plus-icon.svg" alt="Icon" />
+        </button>
+      </div>
+    </div>
+</div>

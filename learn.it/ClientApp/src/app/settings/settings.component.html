@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="label-wrapper">
     <div class="label-text">
-      <img src="/assets/settings-icon.svg" alt="Icon" class="settings-icon"/>
+      <img src="/assets/settings-icon.svg" alt="Icon" class="settings-icon" />
       <h2>Ustawienia </h2>
     </div>
     <button routerLink="/set" (click)="goBack()" class="icon-btn rotate45">
@@ -11,12 +11,12 @@
   <div class="comoponents-wrapper">
     <div class="components-list">
       <div class="list-item" (click)="loadComponent('profile')" [class.selected]="selectedTab === 'profile'">
-        Profil  
+        Profil
       </div>
-      <div class="list-item">
-       Grupy
+      <div class="list-item" (click)="loadComponent('groups')" [class.selected]="selectedTab === 'groups'">
+        Grupy
       </div>
-      <div class="list-item">
+      <div class="list-item" (click)="loadComponent('password')" [class.selected]="selectedTab === 'password'">
         Hasło
       </div>
       <div class="list-item">
