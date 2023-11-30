@@ -24,6 +24,8 @@ import { UserSetsComponent } from './user-sets/user-sets.component';
 import { SettingsComponent } from './settings/settings.component';
 import { DynamicHostDirective } from './dynamic-host.directive';
 import { ProfileComponent } from './settings/components/profile/profile.component';
+import { PasswordComponent } from './settings/components/password/password.component';
+import { GroupsComponent } from './settings/components/groups/groups.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { ProfileComponent } from './settings/components/profile/profile.componen
     UserSetsComponent,
     SettingsComponent,
     DynamicHostDirective,
-    ProfileComponent
+    ProfileComponent,
+    PasswordComponent,
+    GroupsComponent
   ],
   imports: [
     MatTooltipModule,

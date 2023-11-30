@@ -2,6 +2,8 @@ import { Component, ComponentFactory, ComponentFactoryResolver, ViewChild } from
 import { DynamicHostDirective } from '../dynamic-host.directive';
 import { Location } from '@angular/common';
 import { ProfileComponent } from './components/profile/profile.component';
+import { PasswordComponent } from './components/password/password.component';
+import { GroupsComponent } from './components/groups/groups.component';
 
 @Component({
   selector: 'app-settings',
@@ -28,10 +30,19 @@ export class SettingsComponent {
       case 'profile':
           componentFactory = this.componentFactoryResolver.resolveComponentFactory(ProfileComponent);
         break;
+      case 'password':
+        componentFactory = this.componentFactoryResolver.resolveComponentFactory(PasswordComponent);
+        break;
+      case 'groups':
+        componentFactory = this.componentFactoryResolver.resolveComponentFactory(GroupsComponent);
+        break;
       default:
         componentFactory = this.componentFactoryResolver.resolveComponentFactory(ProfileComponent);
         break;
     }
+    
+    this.selectedTab = componentName;
+
     if(componentFactory)
       viewContainerRef.createComponent(componentFactory);
   }
