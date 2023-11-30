@@ -210,5 +210,20 @@ namespace learn.it.Controllers
 
             return Forbid();
         }
+
+        [HttpGet("{userId}/groups")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetUserGroups([FromRoute] int userId)
+        {
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
+            {
+                var groups = queriedUser.Groups.Select(g => g.ToGroupDto()).ToList();
+                return Ok(groups);
+            }
+
+            return Forbid();
+        }
     }
 }
