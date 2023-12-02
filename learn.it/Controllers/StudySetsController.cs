@@ -21,13 +21,17 @@ namespace learn.it.Controllers
         private readonly IUsersService _usersService;
 
         private readonly IGroupsService _groupsService;
+        private readonly IFlashcardsService _flashcardsService;
+        private readonly IFlashcardUserProgressService _flashcardProgressService;
 
         public StudySetsController(IStudySetsService studySetsService, IUsersService usersService,
-            IGroupsService groupsService)
+            IGroupsService groupsService, IFlashcardsService flashcardsService, IFlashcardUserProgressService flashcardUserProgressService)
         {
             _studySetsService = studySetsService;
             _usersService = usersService;
             _groupsService = groupsService;
+            _flashcardsService = flashcardsService;
+            _flashcardProgressService = flashcardUserProgressService;
         }
 
         [HttpGet]
@@ -137,6 +141,10 @@ namespace learn.it.Controllers
             //this technically isn't necessary, but EF Core might not update the group's study sets
             //it ensures consistency
             group?.StudySets.Add(createdStudySet);
+
+            user.UserStats.SetsAdded++;
+            await _usersService.UpdateUser(user);
+
             return CreatedAtAction(nameof(GetStudySetDetails), new { studySetId = createdStudySet.StudySetId },
                                new StudySetDto(createdStudySet));
         }
@@ -175,9 +183,20 @@ namespace learn.it.Controllers
         {
             var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             var studySet = await _studySetsService.GetStudySetById(studySetId);
+            var creator = await _usersService.GetUserByIdOrUsername(studySet.Creator.UserId.ToString());
+
             if (ControllerUtils.IsUserAdmin(User) || studySet.Creator.Username == user.Username)
             {
                 await _studySetsService.DeleteStudySet(studySet.StudySetId);
+                creator.UserStats.SetsAdded--;
+                var masteredSetUsers = await ControllerUtils.GetUsersWhoMasteredStudySet(studySet, _flashcardsService,
+                    _flashcardProgressService, _usersService);
+                foreach (var masteredSetUser in masteredSetUsers)
+                {
+                    masteredSetUser.UserStats.SetsCompleted--;
+                    await _usersService.UpdateUser(masteredSetUser);
+                }
+                await _usersService.UpdateUser(creator);
                 return NoContent();
             }
             throw new StudySetNotFoundException(studySetId);

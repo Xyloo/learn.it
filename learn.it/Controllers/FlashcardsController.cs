@@ -72,6 +72,10 @@ namespace learn.it.Controllers
                     StudySet = studySet
                 };
                 var createdFlashcard = await _flashcardsService.AddFlashcard(flashcard);
+
+                user.UserStats.FlashcardsAdded++;
+                await _usersService.UpdateUser(user);
+
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
 
@@ -95,6 +99,10 @@ namespace learn.it.Controllers
                     StudySet = studySet
                 };
                 var createdFlashcard = await _flashcardsService.AddImageFlashcard(flashcard, image);
+
+                user.UserStats.FlashcardsAdded++;
+                await _usersService.UpdateUser(user);
+
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
 
@@ -213,9 +221,12 @@ namespace learn.it.Controllers
         {
             var flashcard = await _flashcardsService.GetFlashcard(flashcardId);
             var studySet = await _studySetsService.GetStudySetById(flashcard.StudySet.StudySetId);
+            var creator = await _usersService.GetUserByIdOrUsername(studySet.Creator.UserId.ToString());
             if (ControllerUtils.IsUserAdminOrSelf(studySet.Creator, User))
             {
                 await _flashcardsService.RemoveFlashcard(flashcardId);
+                creator.UserStats.FlashcardsAdded--;
+                await _usersService.UpdateUser(creator);
                 return NoContent();
             }
 

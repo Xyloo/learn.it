@@ -12,5 +12,6 @@ namespace learn.it.Services.Interfaces
         Task<IEnumerable<FlashcardUserProgressDto>> GetFlashcardUserProgressesByUserId(int userId);
         Task RemoveFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress);
         Task<FlashcardUserProgress> UpdateFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress);
+        Task<IEnumerable<FlashcardUserProgress>> GetFlashcardUserProgressesByUserIdAndStudySetId(int userId, int studySetId);
     }
 }

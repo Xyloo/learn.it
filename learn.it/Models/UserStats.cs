@@ -22,19 +22,19 @@ public partial class UserStats
     public int SetsCompleted { get; set; }
 
     [Column("total_login_days")]
-    public int TotalLoginDays { get; set; }
+    public int TotalLoginDays { get; set; } //done
 
     [Column("total_flashcards_mastered")]
     public int TotalFlashcardsMastered { get; set; }
 
     [Column("consecutive_login_days")]
-    public int ConsecutiveLoginDays { get; set; }
+    public int ConsecutiveLoginDays { get; set; } //done
 
     [Column("sets_added")]
-    public int SetsAdded { get; set; }
+    public int SetsAdded { get; set; } // done
 
     [Column("flashcards_added")]
-    public int FlashcardsAdded { get; set; }
+    public int FlashcardsAdded { get; set; } //done 
 
     [ForeignKey("UserId")]
     [InverseProperty("UserStats")]
