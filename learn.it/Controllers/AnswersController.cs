@@ -70,7 +70,7 @@ namespace learn.it.Controllers
                     await _flashcardUserProgressService.UpdateFlashcardUserProgress(progress);
                     if (await ControllerUtils.IsStudySetMastered(flashcard.StudySet, user, _flashcardsService, _flashcardUserProgressService))
                     {
-                        user.UserStats.SetsCompleted++;
+                        user.UserStats.TotalSetsMastered++;
                     }
                     await _usersService.UpdateUser(user);
                 }

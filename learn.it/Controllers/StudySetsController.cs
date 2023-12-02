@@ -142,7 +142,7 @@ namespace learn.it.Controllers
             //it ensures consistency
             group?.StudySets.Add(createdStudySet);
 
-            user.UserStats.SetsAdded++;
+            user.UserStats.TotalSetsAdded++;
             await _usersService.UpdateUser(user);
 
             return CreatedAtAction(nameof(GetStudySetDetails), new { studySetId = createdStudySet.StudySetId },
@@ -164,6 +164,11 @@ namespace learn.it.Controllers
                 if (validationResults.Any())
                     throw new InvalidInputDataException(validationResults.ToString());
 
+                var masteredSetUsers = (await ControllerUtils.GetUsersWhoMasteredStudySet(studySetToUpdate,
+                    _flashcardsService,
+                    _flashcardProgressService, _usersService)).ToList();
+                var masteredSetUsersBeforeVisibilityChange = masteredSetUsers.Where(u => ControllerUtils.CanUserAccessStudySet(u, studySetToUpdate)).ToList();
+
                 studySetToUpdate.Name = studySet.Name ?? studySetToUpdate.Name;
                 studySetToUpdate.Description = studySet.Description ?? studySetToUpdate.Description;
                 studySetToUpdate.Visibility = studySet.Visibility ?? studySetToUpdate.Visibility;
@@ -171,6 +176,33 @@ namespace learn.it.Controllers
                     ? null
                     : await _groupsService.GetGroupById(studySet.GroupId.Value);
                 var updatedStudySet = await _studySetsService.UpdateStudySet(studySetToUpdate);
+
+                var masteredSetUsersAfterVisibilityChange = masteredSetUsers.Where(u => ControllerUtils.CanUserAccessStudySet(u, updatedStudySet)).ToList();
+
+                foreach (var userToDecrement in masteredSetUsersBeforeVisibilityChange.Except(
+                             masteredSetUsersAfterVisibilityChange))
+                {
+                    var userProgresses =
+                        await _flashcardProgressService.GetFlashcardUserProgressesByUserIdAndStudySetId(
+                            userToDecrement.UserId, updatedStudySet.StudySetId);
+                    var masteredFlashcards = userProgresses.Count(p => p.IsMastered);
+                    userToDecrement.UserStats.TotalSetsMastered--;
+                    userToDecrement.UserStats.TotalFlashcardsMastered -= masteredFlashcards;
+                    await _usersService.UpdateUser(userToDecrement);
+                }
+
+                foreach (var userToIncrement in masteredSetUsersAfterVisibilityChange.Except(
+                             masteredSetUsersBeforeVisibilityChange))
+                {
+                    var userProgresses =
+                        await _flashcardProgressService.GetFlashcardUserProgressesByUserIdAndStudySetId(
+                            userToIncrement.UserId, updatedStudySet.StudySetId);
+                    var masteredFlashcards = userProgresses.Count(p => p.IsMastered);
+                    userToIncrement.UserStats.TotalFlashcardsMastered += masteredFlashcards;
+                    userToIncrement.UserStats.TotalSetsMastered++;
+                    await _usersService.UpdateUser(userToIncrement);
+                }
+
                 return Ok(new StudySetDto(updatedStudySet));
             }
 
@@ -188,13 +220,25 @@ namespace learn.it.Controllers
             if (ControllerUtils.IsUserAdmin(User) || studySet.Creator.Username == user.Username)
             {
                 await _studySetsService.DeleteStudySet(studySet.StudySetId);
-                creator.UserStats.SetsAdded--;
+                creator.UserStats.TotalSetsAdded--;
                 var masteredSetUsers = await ControllerUtils.GetUsersWhoMasteredStudySet(studySet, _flashcardsService,
                     _flashcardProgressService, _usersService);
                 foreach (var masteredSetUser in masteredSetUsers)
                 {
-                    masteredSetUser.UserStats.SetsCompleted--;
+                    masteredSetUser.UserStats.TotalSetsMastered--;
                     await _usersService.UpdateUser(masteredSetUser);
+                }
+
+                foreach (var flashcard in studySet.Flashcards)
+                {
+                    var flashcardProgresses =
+                        (await _flashcardProgressService.GetFlashcardUserProgressesByFlashcardId(flashcard.FlashcardId)).Where(p => p.IsMastered);
+                    foreach (var flashcardProgress in flashcardProgresses)
+                    {
+                        var userToDecrement = await _usersService.GetUserByIdOrUsername(flashcardProgress.User.Username);
+                        userToDecrement.UserStats.TotalFlashcardsMastered--;
+                        await _usersService.UpdateUser(userToDecrement);
+                    }
                 }
                 await _usersService.UpdateUser(creator);
                 return NoContent();
