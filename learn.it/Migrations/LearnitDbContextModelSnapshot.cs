@@ -488,15 +488,15 @@ namespace learn.it.Migrations
                         .HasColumnType("int")
                         .HasColumnName("consecutive_login_days");
 
-                    b.Property<int>("FlashcardsAdded")
+                    b.Property<int>("TotalFlashcardsAdded")
                         .HasColumnType("int")
                         .HasColumnName("flashcards_added");
 
-                    b.Property<int>("SetsAdded")
+                    b.Property<int>("TotalSetsAdded")
                         .HasColumnType("int")
                         .HasColumnName("sets_added");
 
-                    b.Property<int>("SetsCompleted")
+                    b.Property<int>("TotalSetsMastered")
                         .HasColumnType("int")
                         .HasColumnName("sets_completed");
 

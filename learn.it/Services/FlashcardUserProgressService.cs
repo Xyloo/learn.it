@@ -55,5 +55,11 @@ namespace learn.it.Services
             var progress = await _flashcardUserProgressRepository.GetFlashcardUserProgressByFlashcardIdAndUserId(flashcardUserProgress.FlashcardId, flashcardUserProgress.UserId) ?? throw new FlashcardUserProgressNotFoundException(flashcardUserProgress.FlashcardId, flashcardUserProgress.UserId);
             return await _flashcardUserProgressRepository.UpdateFlashcardUserProgress(flashcardUserProgress);
         }
+
+        public async Task<IEnumerable<FlashcardUserProgress>> GetFlashcardUserProgressesByUserIdAndStudySetId(int userId, int studySetId)
+        {
+            var progresses = await _flashcardUserProgressRepository.GetFlashcardUserProgressesByUserIdAndStudySetId(userId, studySetId);
+            return progresses;
+        }
     }
 }

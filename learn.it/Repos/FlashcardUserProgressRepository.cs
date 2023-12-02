@@ -55,5 +55,13 @@ namespace learn.it.Repos
             _context.FlashcardUserProgress.Remove(flashcardUserProgress);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<FlashcardUserProgress>> GetFlashcardUserProgressesByUserIdAndStudySetId(int userId, int studySetId)
+        {
+            return await _context.FlashcardUserProgress.Where(f => f.User.UserId == userId && f.Flashcard.StudySet.StudySetId == studySetId)
+                .Include(f => f.Flashcard)
+                .Include(f => f.User)
+                .ToListAsync();
+        }
     }
 }

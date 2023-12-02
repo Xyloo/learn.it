@@ -12,7 +12,5 @@ namespace learn.it.Models.Dtos.Request
         public int AnswerTime { get; set; }
         [Required(ErrorMessage = "Flashcard id must be provided.")]
         public int FlashcardId { get; set; }
-        [Required(ErrorMessage = "User id must be provided.")]
-        public int UserId { get; set; }
     }
 }

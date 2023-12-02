@@ -18,8 +18,8 @@ public partial class UserStats
     [Column("user_id")]
     public int UserId { get; private set; }
 
-    [Column("sets_completed")]
-    public int SetsCompleted { get; set; }
+    [Column("total_sets_mastered")]
+    public int TotalSetsMastered { get; set; }
 
     [Column("total_login_days")]
     public int TotalLoginDays { get; set; }
@@ -30,11 +30,11 @@ public partial class UserStats
     [Column("consecutive_login_days")]
     public int ConsecutiveLoginDays { get; set; }
 
-    [Column("sets_added")]
-    public int SetsAdded { get; set; }
+    [Column("total_sets_added")]
+    public int TotalSetsAdded { get; set; }
 
-    [Column("flashcards_added")]
-    public int FlashcardsAdded { get; set; }
+    [Column("total_flashcards_added")]
+    public int TotalFlashcardsAdded { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("UserStats")]
