@@ -100,5 +100,16 @@ namespace learn.it.Controllers
             }
             throw new FlashcardUserProgressNotFoundException(user.UserId, flashcardId);
         }
+
+        [HttpDelete("{flashcardId}/{userId}")]
+        [Authorize(Policy = "Admins")]
+        public async Task<IActionResult> DeleteFlashcardProgress([FromRoute] int flashcardId, [FromRoute] int userId)
+        {
+            var user = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var flashcard = await _flashcardsService.GetFlashcard(flashcardId);
+            var progress = await _flashcardProgressService.GetFlashcardUserProgressByFlashcardIdAndUserId(flashcard.FlashcardId, user.UserId);
+            await _flashcardProgressService.RemoveFlashcardUserProgress(progress);
+            return Ok();
+        }
     }
 }

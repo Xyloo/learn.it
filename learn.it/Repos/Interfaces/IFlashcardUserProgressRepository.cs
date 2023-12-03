@@ -10,5 +10,6 @@ namespace learn.it.Repos.Interfaces
         Task<IEnumerable<FlashcardUserProgress>> GetFlashcardUserProgressesByUserId(int userId);
         Task<FlashcardUserProgress> UpdateFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress);
         Task RemoveFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress);
+        Task<IEnumerable<FlashcardUserProgress>> GetFlashcardUserProgressesByUserIdAndStudySetId(int userId, int studySetId);
     }
 }

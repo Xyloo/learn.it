@@ -36,7 +36,7 @@ namespace learn.it.Controllers
         public async Task<IActionResult> AddAnswer(CreateAnswerDto answer)
         {
             var flashcard = await _flashcardsService.GetFlashcard(answer.FlashcardId);
-            var user = await _usersService.GetUserByIdOrUsername(answer.UserId.ToString());
+            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             if (ControllerUtils.CanUserAccessStudySet(user, flashcard.StudySet))
             {
                 var newAnswer = new Answer
@@ -60,6 +60,7 @@ namespace learn.it.Controllers
                         {
                             progress.IsMastered = true;
                             progress.MasteredTimestamp = DateTime.UtcNow;
+                            user.UserStats.TotalFlashcardsMastered++;
                         }
                     }
                     else
@@ -67,6 +68,11 @@ namespace learn.it.Controllers
                         progress.ConsecutiveCorrectAnswers = 0;
                     }
                     await _flashcardUserProgressService.UpdateFlashcardUserProgress(progress);
+                    if (await ControllerUtils.IsStudySetMastered(flashcard.StudySet, user, _flashcardsService, _flashcardUserProgressService))
+                    {
+                        user.UserStats.TotalSetsMastered++;
+                    }
+                    await _usersService.UpdateUser(user);
                 }
                 catch (FlashcardUserProgressNotFoundException)
                 {
@@ -139,5 +145,6 @@ namespace learn.it.Controllers
             await _answersService.RemoveAnswer(answer);
             return NoContent();
         }
+
     }
 }

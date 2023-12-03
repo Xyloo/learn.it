@@ -18,12 +18,14 @@ namespace learn.it.Controllers
         private readonly IFlashcardsService _flashcardsService;
         private readonly IStudySetsService _studySetsService;
         private readonly IUsersService _usersService;
+        private readonly IFlashcardUserProgressService _flashcardProgressService;
 
-        public FlashcardsController(IFlashcardsService flashcardsService, IStudySetsService studySetsService, IUsersService usersService)
+        public FlashcardsController(IFlashcardsService flashcardsService, IStudySetsService studySetsService, IUsersService usersService, IFlashcardUserProgressService flashcardProgressService)
         {
             _flashcardsService = flashcardsService;
             _studySetsService = studySetsService;
             _usersService = usersService;
+            _flashcardProgressService = flashcardProgressService;
         }
 
         [HttpGet("{flashcardId}")]
@@ -72,6 +74,10 @@ namespace learn.it.Controllers
                     StudySet = studySet
                 };
                 var createdFlashcard = await _flashcardsService.AddFlashcard(flashcard);
+
+                user.UserStats.TotalFlashcardsAdded++;
+                await _usersService.UpdateUser(user);
+
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
 
@@ -95,6 +101,10 @@ namespace learn.it.Controllers
                     StudySet = studySet
                 };
                 var createdFlashcard = await _flashcardsService.AddImageFlashcard(flashcard, image);
+
+                user.UserStats.TotalFlashcardsAdded++;
+                await _usersService.UpdateUser(user);
+
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
 
@@ -213,9 +223,20 @@ namespace learn.it.Controllers
         {
             var flashcard = await _flashcardsService.GetFlashcard(flashcardId);
             var studySet = await _studySetsService.GetStudySetById(flashcard.StudySet.StudySetId);
+            var creator = await _usersService.GetUserByIdOrUsername(studySet.Creator.UserId.ToString());
+            var progressedFlashcard = await _flashcardProgressService.GetFlashcardUserProgressesByFlashcardId(flashcardId);
+            var masteredFlashcard = progressedFlashcard.Where(f => f.IsMastered);
             if (ControllerUtils.IsUserAdminOrSelf(studySet.Creator, User))
             {
                 await _flashcardsService.RemoveFlashcard(flashcardId);
+                creator.UserStats.TotalFlashcardsAdded--;
+                foreach (var flashcardProgress in masteredFlashcard)
+                {
+                    var user = await _usersService.GetUserByIdOrUsername(flashcardProgress.User.Username);
+                    user.UserStats.TotalFlashcardsMastered--;
+                    await _usersService.UpdateUser(user);
+                }
+                await _usersService.UpdateUser(creator);
                 return NoContent();
             }
 

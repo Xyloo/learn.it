@@ -2,6 +2,8 @@
 using learn.it.Models;
 using System.Security.Claims;
 using learn.it.Exceptions;
+using learn.it.Models.Dtos.Response;
+using learn.it.Services.Interfaces;
 
 namespace learn.it.Utils
 {
@@ -58,5 +60,53 @@ namespace learn.it.Utils
                    studySet.Creator.Username == user.Username ||
                    studySet.Visibility == Visibility.Public;
         }
+
+        public static async Task<bool> IsStudySetMastered(
+            StudySet studySet,
+            User user,
+            IFlashcardsService flashcardsService,
+            IFlashcardUserProgressService flashcardUserProgressService)
+        {
+            var progress = (await flashcardUserProgressService
+                    .GetFlashcardUserProgressesByUserIdAndStudySetId(user.UserId, studySet.StudySetId))
+                .ToList();
+
+            var flashcards = (await flashcardsService.GetFlashcardsInSet(studySet.StudySetId)).ToList();
+
+            return progress.Count == flashcards.Count && progress.All(p => p.IsMastered);
+        }
+
+        public static async Task<IEnumerable<User>> GetUsersWhoMasteredStudySet(
+            StudySet studySet,
+            IFlashcardsService flashcardsService,
+            IFlashcardUserProgressService flashcardUserProgressService,
+            IUsersService usersService)
+        {
+            var flashcards = (await flashcardsService.GetFlashcardsInSet(studySet.StudySetId)).ToList();
+
+            var userDtos = new List<AnonymousUserResponseDto>();
+            // Initialize users list with users who have mastered the first flashcard
+            var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().Id)).ToList();
+            userDtos.AddRange(firstFlashcardProgress.Where(p => p.IsMastered).Select(p => p.User));
+
+            // Iterate through the remaining flashcards
+            foreach (var flashcard in flashcards.Skip(1))
+            {
+                var progress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcard.Id)).ToList();
+                var usersWhoMasteredFlashcard = progress.Where(p => p.IsMastered).Select(p => p.User).ToList();
+
+                // Update users list to only include users who have mastered the current flashcard
+                userDtos = userDtos.Intersect(usersWhoMasteredFlashcard).ToList();
+            }
+
+            var users = new List<User>();
+            foreach (var user in userDtos)
+            {
+                users.Add(await usersService.GetUserByIdOrUsername(user.Username));
+            }
+            // Return users who have mastered all flashcards
+            return users;
+        }
+
     }
 }
