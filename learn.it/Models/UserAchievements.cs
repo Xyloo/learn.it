@@ -17,11 +17,11 @@ public partial class UserAchievements
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("achievement_id")]
-    public int AchievementId { get; private set; }
+    public int AchievementId { get; set; }
 
     [Key]
     [Column("user_id")]
-    public int UserId { get; private set; }
+    public int UserId { get; set; }
 
     [Column("timestamp")]
     [Precision(0)]

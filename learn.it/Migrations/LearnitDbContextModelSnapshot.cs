@@ -70,7 +70,7 @@ namespace learn.it.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("description");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace learn.it.Models;
 
 [Table("achievements", Schema = "learnitdb")]
+[Index(nameof(Predicate), Name = "predicate_UNIQUE", IsUnique = true)]
 public partial class Achievement
 {
     [Key]
@@ -23,14 +24,18 @@ public partial class Achievement
     public string Name { get; set; }
 
     [Required]
-    [Column("image_url")]
+    [Column("image_path")]
     [StringLength(100)]
-    public string ImageUrl { get; set; }
+    public string ImagePath { get; set; }
 
     [Required]
     [Column("description")]
     [StringLength(200)]
     public string Description { get; set; }
+
+    [Required]
+    [Column("predicate")]
+    public string Predicate { get; set; }
 
     [InverseProperty("Achievement")]
     [JsonIgnore]
