@@ -32,7 +32,7 @@
               <a href="#" (click)="focusOnSearchInput(); $event.preventDefault()">Wyszukaj</a>
               <a (click)="redirectTo('/set')">Dodaj zestaw</a>
               <a href="#">Pomoc</a>
-              <a routerLink="/login">Wyloguj</a>
+              <a (click)="logout()" routerLink="/login">Wyloguj</a>
             </div>
           </div>
         </div>

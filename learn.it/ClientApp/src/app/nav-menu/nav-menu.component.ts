@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { AccountService } from '../services/account.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -10,7 +11,7 @@ export class NavMenuComponent {
 
   @ViewChild('searchInput') searchInput: ElementRef;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private accountService: AccountService) { }
 
   showDropdown: boolean = false;
   toggleDropdown() {
@@ -30,6 +31,10 @@ export class NavMenuComponent {
   redirectTo(url: string) {
     this.router.navigateByUrl(url);
     this.closeDropdown();
+  }
+
+  logout() {
+    this.accountService.logout();
   }
 
 

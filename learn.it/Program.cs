@@ -130,6 +130,17 @@ builder.Services.AddScoped<IGroupsService, GroupsService>();
 builder.Services.AddScoped<IStudySetsService, StudySetsService>();
 builder.Services.AddScoped<IFlashcardsService, FlashcardsService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -168,5 +179,7 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
+
+app.UseCors("AllowAll");
 
 app.Run();

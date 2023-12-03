@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -48,7 +49,8 @@ import { GroupsComponent } from './settings/components/groups/groups.component';
     DynamicHostDirective,
     ProfileComponent,
     PasswordComponent,
-    GroupsComponent
+    GroupsComponent,
+
   ],
   imports: [
     MatTooltipModule,
@@ -68,7 +70,8 @@ import { GroupsComponent } from './settings/components/groups/groups.component';
       { path: 'sets', component: UserSetsComponent },
       { path: 'settings', component: SettingsComponent }
     ]),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
