@@ -65,7 +65,7 @@ builder.Services.AddProblemDetails(options =>
 
     options.Map<UnauthorizedAccessException>(ex => new ProblemDetails
     {
-        Title = "User unathorized",
+        Title = "User unauthorized",
         Detail = ex.Message,
         Status = StatusCodes.Status401Unauthorized
     });

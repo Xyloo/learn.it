@@ -13,5 +13,6 @@ namespace learn.it.Services.Interfaces
         Task<UserAchievements> GrantAchievement(int userId, int achievementId);
         Task RevokeAchievement(int userId, int achievementId);
         Task RemoveAchievement(int id);
+        bool GetPredicateResult(Achievement achievement, UserStats userStats);
     }
 }
