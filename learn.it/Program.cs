@@ -123,12 +123,18 @@ builder.Services.AddScoped<ILoginsRepository, LoginsRepository>();
 builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
 builder.Services.AddScoped<IStudySetsRepository, StudySetsRepository>();
 builder.Services.AddScoped<IFlashcardsRepository, FlashcardsRepository>();
+builder.Services.AddScoped<IFlashcardUserProgressRepository, FlashcardUserProgressRepository>();
+builder.Services.AddScoped<IAnswersRepository, AnswersRepository>();
+builder.Services.AddScoped<IAchievementsRepository, AchievementsRepository>();
 
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ILoginsService, LoginsService>();
 builder.Services.AddScoped<IGroupsService, GroupsService>();
 builder.Services.AddScoped<IStudySetsService, StudySetsService>();
 builder.Services.AddScoped<IFlashcardsService, FlashcardsService>();
+builder.Services.AddScoped<IFlashcardUserProgressService, FlashcardUserProgressService>();
+builder.Services.AddScoped<IAnswersService, AnswersService>();
+builder.Services.AddScoped<IAchievementsService, AchievementsService>();
 
 var app = builder.Build();
 
