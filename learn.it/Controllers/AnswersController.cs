@@ -15,20 +15,19 @@ namespace learn.it.Controllers
     public class AnswersController : ControllerBase
     {
         private readonly IAnswersService _answersService;
-
         private readonly IFlashcardsService _flashcardsService;
-
         private readonly IUsersService _usersService;
-
         private readonly IFlashcardUserProgressService _flashcardUserProgressService;
+        private readonly IAchievementsService _achievementsService;
 
         public AnswersController(IAnswersService answersService, IFlashcardsService flashcardsService,
-            IUsersService usersService, IFlashcardUserProgressService flashcardUserProgressService)
+            IUsersService usersService, IFlashcardUserProgressService flashcardUserProgressService, IAchievementsService achievementsService)
         {
             _answersService = answersService;
             _flashcardsService = flashcardsService;
             _usersService = usersService;
             _flashcardUserProgressService = flashcardUserProgressService;
+            _achievementsService = achievementsService;
         }
 
         [HttpPost]
@@ -73,6 +72,8 @@ namespace learn.it.Controllers
                         user.UserStats.TotalSetsMastered++;
                     }
                     await _usersService.UpdateUser(user);
+                    await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsMastered), user);
+                    await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalSetsMastered), user);
                 }
                 catch (FlashcardUserProgressNotFoundException)
                 {

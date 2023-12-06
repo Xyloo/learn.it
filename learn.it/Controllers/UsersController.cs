@@ -20,6 +20,7 @@ namespace learn.it.Controllers
         private readonly ILoginsService _loginsService;
         private readonly IGroupsService _groupsService;
         private readonly IAchievementsService _achievementsService;
+
         public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService)
         {
             _usersService = usersService;
@@ -60,10 +61,13 @@ namespace learn.it.Controllers
                     ? user.UserStats.ConsecutiveLoginDays + 1
                     : 1;
             }
-            user.UserStats.TotalLoginDays += !hasLoggedInToday ? 1 : 0;
+            user.UserStats.TotalLoginDays += hasLoggedInToday ? 0 : 1;
             user.LastLogin = DateTime.UtcNow;
 
             await _usersService.UpdateUser(user);
+
+            await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.ConsecutiveLoginDays), user);
+            await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalLoginDays), user);
 
             var token = _usersService.GenerateJwtToken(user);
             var successfulLogin = new Login()
@@ -132,11 +136,7 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Admins")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _usersService.GetAllUsers();
-            foreach (var user in users)
-            {
-                user.Password = null!;
-            }
+            var users = (await _usersService.GetAllUsers()).Select(u => u.ToSelfUserResponseDto());
             return Ok(users);
         }
 
@@ -246,6 +246,30 @@ namespace learn.it.Controllers
             }
 
             return Forbid();
+        }
+
+        [HttpDelete("{userId}/achievement/{achievementId}")]
+        [Authorize(Policy = "Admins")]
+        public async Task<IActionResult> RevokeAchievement([FromRoute] string userId, [FromRoute] int achievementId)
+        {
+            //to make sure both of these exist
+            var user = await _usersService.GetUserByIdOrUsername(userId);
+            await _achievementsService.GetAchievement(achievementId);
+
+            await _achievementsService.RevokeAchievement(user.UserId, achievementId);
+            return Ok();
+        }
+
+        [HttpPost("{userId}/achievement/{achievementId}")]
+        [Authorize(Policy = "Admins")]
+        public async Task<IActionResult> GrantAchievement([FromRoute] string userId, [FromRoute] int achievementId)
+        {
+            //to make sure both of these exist
+            var user = await _usersService.GetUserByIdOrUsername(userId);
+            await _achievementsService.GetAchievement(achievementId);
+
+            await _achievementsService.GrantAchievement(user.UserId, achievementId);
+            return Ok();
         }
     }
 }

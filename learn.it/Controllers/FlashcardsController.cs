@@ -19,13 +19,15 @@ namespace learn.it.Controllers
         private readonly IStudySetsService _studySetsService;
         private readonly IUsersService _usersService;
         private readonly IFlashcardUserProgressService _flashcardProgressService;
+        private readonly IAchievementsService _achievementsService;
 
-        public FlashcardsController(IFlashcardsService flashcardsService, IStudySetsService studySetsService, IUsersService usersService, IFlashcardUserProgressService flashcardProgressService)
+        public FlashcardsController(IFlashcardsService flashcardsService, IStudySetsService studySetsService, IUsersService usersService, IFlashcardUserProgressService flashcardProgressService, IAchievementsService achievementsService)
         {
             _flashcardsService = flashcardsService;
             _studySetsService = studySetsService;
             _usersService = usersService;
             _flashcardProgressService = flashcardProgressService;
+            _achievementsService = achievementsService;
         }
 
         [HttpGet("{flashcardId}")]
@@ -77,6 +79,7 @@ namespace learn.it.Controllers
 
                 user.UserStats.TotalFlashcardsAdded++;
                 await _usersService.UpdateUser(user);
+                await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsAdded), user);
 
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
@@ -104,6 +107,7 @@ namespace learn.it.Controllers
 
                 user.UserStats.TotalFlashcardsAdded++;
                 await _usersService.UpdateUser(user);
+                await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsAdded), user);
 
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }

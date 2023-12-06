@@ -15,5 +15,8 @@ namespace learn.it.Services.Interfaces
         Task RemoveAchievement(int id);
         bool GetPredicateResult(Achievement achievement, UserStats userStats);
         public Task<Achievement> UpdateAchievementImage(Achievement achievement, IFormFile newImage);
+
+        public Task<IEnumerable<Achievement>> GrantAchievementsContainingPredicate(string predicate,
+            User user);
     }
 }

@@ -79,6 +79,7 @@ namespace learn.it.Services
             {
                 throw new UserAchievementExistsException(userId, achievementId);
             }
+
             var newAchievement = new UserAchievements
             {
                 UserId = userId,
@@ -87,6 +88,24 @@ namespace learn.it.Services
             };
             await _achievementsRepository.GrantAchievementToUser(newAchievement);
             return newAchievement;
+        }
+
+        public async Task<IEnumerable<Achievement>> GrantAchievementsContainingPredicate(string predicate,
+            User user)
+        {
+            var loginAchievements = await GetAchievementsContainingInPredicate(predicate);
+            var userAchievements = (await GetUserAchievements(user.UserId)).Select(g => g.Achievement);
+            var notGrantedAchievements = loginAchievements.Where(a => userAchievements.All(x => x.Name != a.Name)).ToList();
+            List<Achievement> grantedAchievements = new();
+            foreach (var achievement in notGrantedAchievements)
+            {
+                if (GetPredicateResult(achievement, user.UserStats))
+                {
+                    await GrantAchievement(user.UserId, achievement.AchievementId);
+                    grantedAchievements.Add(achievement);
+                }
+            }
+            return grantedAchievements;
         }
 
         public async Task RevokeAchievement(int userId, int achievementId)

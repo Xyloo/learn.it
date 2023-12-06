@@ -14,12 +14,12 @@ namespace learn.it.Models;
 [Index("UserId", Name = "fk_user_achievements_users1_idx")]
 public partial class UserAchievements
 {
-    [Key]
+    [Key, ForeignKey("Achievement")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("achievement_id")]
     public int AchievementId { get; set; }
 
-    [Key]
+    [Key, ForeignKey("User")]
     [Column("user_id")]
     public int UserId { get; set; }
 
@@ -27,11 +27,7 @@ public partial class UserAchievements
     [Precision(0)]
     public DateTime Timestamp { get; set; }
 
-    [ForeignKey("AchievementId")]
-    [InverseProperty("UserAchievements")]
     public virtual Achievement Achievement { get; set; }
 
-    [ForeignKey("UserId")]
-    [InverseProperty("UserAchievements")]
     public virtual User User { get; set; }
 }

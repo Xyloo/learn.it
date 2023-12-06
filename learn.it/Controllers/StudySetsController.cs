@@ -17,21 +17,21 @@ namespace learn.it.Controllers
     public class StudySetsController : ControllerBase
     {
         private readonly IStudySetsService _studySetsService;
-
         private readonly IUsersService _usersService;
-
         private readonly IGroupsService _groupsService;
         private readonly IFlashcardsService _flashcardsService;
         private readonly IFlashcardUserProgressService _flashcardProgressService;
+        private readonly IAchievementsService _achievementsService;
 
         public StudySetsController(IStudySetsService studySetsService, IUsersService usersService,
-            IGroupsService groupsService, IFlashcardsService flashcardsService, IFlashcardUserProgressService flashcardUserProgressService)
+            IGroupsService groupsService, IFlashcardsService flashcardsService, IFlashcardUserProgressService flashcardUserProgressService, IAchievementsService achievementsService)
         {
             _studySetsService = studySetsService;
             _usersService = usersService;
             _groupsService = groupsService;
             _flashcardsService = flashcardsService;
             _flashcardProgressService = flashcardUserProgressService;
+            _achievementsService = achievementsService;
         }
 
         [HttpGet]
@@ -145,6 +145,8 @@ namespace learn.it.Controllers
             user.UserStats.TotalSetsAdded++;
             await _usersService.UpdateUser(user);
 
+            await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalSetsAdded), user);
+
             return CreatedAtAction(nameof(GetStudySetDetails), new { studySetId = createdStudySet.StudySetId },
                                new StudySetDto(createdStudySet));
         }
@@ -201,6 +203,8 @@ namespace learn.it.Controllers
                     userToIncrement.UserStats.TotalFlashcardsMastered += masteredFlashcards;
                     userToIncrement.UserStats.TotalSetsMastered++;
                     await _usersService.UpdateUser(userToIncrement);
+                    await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalSetsMastered), user);
+                    await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsMastered), user);
                 }
 
                 return Ok(new StudySetDto(updatedStudySet));
