@@ -44,35 +44,35 @@ builder.Services.AddProblemDetails(options =>
 {
     options.Map<NotFoundException>(ex => new ProblemDetails
     {
-        Title = "Not found",
+        Title = "Nie odnaleziono obiektu",
         Detail = ex.Message,
         Status = StatusCodes.Status404NotFound
     });
 
     options.Map<AlreadyExistsException>(ex => new ProblemDetails
     {
-        Title = "Data already exists",
+        Title = "Istniej¹ce dane",
         Detail = ex.Message,
         Status = StatusCodes.Status409Conflict
     });
 
     options.Map<InvalidInputDataException>(ex => new ProblemDetails
     {
-        Title = "Invalid data",
+        Title = "Nieprawid³owe dane",
         Detail = ex.Message,
         Status = StatusCodes.Status400BadRequest
     });
 
     options.Map<UnauthorizedAccessException>(ex => new ProblemDetails
     {
-        Title = "User unathorized",
+        Title = "U¿ytkownik niezalogowany",
         Detail = ex.Message,
         Status = StatusCodes.Status401Unauthorized
     });
 
     options.Map<ForbiddenAccessException>(ex => new ProblemDetails
     {
-        Title = "Access forbidden",
+        Title = "Brak uprawnieñ",
         Detail = ex.Message,
         Status = StatusCodes.Status403Forbidden
     });
@@ -123,12 +123,18 @@ builder.Services.AddScoped<ILoginsRepository, LoginsRepository>();
 builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
 builder.Services.AddScoped<IStudySetsRepository, StudySetsRepository>();
 builder.Services.AddScoped<IFlashcardsRepository, FlashcardsRepository>();
+builder.Services.AddScoped<IFlashcardUserProgressRepository, FlashcardUserProgressRepository>();
+builder.Services.AddScoped<IAnswersRepository, AnswersRepository>();
+builder.Services.AddScoped<IAchievementsRepository, AchievementsRepository>();
 
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ILoginsService, LoginsService>();
 builder.Services.AddScoped<IGroupsService, GroupsService>();
 builder.Services.AddScoped<IStudySetsService, StudySetsService>();
 builder.Services.AddScoped<IFlashcardsService, FlashcardsService>();
+builder.Services.AddScoped<IFlashcardUserProgressService, FlashcardUserProgressService>();
+builder.Services.AddScoped<IAnswersService, AnswersService>();
+builder.Services.AddScoped<IAchievementsService, AchievementsService>();
 
 builder.Services.AddCors(options =>
 {

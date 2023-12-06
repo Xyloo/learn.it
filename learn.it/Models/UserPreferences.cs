@@ -13,7 +13,7 @@ namespace learn.it.Models;
 [Index("UserId", Name = "fk_user_preferences_users1_idx")]
 public partial class UserPreferences
 {
-    [Key]
+    [Key, ForeignKey("User")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("user_id")]
     public int UserId { get; private set; }
@@ -21,14 +21,9 @@ public partial class UserPreferences
     [Column("high_contrast_mode")]
     public short HighContrastMode { get; set; } = 0;
 
-    [Column("email_reminders")]
-    public short EmailReminders { get; set; } = 0;
-
     [Column("auto_tts")]
     public short AutoTts { get; set; } = 0;
 
-    [ForeignKey("UserId")]
-    [InverseProperty("UserPreferences")]
     [JsonIgnore]
     public virtual User User { get; set; }
 }

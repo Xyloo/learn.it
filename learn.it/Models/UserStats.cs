@@ -13,7 +13,7 @@ namespace learn.it.Models;
 [Index("UserId", Name = "fk_user_stats_users1_idx")]
 public partial class UserStats
 {
-    [Key]
+    [Key, ForeignKey("User")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("user_id")]
     public int UserId { get; private set; }
@@ -36,8 +36,6 @@ public partial class UserStats
     [Column("total_flashcards_added")]
     public int TotalFlashcardsAdded { get; set; }
 
-    [ForeignKey("UserId")]
-    [InverseProperty("UserStats")]
     [JsonIgnore]
     public virtual User User { get; set; }
 }

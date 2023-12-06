@@ -2,7 +2,7 @@
 {
     public class GroupJoinRequestExistsException : AlreadyExistsException
     {
-        public GroupJoinRequestExistsException(string userId, string groupId) : base($"A group join request/invitation for user id [{userId}] and group id [{groupId}] already exists.")
+        public GroupJoinRequestExistsException(string userId, string groupId) : base($"Zaproszenie/prośba o dołączenie do grupy o id [{groupId}] przez użytkownika [{userId}] już istnieje.")
         {
         }
     }

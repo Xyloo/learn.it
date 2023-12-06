@@ -2,6 +2,7 @@
 using learn.it.Exceptions;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication;
@@ -18,12 +19,16 @@ namespace learn.it.Controllers
         private readonly IUsersService _usersService;
         private readonly ILoginsService _loginsService;
         private readonly IGroupsService _groupsService;
-        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService)
+        private readonly IAchievementsService _achievementsService;
+        private readonly IAnswersService _answersService;
+
+        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService, IAnswersService answersService)
         {
             _usersService = usersService;
             _loginsService = loginsService;
             _groupsService = groupsService;
-
+            _achievementsService = achievementsService;
+            _answersService = answersService;
         }
 
         [HttpPost("login")]
@@ -44,7 +49,7 @@ namespace learn.it.Controllers
                     Timestamp = DateTime.UtcNow
                 };
                 await _loginsService.CreateLogin(login);
-                throw new InvalidInputDataException("Username and/or password are incorrect.");
+                throw new InvalidInputDataException("Nazwa użytkownika i/lub hasło są niepoprawne.");
             }
 
             var lastLogin = user.LastLogin;
@@ -58,10 +63,13 @@ namespace learn.it.Controllers
                     ? user.UserStats.ConsecutiveLoginDays + 1
                     : 1;
             }
-            user.UserStats.TotalLoginDays += !hasLoggedInToday ? 1 : 0;
+            user.UserStats.TotalLoginDays += hasLoggedInToday ? 0 : 1;
             user.LastLogin = DateTime.UtcNow;
 
             await _usersService.UpdateUser(user);
+
+            await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.ConsecutiveLoginDays), user);
+            await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalLoginDays), user);
 
             var token = _usersService.GenerateJwtToken(user);
             var successfulLogin = new Login()
@@ -73,7 +81,11 @@ namespace learn.it.Controllers
                 Timestamp = DateTime.UtcNow
             };
             await _loginsService.CreateLogin(successfulLogin);
-            return Ok(new { token });
+            return Ok(new
+            {
+                Token = token,
+                user.UserId
+            });
         }
 
         [HttpGet("logout")]
@@ -102,7 +114,7 @@ namespace learn.it.Controllers
 
         [HttpPut("{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateRequest, [FromRoute] int userId)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateRequest, [FromRoute] string userId)
         {
             var validationContext = new ValidationContext(updateRequest);
             var validation = updateRequest.Validate(validationContext);
@@ -111,11 +123,11 @@ namespace learn.it.Controllers
                 throw new InvalidInputDataException(validation.ToString());
             }
 
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                var updatedUser = await _usersService.UpdateUser(userId, updateRequest);
+                var updatedUser = await _usersService.UpdateUser(queriedUser.UserId, updateRequest);
                 return Ok(updatedUser.ToSelfUserResponseDto());
             }
 
@@ -126,11 +138,7 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Admins")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _usersService.GetAllUsers();
-            foreach (var user in users)
-            {
-                user.Password = null!;
-            }
+            var users = (await _usersService.GetAllUsers()).Select(u => u.ToSelfUserResponseDto());
             return Ok(users);
         }
 
@@ -150,14 +158,13 @@ namespace learn.it.Controllers
 
         [HttpDelete("{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> DeleteUser([FromRoute] int userId)
+        public async Task<IActionResult> DeleteUser([FromRoute] string userId)
         {
-
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                await _usersService.DeleteUser(userId);
+                await _usersService.DeleteUser(queriedUser.UserId);
                 return Ok();
             }
 
@@ -166,16 +173,16 @@ namespace learn.it.Controllers
 
         [HttpPost("avatar/{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> UpdateUserAvatar([FromRoute] int userId, IFormFile avatar)
+        public async Task<IActionResult> UpdateUserAvatar([FromRoute] string userId, IFormFile avatar)
         {
             ControllerUtils.CheckIfValidImage(avatar);
 
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 var updatedUser = await _usersService.UpdateUserAvatar(queriedUser, avatar);
-                return Ok("Avatar updated successfully.");
+                return Ok("Pomyślnie zaktualizowano avatar.");
             }
 
             return Forbid();
@@ -183,14 +190,14 @@ namespace learn.it.Controllers
 
         [HttpDelete("avatar/{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> DeleteUserAvatar([FromRoute] int userId)
+        public async Task<IActionResult> DeleteUserAvatar([FromRoute] string userId)
         {
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 await _usersService.DeleteUserAvatar(queriedUser);
-                return Ok("Avatar deleted successfully.");
+                return Ok("Pomyślnie usunięto avatar.");
             }
 
             return Forbid();
@@ -198,13 +205,13 @@ namespace learn.it.Controllers
 
         [HttpGet("{userId}/join-requests")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetUserJoinRequests([FromRoute] int userId)
+        public async Task<IActionResult> GetUserJoinRequests([FromRoute] string userId)
         {
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                var joinRequests = await _groupsService.GetAllGroupJoinRequestsForUser(userId);
+                var joinRequests = await _groupsService.GetAllGroupJoinRequestsForUser(queriedUser.UserId);
                 return Ok(joinRequests);
             }
 
@@ -213,9 +220,9 @@ namespace learn.it.Controllers
 
         [HttpGet("{userId}/groups")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetUserGroups([FromRoute] int userId)
+        public async Task<IActionResult> GetUserGroups([FromRoute] string userId)
         {
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -224,6 +231,55 @@ namespace learn.it.Controllers
             }
 
             return Forbid();
+        }
+
+        [HttpGet("{userId}/achievements")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetUserAchievements([FromRoute] string userId)
+        {
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
+
+            if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
+            {
+                var achievements = (await _achievementsService.GetUserAchievements(queriedUser.UserId))
+                    .Select(a => new UserAchievementsDto(a)).ToList();
+                return Ok(achievements);
+            }
+
+            return Forbid();
+        }
+
+        [HttpDelete("{userId}/achievement/{achievementId}")]
+        [Authorize(Policy = "Admins")]
+        public async Task<IActionResult> RevokeAchievement([FromRoute] string userId, [FromRoute] int achievementId)
+        {
+            //to make sure both of these exist
+            var user = await _usersService.GetUserByIdOrUsername(userId);
+            await _achievementsService.GetAchievement(achievementId);
+
+            await _achievementsService.RevokeAchievement(user.UserId, achievementId);
+            return Ok();
+        }
+
+        [HttpPost("{userId}/achievement/{achievementId}")]
+        [Authorize(Policy = "Admins")]
+        public async Task<IActionResult> GrantAchievement([FromRoute] string userId, [FromRoute] int achievementId)
+        {
+            //to make sure both of these exist
+            var user = await _usersService.GetUserByIdOrUsername(userId);
+            await _achievementsService.GetAchievement(achievementId);
+
+            await _achievementsService.GrantAchievement(user.UserId, achievementId);
+            return Ok();
+        }
+
+        [HttpGet("lastActivity")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetLastActivity()
+        {
+            var answers = await _answersService.GetAnswersByUserId(ControllerUtils.GetUserIdFromClaims(User));
+            answers = answers.OrderByDescending(x => x.AnswerTimestamp).Take(3);
+            return Ok(answers);
         }
     }
 }
