@@ -2,7 +2,7 @@
 {
     public class UsernameExistsException : AlreadyExistsException
     {
-        public UsernameExistsException() : base("Username already exists.")
+        public UsernameExistsException() : base("Użytkownik o takiej nazwie już istnieje.")
         {
         }
     }

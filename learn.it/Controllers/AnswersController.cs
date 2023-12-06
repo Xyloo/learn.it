@@ -92,7 +92,7 @@ namespace learn.it.Controllers
                 var addedAnswer = await _answersService.AddAnswer(newAnswer);
                 return CreatedAtAction(nameof(GetAnswerById), new { answerId = addedAnswer.AnswerId }, new AnswerDto(addedAnswer));
             }
-            throw new ForbiddenAccessException("You cannot access this study set");
+            throw new ForbiddenAccessException("Nie masz dostępu do tego zestawu.");
         }
 
         [HttpGet("{answerId}")]
@@ -104,7 +104,7 @@ namespace learn.it.Controllers
             {
                 return Ok(new AnswerDto(answer));
             }
-            throw new ForbiddenAccessException("You cannot access this answer");
+            throw new ForbiddenAccessException("Nie masz dostępu do tej odpowiedzi.");
         }
 
         [HttpGet("flashcard/{flashcardId}")]
@@ -123,7 +123,7 @@ namespace learn.it.Controllers
                 var answers = (await _answersService.GetAnswersByFlashcardId(flashcardId)).ToList().Where(g => g.User.UserId == user.UserId).ToList();
                 return Ok(answers.Select(a => new AnswerDto(a)));
             }
-            throw new ForbiddenAccessException("You cannot access this study set");
+            throw new ForbiddenAccessException("Nie masz dostępu do tego zestawu.");
         }
 
         [HttpGet("user/{userId}")]
@@ -135,7 +135,7 @@ namespace learn.it.Controllers
             {
                 return Ok((await _answersService.GetAnswersByUserId(userId)).Select(a => new AnswerDto(a)));
             }
-            throw new ForbiddenAccessException("You cannot access this user's answers");
+            throw new ForbiddenAccessException("Nie masz dostępu do odpowiedzi tego użytkownika.");
         }
 
         [HttpDelete("{answerId}")]

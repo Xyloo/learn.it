@@ -44,35 +44,35 @@ builder.Services.AddProblemDetails(options =>
 {
     options.Map<NotFoundException>(ex => new ProblemDetails
     {
-        Title = "Not found",
+        Title = "Nie odnaleziono obiektu",
         Detail = ex.Message,
         Status = StatusCodes.Status404NotFound
     });
 
     options.Map<AlreadyExistsException>(ex => new ProblemDetails
     {
-        Title = "Data already exists",
+        Title = "Istniej¹ce dane",
         Detail = ex.Message,
         Status = StatusCodes.Status409Conflict
     });
 
     options.Map<InvalidInputDataException>(ex => new ProblemDetails
     {
-        Title = "Invalid data",
+        Title = "Nieprawid³owe dane",
         Detail = ex.Message,
         Status = StatusCodes.Status400BadRequest
     });
 
     options.Map<UnauthorizedAccessException>(ex => new ProblemDetails
     {
-        Title = "User unauthorized",
+        Title = "U¿ytkownik niezalogowany",
         Detail = ex.Message,
         Status = StatusCodes.Status401Unauthorized
     });
 
     options.Map<ForbiddenAccessException>(ex => new ProblemDetails
     {
-        Title = "Access forbidden",
+        Title = "Brak uprawnieñ",
         Detail = ex.Message,
         Status = StatusCodes.Status403Forbidden
     });

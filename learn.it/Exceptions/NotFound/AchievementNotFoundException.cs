@@ -2,7 +2,7 @@
 {
     public class AchievementNotFoundException : NotFoundException
     {
-        public AchievementNotFoundException(int id) : base($"Achievement with id {id} was not found")
+        public AchievementNotFoundException(int id) : base($"Nie odnaleziono osiągnięcia o id [{id}].")
         {
         }
     }

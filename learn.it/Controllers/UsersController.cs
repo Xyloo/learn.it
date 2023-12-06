@@ -49,7 +49,7 @@ namespace learn.it.Controllers
                     Timestamp = DateTime.UtcNow
                 };
                 await _loginsService.CreateLogin(login);
-                throw new InvalidInputDataException("Username and/or password are incorrect.");
+                throw new InvalidInputDataException("Nazwa użytkownika i/lub hasło są niepoprawne.");
             }
 
             var lastLogin = user.LastLogin;

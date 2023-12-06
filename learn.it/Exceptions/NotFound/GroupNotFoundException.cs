@@ -2,7 +2,7 @@
 {
     public class GroupNotFoundException : NotFoundException
     {
-        public GroupNotFoundException(string id) : base($"Group with id: [{id}] was not found.")
+        public GroupNotFoundException(string id) : base($"Nie odnaleziono grupy o id [{id}].")
         {
         }
     }

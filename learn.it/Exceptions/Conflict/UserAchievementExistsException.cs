@@ -2,7 +2,7 @@
 {
     public class UserAchievementExistsException : AlreadyExistsException
     {
-        public UserAchievementExistsException(int userId, int achievementId) : base($"User with id {userId} already has achievement with id {achievementId}.")
+        public UserAchievementExistsException(int userId, int achievementId) : base($"Użytkownik o id [{userId}] zdobył już osiągnięcie o id [{achievementId}].")
         {
         }
     }

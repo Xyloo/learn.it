@@ -152,7 +152,7 @@ namespace learn.it.Controllers
                     if (updatedFlashcard.Term is null)
                     {
                         throw new InvalidInputDataException(
-                            "Term cannot be null if changing from an image flashcard to a text flashcard.");
+                            "Pojęcie musi być zmienione w przypadku zmiany z fiszki z obrazem na tekstową.");
                     }
                     await _flashcardsService.RemoveImage(flashcard);
                     flashcard.IsTermText = true;

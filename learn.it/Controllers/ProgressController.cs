@@ -68,7 +68,7 @@ namespace learn.it.Controllers
                 return Ok(progress);
             }
 
-            throw new FlashcardUserProgressNotFoundException($"No user progress was found for study set id: [{studySetId}]");
+            throw new FlashcardUserProgressNotFoundException($"Nie odnaleziono postępu użytkownika dla id zestawu [{studySetId}].");
         }
 
         [HttpPut("{flashcardId}")]
