@@ -20,13 +20,15 @@ namespace learn.it.Controllers
         private readonly ILoginsService _loginsService;
         private readonly IGroupsService _groupsService;
         private readonly IAchievementsService _achievementsService;
+        private readonly IAnswersService _answersService;
 
-        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService)
+        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService, IAnswersService answersService)
         {
             _usersService = usersService;
             _loginsService = loginsService;
             _groupsService = groupsService;
             _achievementsService = achievementsService;
+            _answersService = answersService;
         }
 
         [HttpPost("login")]
@@ -112,7 +114,7 @@ namespace learn.it.Controllers
 
         [HttpPut("{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateRequest, [FromRoute] int userId)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateRequest, [FromRoute] string userId)
         {
             var validationContext = new ValidationContext(updateRequest);
             var validation = updateRequest.Validate(validationContext);
@@ -121,11 +123,11 @@ namespace learn.it.Controllers
                 throw new InvalidInputDataException(validation.ToString());
             }
 
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                var updatedUser = await _usersService.UpdateUser(userId, updateRequest);
+                var updatedUser = await _usersService.UpdateUser(queriedUser.UserId, updateRequest);
                 return Ok(updatedUser.ToSelfUserResponseDto());
             }
 
@@ -156,14 +158,13 @@ namespace learn.it.Controllers
 
         [HttpDelete("{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> DeleteUser([FromRoute] int userId)
+        public async Task<IActionResult> DeleteUser([FromRoute] string userId)
         {
-
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                await _usersService.DeleteUser(userId);
+                await _usersService.DeleteUser(queriedUser.UserId);
                 return Ok();
             }
 
@@ -172,16 +173,16 @@ namespace learn.it.Controllers
 
         [HttpPost("avatar/{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> UpdateUserAvatar([FromRoute] int userId, IFormFile avatar)
+        public async Task<IActionResult> UpdateUserAvatar([FromRoute] string userId, IFormFile avatar)
         {
             ControllerUtils.CheckIfValidImage(avatar);
 
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 var updatedUser = await _usersService.UpdateUserAvatar(queriedUser, avatar);
-                return Ok("Avatar updated successfully.");
+                return Ok("Pomyślnie zaktualizowano avatar.");
             }
 
             return Forbid();
@@ -189,14 +190,14 @@ namespace learn.it.Controllers
 
         [HttpDelete("avatar/{userId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> DeleteUserAvatar([FromRoute] int userId)
+        public async Task<IActionResult> DeleteUserAvatar([FromRoute] string userId)
         {
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 await _usersService.DeleteUserAvatar(queriedUser);
-                return Ok("Avatar deleted successfully.");
+                return Ok("Pomyślnie usunięto avatar.");
             }
 
             return Forbid();
@@ -204,13 +205,13 @@ namespace learn.it.Controllers
 
         [HttpGet("{userId}/join-requests")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetUserJoinRequests([FromRoute] int userId)
+        public async Task<IActionResult> GetUserJoinRequests([FromRoute] string userId)
         {
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                var joinRequests = await _groupsService.GetAllGroupJoinRequestsForUser(userId);
+                var joinRequests = await _groupsService.GetAllGroupJoinRequestsForUser(queriedUser.UserId);
                 return Ok(joinRequests);
             }
 
@@ -219,9 +220,9 @@ namespace learn.it.Controllers
 
         [HttpGet("{userId}/groups")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetUserGroups([FromRoute] int userId)
+        public async Task<IActionResult> GetUserGroups([FromRoute] string userId)
         {
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
@@ -234,13 +235,13 @@ namespace learn.it.Controllers
 
         [HttpGet("{userId}/achievements")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetUserAchievements([FromRoute] int userId)
+        public async Task<IActionResult> GetUserAchievements([FromRoute] string userId)
         {
-            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId);
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                var achievements = (await _achievementsService.GetUserAchievements(userId))
+                var achievements = (await _achievementsService.GetUserAchievements(queriedUser.UserId))
                     .Select(a => new UserAchievementsDto(a)).ToList();
                 return Ok(achievements);
             }
@@ -270,6 +271,15 @@ namespace learn.it.Controllers
 
             await _achievementsService.GrantAchievement(user.UserId, achievementId);
             return Ok();
+        }
+
+        [HttpGet("lastActivity")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetLastActivity()
+        {
+            var answers = await _answersService.GetAnswersByUserId(ControllerUtils.GetUserIdFromClaims(User));
+            answers = answers.OrderByDescending(x => x.AnswerTimestamp).Take(3);
+            return Ok(answers);
         }
     }
 }

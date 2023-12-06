@@ -34,7 +34,7 @@ namespace learn.it.Controllers
             _achievementsService = achievementsService;
         }
 
-        [HttpGet]
+        [HttpGet("allSets")]
         [Authorize(Policy = "Admins")]
         public async Task<IActionResult> GetAllStudySets()
         {
@@ -248,6 +248,14 @@ namespace learn.it.Controllers
                 return NoContent();
             }
             throw new StudySetNotFoundException(studySetId);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPublicStudySets()
+        {
+            var sets = await _studySetsService.GetAllStudySets();
+            sets = sets.Where(s => s.Visibility == Visibility.Public).Take(6);
+            return Ok(sets);
         }
     }
 }
