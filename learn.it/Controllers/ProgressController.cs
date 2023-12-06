@@ -95,6 +95,7 @@ namespace learn.it.Controllers
                     progress.IsMastered = true;
                     progress.MasteredTimestamp = DateTime.UtcNow;
                 }
+                await _flashcardProgressService.UpdateFlashcardUserProgress(progress);
                 return Ok(progressDto);
             }
             throw new FlashcardUserProgressNotFoundException(user.UserId, flashcardId);
