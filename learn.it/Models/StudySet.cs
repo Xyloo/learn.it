@@ -8,24 +8,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
-[Table("study_sets", Schema = "learnitdb")]
+[Table("StudySets", Schema = "learnitdb")]
 [Index("GroupId", Name = "fk_study_sets_groups1_idx")]
 [Index("CreatorId", Name = "fk_study_sets_users1_idx")]
 public partial class StudySet
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("study_set_id")]
     public int StudySetId { get; set; }
 
-    [Column("name")]
     public string Name { get; set; }
 
-    [Column("description")]
     public string? Description { get; set; }
 
     [Required]
-    [Column("visibility")]
     public Visibility Visibility { get; set; }
 
     [ForeignKey("CreatorId")]

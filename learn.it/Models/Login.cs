@@ -6,27 +6,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace learn.it.Models;
 
-[Table("logins", Schema = "learnitdb")]
+[Table("Logins", Schema = "learnitdb")]
 [Index("UserId", Name = "fk_logins_users_idx")]
 public partial class Login
 {
     [Key]
-    [Column("login_id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int LoginId { get; private set; }
 
-    [Column("timestamp")]
     [Precision(0)]
     public DateTime Timestamp { get; set; }
 
-    [Column("is_successful")]
     public bool IsSuccessful { get; set; }
 
-    [Column("user_agent")]
     [StringLength(255)]
     public string UserAgent { get; set; }
 
-    [Column("ip_address")]
     [StringLength(45)]
     public string IpAddress { get; set; }
 

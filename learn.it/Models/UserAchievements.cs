@@ -9,21 +9,18 @@ using Microsoft.EntityFrameworkCore;
 namespace learn.it.Models;
 
 [PrimaryKey("UserId", "AchievementId")]
-[Table("user_achievements", Schema = "learnitdb")]
+[Table("UserAchievements", Schema = "learnitdb")]
 [Index("AchievementId", Name = "fk_user_achievements_achievements1")]
 [Index("UserId", Name = "fk_user_achievements_users1_idx")]
 public partial class UserAchievements
 {
     [Key, ForeignKey("Achievement")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("achievement_id")]
     public int AchievementId { get; set; }
 
     [Key, ForeignKey("User")]
-    [Column("user_id")]
     public int UserId { get; set; }
 
-    [Column("timestamp")]
     [Precision(0)]
     public DateTime Timestamp { get; set; }
 

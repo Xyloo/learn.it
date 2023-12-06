@@ -135,6 +135,7 @@ builder.Services.AddScoped<IFlashcardsService, FlashcardsService>();
 builder.Services.AddScoped<IFlashcardUserProgressService, FlashcardUserProgressService>();
 builder.Services.AddScoped<IAnswersService, AnswersService>();
 builder.Services.AddScoped<IAchievementsService, AchievementsService>();
+builder.Services.AddScoped<IImageHandler, ImageHandler>();
 
 builder.Services.AddCors(options =>
 {

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
-[Table("users", Schema = "learnitdb")]
+[Table("Users", Schema = "learnitdb")]
 [Index("PermissionId", Name = "fk_users_permissions1_idx")]
 [Index("Email", Name = "users$email_UNIQUE", IsUnique = true)]
 [Index("Username", Name = "users$username_UNIQUE", IsUnique = true)]
@@ -18,28 +18,21 @@ public partial class User
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("user_id")]
     public int UserId { get; set; }
 
-    [Column("username")]
     public string Username { get; set; }
 
-    [Column("email")]
     public string Email { get; set; }
 
-    [Column("password")]
     public string Password { get; set; }
 
-    [Column("create_time")]
     [Precision(0)]
     public DateTime CreateTime { get; set; }
 
-    [Column("last_login")]
     [Precision(0)]
     public DateTime? LastLogin { get; set; }
 
     //this can be null - the database has a default value of "default.png"
-    [Column("avatar")]
     public string? Avatar { get; set; }
 
     [InverseProperty("User")]
