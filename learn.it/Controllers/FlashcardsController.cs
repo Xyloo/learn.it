@@ -207,11 +207,9 @@ namespace learn.it.Controllers
                 { 
                     await _flashcardsService.RemoveImage(flashcard);
                 }
-                var imageFileName = await _flashcardsService.AddImage(image);
-                flashcard.Term = imageFileName;
                 flashcard.Definition = updatedFlashcard.Definition ?? flashcard.Definition;
                 flashcard.StudySet = newStudySet ?? flashcard.StudySet;
-                var updated = await _flashcardsService.UpdateFlashcard(flashcard);
+                var updated = await _flashcardsService.UpdateToImageFlashcard(flashcard, image);
                 return Ok(new FlashcardDto(updated));
             }
             throw new StudySetNotFoundException(studySet.StudySetId);

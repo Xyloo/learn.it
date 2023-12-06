@@ -1,5 +1,4 @@
-﻿using learn.it.Exceptions.Conflict;
-using learn.it.Exceptions.NotFound;
+﻿using learn.it.Exceptions.NotFound;
 using learn.it.Models;
 using learn.it.Repos.Interfaces;
 using Microsoft.EntityFrameworkCore;

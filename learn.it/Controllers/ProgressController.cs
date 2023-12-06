@@ -1,5 +1,4 @@
 ﻿using learn.it.Exceptions.NotFound;
-using learn.it.Models;
 using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;

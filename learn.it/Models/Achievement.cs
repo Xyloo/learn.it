@@ -18,22 +18,18 @@ public partial class Achievement
     [Column("achievement_id")]
     public int AchievementId { get; private set; }
 
-    [Required]
     [Column("name")]
     [StringLength(150)]
     public string Name { get; set; }
 
-    [Required]
     [Column("image_path")]
     [StringLength(100)]
     public string ImagePath { get; set; }
 
-    [Required]
     [Column("description")]
     [StringLength(200)]
     public string Description { get; set; }
 
-    [Required]
     [Column("predicate")]
     public string Predicate { get; set; }
 

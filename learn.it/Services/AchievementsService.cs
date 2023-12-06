@@ -1,29 +1,34 @@
-﻿using System;
-using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
-using learn.it.Exceptions;
+﻿using learn.it.Exceptions;
 using learn.it.Exceptions.Conflict;
 using learn.it.Exceptions.NotFound;
 using learn.it.Models;
 using learn.it.Repos.Interfaces;
 using learn.it.Services.Interfaces;
-using Microsoft.OpenApi.Extensions;
+using learn.it.Utils;
 
 namespace learn.it.Services
 {
     public class AchievementsService : IAchievementsService
     {
         private readonly IAchievementsRepository _achievementsRepository;
-        public AchievementsService(IAchievementsRepository achievementsRepository)
+        private readonly IImageHandler _imageHandler;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private const string AchievementImagesDirectory = "AchievementImages";
+        public AchievementsService(IAchievementsRepository achievementsRepository, IImageHandler imageHandler, IWebHostEnvironment webHostEnvironment)
         {
             _achievementsRepository = achievementsRepository;
+            _imageHandler = imageHandler;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<Achievement> AddAchievement(Achievement achievement)
+        public async Task<Achievement> AddAchievement(Achievement achievement, IFormFile achievementImage)
         {
             if (!CheckPredicateValid(achievement.Predicate))
                 throw new InvalidInputDataException(
                     "Predykat nie spełnia wymogów walidacji. Oczekiwana postać: pole operator liczba, np. TotalLoginDays > 5. Dopuszczalne wartości: pola UserStats, operatory >= == <= > <, liczba int.");
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, AchievementImagesDirectory);
+            var imageFilename = await _imageHandler.AddImage(achievementImage, path);
+            achievement.ImagePath = imageFilename;
             await _achievementsRepository.AddAchievement(achievement);
             return achievement;
         }
@@ -50,6 +55,15 @@ namespace learn.it.Services
                     "Predykat nie spełnia wymogów walidacji. Oczekiwana postać: pole operator liczba, np. TotalLoginDays > 5. Dopuszczalne wartości: pola UserStats, operatory >= == <= > <, liczba int.");
             await _achievementsRepository.UpdateAchievement(achievement);
             return achievement;
+        }
+
+        public async Task<Achievement> UpdateAchievementImage(Achievement achievement, IFormFile newImage)
+        {
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, AchievementImagesDirectory);
+            var imageFilename = await _imageHandler.AddImage(newImage, path);
+            achievement.ImagePath = imageFilename;
+            var updatedAchievement = await _achievementsRepository.UpdateAchievement(achievement);
+            return updatedAchievement;
         }
 
         public async Task<IEnumerable<UserAchievements>> GetUserAchievements(int userId)

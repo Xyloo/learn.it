@@ -20,14 +20,16 @@ namespace learn.it.Services
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IImageHandler _imageHandler;
+        private const string AvatarsDirectory = "Avatars";
 
-        public UsersService(IUsersRepository usersRepository, IPermissionsRepository permissionsRepository, IWebHostEnvironment webHostEnvironment)
+        public UsersService(IUsersRepository usersRepository, IPermissionsRepository permissionsRepository, IWebHostEnvironment webHostEnvironment, IImageHandler imageHandler)
         {
             _usersRepository = usersRepository;
             _passwordHasher = new PasswordHasher<User>();
             _permissionsRepository = permissionsRepository;
             _webHostEnvironment = webHostEnvironment;
-
+            _imageHandler = imageHandler;
         }
 
         public async Task<User> CreateUser(User userData)
@@ -60,6 +62,13 @@ namespace learn.it.Services
 
         public async Task DeleteUserAvatar(User user)
         {
+            if (user.Avatar == null)
+                return;
+
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, AvatarsDirectory, user.Avatar);
+            if(File.Exists(path))
+                File.Delete(path);
+
             user.Avatar = null;
             await _usersRepository.UpdateUser(user);
         }
@@ -160,17 +169,9 @@ namespace learn.it.Services
 
         public async Task<User> UpdateUserAvatar(User user, IFormFile avatar)
         {
-            const string avatarsDirectory = "Avatars";
-            var path = Path.Combine(_webHostEnvironment.WebRootPath, avatarsDirectory);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            var fileName = $"{user.UserId}{Path.GetExtension(avatar.FileName)}";
-            var filePath = Path.Combine(path, fileName);
-            await using var stream = new FileStream(filePath, FileMode.Create);
-            await avatar.CopyToAsync(stream);
+            
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, AvatarsDirectory);
+            var fileName = await _imageHandler.AddImage(avatar, path);
             user.Avatar = fileName;
             return await _usersRepository.UpdateUser(user);
         }
