@@ -16,7 +16,7 @@ public partial class Group
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int GroupId { get; private set; }
+    public int GroupId { get; set; }
 
     public string Name { get; set; }
 

@@ -185,14 +185,15 @@ namespace learn.it.Services
         {
             await GetGroupByIdOrThrow(groupId);
             var requests = (await _groupsRepository.GetAllGroupJoinRequestsForGroup(groupId)).ToList();
-            requests.ForEach(async r =>
+            for (int i = requests.Count - 1; i >= 0; i--)
             {
+                var r = requests[i];
                 if (r.ExpiresAt < DateTime.UtcNow)
                 {
                     await _groupsRepository.RemoveGroupJoinRequest(r);
-                    requests.Remove(r);
+                    requests.RemoveAt(i);
                 }
-            });
+            }
             return requests.Select(r => r.ToGroupJoinRequestDto());
         }
 
@@ -200,14 +201,15 @@ namespace learn.it.Services
         {
             await GetUserByIdOrThrow(userId);
             var requests = (await _groupsRepository.GetAllGroupJoinRequestsForUser(userId)).ToList();
-            requests.ForEach(async r =>
+            for (int i = requests.Count - 1; i >= 0; i--)
             {
+                var r = requests[i];
                 if (r.ExpiresAt < DateTime.UtcNow)
                 {
                     await _groupsRepository.RemoveGroupJoinRequest(r);
-                    requests.Remove(r);
+                    requests.RemoveAt(i);
                 }
-            });
+            }
             return requests.Select(r => r.ToGroupJoinRequestDto());
         }
 

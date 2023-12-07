@@ -151,7 +151,7 @@ namespace learn.it.Services
 
         }
 
-        //wanted form: x.SomeUserStatsField operator number, eg. x.TotalLoginDays >= 5
+        //wanted form: SomeUserStatsField operator number, eg. TotalLoginDays >= 5
         private bool CheckPredicateValid(string predicate)
         {
             var tokens = predicate.Split(" ");
