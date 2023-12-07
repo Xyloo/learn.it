@@ -49,8 +49,8 @@ namespace learn.it.Services
             userData.Password = hashedPassword;
             userData.CreateTime = DateTime.UtcNow;
             userData.Permissions = await _permissionsRepository.GetPermissionByName("User") ?? throw new InvalidInputDataException("Nie odnaleziono poziomu uprawnień 'User'.");
-            userData.UserStats = new UserStats();
-            userData.UserPreferences = new UserPreferences();
+            userData.UserStats = new UserStats {User = userData};
+            userData.UserPreferences = new UserPreferences {User = userData};
             return await _usersRepository.CreateUser(userData);
         }
 
@@ -169,7 +169,6 @@ namespace learn.it.Services
 
         public async Task<User> UpdateUserAvatar(User user, IFormFile avatar)
         {
-            
             var path = Path.Combine(_webHostEnvironment.WebRootPath, AvatarsDirectory);
             var fileName = await _imageHandler.AddImage(avatar, path);
             user.Avatar = fileName;

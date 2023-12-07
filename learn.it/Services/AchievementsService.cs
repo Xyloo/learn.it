@@ -35,7 +35,7 @@ namespace learn.it.Services
 
         public async Task<Achievement> GetAchievement(int id)
         {
-            return await _achievementsRepository.GetAchievement(id);
+            return await _achievementsRepository.GetAchievement(id) ?? throw new AchievementNotFoundException(id);
         }
 
         public async Task<IEnumerable<Achievement>> GetAchievements()
@@ -93,9 +93,9 @@ namespace learn.it.Services
         public async Task<IEnumerable<Achievement>> GrantAchievementsContainingPredicate(string predicate,
             User user)
         {
-            var loginAchievements = await GetAchievementsContainingInPredicate(predicate);
+            var matchingAchievements = await GetAchievementsContainingInPredicate(predicate);
             var userAchievements = (await GetUserAchievements(user.UserId)).Select(g => g.Achievement);
-            var notGrantedAchievements = loginAchievements.Where(a => userAchievements.All(x => x.Name != a.Name)).ToList();
+            var notGrantedAchievements = matchingAchievements.Where(a => userAchievements.All(x => x.Name != a.Name)).ToList();
             List<Achievement> grantedAchievements = new();
             foreach (var achievement in notGrantedAchievements)
             {

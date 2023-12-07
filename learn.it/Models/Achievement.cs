@@ -15,7 +15,7 @@ public partial class Achievement
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int AchievementId { get; private set; }
+    public int AchievementId { get; set; }
 
     [StringLength(150)]
     public string Name { get; set; }

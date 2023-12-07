@@ -34,9 +34,9 @@ namespace learn.it.Repos
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Achievement> GetAchievement(int id)
+        public async Task<Achievement?> GetAchievement(int id)
         {
-            var achievement = await _dbContext.Achievements.FindAsync(id) ?? throw new AchievementNotFoundException(id);
+            var achievement = await _dbContext.Achievements.FindAsync(id);
             return achievement;
         }
 

@@ -7,7 +7,7 @@ namespace learn.it.Repos.Interfaces
         Task<Achievement> AddAchievement(Achievement achievement);
         Task<UserAchievements> GrantAchievementToUser(UserAchievements userAchievements);
         Task RemoveAchievementFromUser(UserAchievements userAchievements);
-        Task<Achievement> GetAchievement(int id);
+        Task<Achievement?> GetAchievement(int id);
         Task<IEnumerable<Achievement>> GetAchievements();
         Task<IEnumerable<UserAchievements> > GetUserAchievementsByUserId(int userId);
         Task<IEnumerable<Achievement>> GetAchievementsContainingInPredicate(string predicate);
