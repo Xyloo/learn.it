@@ -4,13 +4,13 @@ namespace learn.it.Models.Dtos.Request
 {
     public class CreateAnswerDto
     {
-        [Required(ErrorMessage = "Answer correctness must be provided.")]
+        [Required(ErrorMessage = "Poprawność odpowiedzi musi być podana.")]
         public bool IsCorrect { get; set; }
         //I can't believe I can't just use int.MaxValue in the error string.
-        [Range(0, int.MaxValue, ErrorMessage = "Answer time should be provided in milliseconds and must be in the range between 0 and 2147483647.")]
-        [Required(ErrorMessage = "Answer time must be provided.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Czas odpowiedzi powinien być podany w milisekundach i być w zakresie od 0 do 2147483647.")]
+        [Required(ErrorMessage = "Czas odpowiedzi musi być podany.")]
         public int AnswerTime { get; set; }
-        [Required(ErrorMessage = "Flashcard id must be provided.")]
+        [Required(ErrorMessage = "ID fiszki musi być podane.")]
         public int FlashcardId { get; set; }
     }
 }

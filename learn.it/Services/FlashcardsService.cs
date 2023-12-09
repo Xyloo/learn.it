@@ -3,6 +3,7 @@ using learn.it.Models.Dtos.Response;
 using learn.it.Repos.Interfaces;
 using learn.it.Services.Interfaces;
 using learn.it.Exceptions.NotFound;
+using learn.it.Utils;
 
 namespace learn.it.Services
 {
@@ -10,12 +11,14 @@ namespace learn.it.Services
     {
         private readonly IFlashcardsRepository _flashcardsRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IImageHandler _imageHandler;
         private const string FlashcardImagesFolder = "FlashcardImages";
 
-        public FlashcardsService(IFlashcardsRepository flashcardsRepository, IWebHostEnvironment webHostEnvironment)
+        public FlashcardsService(IFlashcardsRepository flashcardsRepository, IWebHostEnvironment webHostEnvironment, IImageHandler imageHandler)
         {
             _flashcardsRepository = flashcardsRepository;
             _webHostEnvironment = webHostEnvironment;
+            _imageHandler = imageHandler;
         }
 
         public async Task<IEnumerable<FlashcardDto>> GetFlashcardsInSet(int studySetId)
@@ -42,13 +45,22 @@ namespace learn.it.Services
 
         public async Task<Flashcard> AddImageFlashcard(Flashcard flashcard, IFormFile image)
         {
-            var filename = await AddImage(image);
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, FlashcardImagesFolder);
+            var filename = await _imageHandler.AddImage(image, path);
             flashcard.Term = filename;
             return await _flashcardsRepository.AddFlashcard(flashcard);
         }
 
         public async Task<Flashcard> UpdateFlashcard(Flashcard flashcard)
         {
+            return await _flashcardsRepository.UpdateFlashcard(flashcard);
+        }
+
+        public async Task<Flashcard> UpdateToImageFlashcard(Flashcard flashcard, IFormFile image)
+        {
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, FlashcardImagesFolder);
+            var filename = await _imageHandler.AddImage(image, path);
+            flashcard.Term = filename;
             return await _flashcardsRepository.UpdateFlashcard(flashcard);
         }
 
@@ -61,26 +73,6 @@ namespace learn.it.Services
             }
             flashcard.Term = string.Empty;
             await _flashcardsRepository.UpdateFlashcard(flashcard);
-        }
-
-        public async Task<string> AddImage(IFormFile image)
-        {
-            var path = Path.Combine(_webHostEnvironment.WebRootPath, FlashcardImagesFolder);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
-            var filePath = Path.Combine(path, fileName);
-            while (File.Exists(filePath))
-            {
-                fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
-                filePath = Path.Combine(path, fileName);
-            }
-            await using var stream = new FileStream(filePath, FileMode.Create);
-            await image.CopyToAsync(stream);
-            return fileName;
         }
 
         public async Task RemoveFlashcard(int id)

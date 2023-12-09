@@ -2,7 +2,7 @@
 {
     public class EmailExistsException : AlreadyExistsException
     {
-        public EmailExistsException() : base("Email already exists.")
+        public EmailExistsException() : base("Istnieje już użytkownik o takim adresie email.")
         {
         }
     }

@@ -24,7 +24,7 @@ namespace learn.it.Services
         {
             if (await _usersRepository.GetUserById(group.Creator.UserId) == null)
             {
-                throw new UserNotFoundException("Creator does not exist");
+                throw new UserNotFoundException(group.Creator.UserId.ToString());
             }
 
             return await _groupsRepository.CreateGroup(group);
@@ -94,7 +94,7 @@ namespace learn.it.Services
 
             if (group.Users.Any(u => u.UserId == user.UserId))
             {
-                throw new InvalidInputDataException("User is already a member of this group.");
+                throw new InvalidInputDataException("Użytkownik należy już do tej grupy.");
             }
 
             group.Users.Add(user);
@@ -108,7 +108,7 @@ namespace learn.it.Services
 
             if (group.Users.All(u => u.UserId != user.UserId))
             {
-                throw new InvalidInputDataException("User is not a member of this group.");
+                throw new InvalidInputDataException("Użytkownik nie należy do podanej grupy.");
             }
 
             group.Users.Remove(user);
@@ -128,17 +128,17 @@ namespace learn.it.Services
 
             if (group.Users.Any(u => u.UserId == userId))
             {
-                throw new InvalidInputDataException("User is already a member of this group.");
+                throw new InvalidInputDataException("Użytkownik należy już do tej grupy.");
             }
 
             if (userId != creatorId && group.Creator.UserId != creatorId)
             {
-                throw new InvalidInputDataException("Only the group creator can create an invitation.");
+                throw new InvalidInputDataException("Tylko twórca grupy może zapraszać innych użytkowników.");
             }
 
             if (await _groupsRepository.GetGroupJoinRequest(userId, groupId) != null)
             {
-                throw new InvalidInputDataException("User has already requested to join this group.");
+                throw new InvalidInputDataException("Użytkownik złożył już prośbę o dołączenie do tej grupy.");
             }
 
             var groupJoinRequest = new GroupJoinRequest
@@ -174,7 +174,7 @@ namespace learn.it.Services
             if (groupJoinRequest.ExpiresAt < DateTime.UtcNow)
             {
                 await _groupsRepository.RemoveGroupJoinRequest(groupJoinRequest);
-                throw new InvalidInputDataException("Group join request has expired.");
+                throw new InvalidInputDataException("Prośba o dołączenie wygasła.");
             }
             group.Users.Add(user);
             await _groupsRepository.UpdateGroup(group);

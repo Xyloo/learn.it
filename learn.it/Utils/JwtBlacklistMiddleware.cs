@@ -16,7 +16,7 @@
             if (InvalidJwtTokens.IsTokenInvalid(token))
             {
                 context.Response.StatusCode = 401; // Unauthorized
-                await context.Response.WriteAsync("Invalid token - please log in again.");
+                await context.Response.WriteAsync("Token nieprawidłowy - zaloguj się ponownie.");
             }
             else
             {

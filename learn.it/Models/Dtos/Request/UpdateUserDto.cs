@@ -20,18 +20,18 @@ namespace learn.it.Models.Dtos.Request
         {
             if (Username is null && Email is null && Password is null)
             {
-                yield return new ValidationResult("At least one field must be filled.", new[] { nameof(Username), nameof(Email), nameof(Password) });
+                yield return new ValidationResult("Przynajmniej jedno pole musi być uzupełnione.", new[] { nameof(Username), nameof(Email), nameof(Password) });
             }
 
             if (Username is not null)
             {
                 if (Username.Length < 3 || Username.Length > 32)
                 {
-                    yield return new ValidationResult("Username cannot be shorter than 3 and longer than 32 characters.", new[] { nameof(Username) });
+                    yield return new ValidationResult("Nazwa użytkownika nie może być krótsza niż 3 i dłuższa niż 32 znaki.", new[] { nameof(Username) });
                 }
                 else if (!UsernameRegex().IsMatch(Username))
                 {
-                    yield return new ValidationResult("Username cannot start with a number and can only contain letters, numbers and underscores.", new[] { nameof(Username) });
+                    yield return new ValidationResult("Nazwa użytkownika nie może zaczynać się od cyfry i może zawierać tylko litery, cyfry i podkreślniki.", new[] { nameof(Username) });
                 }
             }
 
@@ -39,11 +39,11 @@ namespace learn.it.Models.Dtos.Request
             {
                 if (Email.Length > 255)
                 {
-                    yield return new ValidationResult("Email cannot be longer than 255 characters.", new[] { nameof(Email) });
+                    yield return new ValidationResult("Email nie może być dłuższy niż 255 znaków.", new[] { nameof(Email) });
                 }
                 else if (!new EmailAddressAttribute().IsValid(Email))
                 {
-                    yield return new ValidationResult("Email is not valid.", new[] { nameof(Email) });
+                    yield return new ValidationResult("Email jest niepoprawny.", new[] { nameof(Email) });
                 }
             }
 
@@ -51,11 +51,11 @@ namespace learn.it.Models.Dtos.Request
             {
                 if (Password.Length < 8 || Password.Length > 255)
                 {
-                    yield return new ValidationResult("Password cannot be shorter than 8 and longer than 255 characters.", new[] { nameof(Password) });
+                    yield return new ValidationResult("Hasło nie może być krótsze niż 8 i dłuższe niż 255 znaków.", new[] { nameof(Password) });
                 }
                 else if (!PasswordRegex().IsMatch(Password))
                 {
-                    yield return new ValidationResult("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter and one number.", new[] { nameof(Password) });
+                    yield return new ValidationResult("Hasło musi składać się z przynajmniej 8 znaków i zawierać przynajmniej jedną wielką literę, jedną małą literę oraz jedną cyfrę.", new[] { nameof(Password) });
                 }
             }
         }

@@ -17,24 +17,24 @@ namespace learn.it.Controllers
     public class StudySetsController : ControllerBase
     {
         private readonly IStudySetsService _studySetsService;
-
         private readonly IUsersService _usersService;
-
         private readonly IGroupsService _groupsService;
         private readonly IFlashcardsService _flashcardsService;
         private readonly IFlashcardUserProgressService _flashcardProgressService;
+        private readonly IAchievementsService _achievementsService;
 
         public StudySetsController(IStudySetsService studySetsService, IUsersService usersService,
-            IGroupsService groupsService, IFlashcardsService flashcardsService, IFlashcardUserProgressService flashcardUserProgressService)
+            IGroupsService groupsService, IFlashcardsService flashcardsService, IFlashcardUserProgressService flashcardUserProgressService, IAchievementsService achievementsService)
         {
             _studySetsService = studySetsService;
             _usersService = usersService;
             _groupsService = groupsService;
             _flashcardsService = flashcardsService;
             _flashcardProgressService = flashcardUserProgressService;
+            _achievementsService = achievementsService;
         }
 
-        [HttpGet]
+        [HttpGet("allSets")]
         [Authorize(Policy = "Admins")]
         public async Task<IActionResult> GetAllStudySets()
         {
@@ -67,7 +67,7 @@ namespace learn.it.Controllers
         {
             var studySets = (await _studySetsService.GetStudySetsContainingName(name)).ToList();
             if (studySets.Count == 0)
-                throw new InvalidInputDataException($"No study sets containing [{name}] found.");
+                throw new InvalidInputDataException($"Nie odnaleziono zestawów zawierających frazę [{name}].");
 
             User? user;
             try
@@ -118,7 +118,7 @@ namespace learn.it.Controllers
                 {
                     group = await _groupsService.GetGroupById(studySet.GroupId.Value);
                     if (!await _groupsService.IsUserInGroup(user.UserId, group.GroupId))
-                        throw new InvalidInputDataException("User is not a member of the group.");
+                        throw new InvalidInputDataException("Użytkownik nie należy do tej grupy.");
                 }
                 catch (GroupNotFoundException)
                 {
@@ -127,7 +127,7 @@ namespace learn.it.Controllers
             }
 
             if (group is null && studySet.Visibility == Visibility.Group)
-                throw new InvalidInputDataException("Cannot create a group study set without a group.");
+                throw new InvalidInputDataException("Nie można utworzyć zestawu o widoczności grupy bez uzupełnienia pola grupy.");
 
             var newStudySet = new StudySet()
             {
@@ -144,6 +144,8 @@ namespace learn.it.Controllers
 
             user.UserStats.TotalSetsAdded++;
             await _usersService.UpdateUser(user);
+
+            await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalSetsAdded), user);
 
             return CreatedAtAction(nameof(GetStudySetDetails), new { studySetId = createdStudySet.StudySetId },
                                new StudySetDto(createdStudySet));
@@ -201,6 +203,8 @@ namespace learn.it.Controllers
                     userToIncrement.UserStats.TotalFlashcardsMastered += masteredFlashcards;
                     userToIncrement.UserStats.TotalSetsMastered++;
                     await _usersService.UpdateUser(userToIncrement);
+                    await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalSetsMastered), user);
+                    await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsMastered), user);
                 }
 
                 return Ok(new StudySetDto(updatedStudySet));
@@ -244,6 +248,14 @@ namespace learn.it.Controllers
                 return NoContent();
             }
             throw new StudySetNotFoundException(studySetId);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPublicStudySets()
+        {
+            var sets = await _studySetsService.GetAllStudySets();
+            sets = sets.Where(s => s.Visibility == Visibility.Public).Take(6);
+            return Ok(sets);
         }
     }
 }

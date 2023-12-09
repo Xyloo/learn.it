@@ -2,7 +2,7 @@
 {
     public class AnswerNotFoundException : NotFoundException
     {
-        public AnswerNotFoundException(int id) : base($"Answer with id [{id}] was not found.")
+        public AnswerNotFoundException(int id) : base($"Nie odnaleziono odpowiedzi o id [{id}].")
         {
         }
     }

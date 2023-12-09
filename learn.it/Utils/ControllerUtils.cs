@@ -14,9 +14,9 @@ namespace learn.it.Utils
             switch (file.Length)
             {
                 case 0:
-                    throw new InvalidInputDataException("No file was provided.");
+                    throw new InvalidInputDataException("Nie wysłano pliku.");
                 case > 10 * 1024 * 1024:
-                    throw new InvalidInputDataException("The provided file is too large (max 10 MB).");
+                    throw new InvalidInputDataException("Wysłany plik jest zbyt duży (maks. 10 MB).");
             }
 
             // Check the file content type
@@ -30,7 +30,7 @@ namespace learn.it.Utils
             var extension = Path.GetExtension(file.FileName).ToLower();
 
             if(!allowedExtensions.Contains(extension))
-                throw new InvalidInputDataException("The provided file is not an image.");
+                throw new InvalidInputDataException("Przesłany plik nie jest obrazem.");
         }
 
         public static bool IsUserAdminOrSelf(User user, ClaimsPrincipal data)
@@ -48,7 +48,8 @@ namespace learn.it.Utils
             var parseSuccessful = int.TryParse(data.FindFirst(ClaimTypes.NameIdentifier)?.Value!, out int creatorId);
             if (!parseSuccessful)
             {
-                throw new InvalidCredentialException("Could not parse user id from token");
+                //should never happen
+                throw new InvalidCredentialException("Uzyskanie id użytkownika z tokenu nie było możliwe.");
             }
             return creatorId;
         }

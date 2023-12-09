@@ -19,13 +19,15 @@ namespace learn.it.Controllers
         private readonly IStudySetsService _studySetsService;
         private readonly IUsersService _usersService;
         private readonly IFlashcardUserProgressService _flashcardProgressService;
+        private readonly IAchievementsService _achievementsService;
 
-        public FlashcardsController(IFlashcardsService flashcardsService, IStudySetsService studySetsService, IUsersService usersService, IFlashcardUserProgressService flashcardProgressService)
+        public FlashcardsController(IFlashcardsService flashcardsService, IStudySetsService studySetsService, IUsersService usersService, IFlashcardUserProgressService flashcardProgressService, IAchievementsService achievementsService)
         {
             _flashcardsService = flashcardsService;
             _studySetsService = studySetsService;
             _usersService = usersService;
             _flashcardProgressService = flashcardProgressService;
+            _achievementsService = achievementsService;
         }
 
         [HttpGet("{flashcardId}")]
@@ -77,6 +79,7 @@ namespace learn.it.Controllers
 
                 user.UserStats.TotalFlashcardsAdded++;
                 await _usersService.UpdateUser(user);
+                await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsAdded), user);
 
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
@@ -104,6 +107,7 @@ namespace learn.it.Controllers
 
                 user.UserStats.TotalFlashcardsAdded++;
                 await _usersService.UpdateUser(user);
+                await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsAdded), user);
 
                 return CreatedAtAction(nameof(GetFlashcard), new { flashcardId = createdFlashcard.FlashcardId }, new FlashcardDto(createdFlashcard));
             }
@@ -148,7 +152,7 @@ namespace learn.it.Controllers
                     if (updatedFlashcard.Term is null)
                     {
                         throw new InvalidInputDataException(
-                            "Term cannot be null if changing from an image flashcard to a text flashcard.");
+                            "Pojęcie musi być zmienione w przypadku zmiany z fiszki z obrazem na tekstową.");
                     }
                     await _flashcardsService.RemoveImage(flashcard);
                     flashcard.IsTermText = true;
@@ -207,11 +211,9 @@ namespace learn.it.Controllers
                 { 
                     await _flashcardsService.RemoveImage(flashcard);
                 }
-                var imageFileName = await _flashcardsService.AddImage(image);
-                flashcard.Term = imageFileName;
                 flashcard.Definition = updatedFlashcard.Definition ?? flashcard.Definition;
                 flashcard.StudySet = newStudySet ?? flashcard.StudySet;
-                var updated = await _flashcardsService.UpdateFlashcard(flashcard);
+                var updated = await _flashcardsService.UpdateToImageFlashcard(flashcard, image);
                 return Ok(new FlashcardDto(updated));
             }
             throw new StudySetNotFoundException(studySet.StudySetId);

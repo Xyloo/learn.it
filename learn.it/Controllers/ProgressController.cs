@@ -1,5 +1,4 @@
 ﻿using learn.it.Exceptions.NotFound;
-using learn.it.Models;
 using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;
@@ -69,7 +68,7 @@ namespace learn.it.Controllers
                 return Ok(progress);
             }
 
-            throw new FlashcardUserProgressNotFoundException($"No user progress was found for study set id: [{studySetId}]");
+            throw new FlashcardUserProgressNotFoundException($"Nie odnaleziono postępu użytkownika dla id zestawu [{studySetId}].");
         }
 
         [HttpPut("{flashcardId}")]
@@ -96,6 +95,7 @@ namespace learn.it.Controllers
                     progress.IsMastered = true;
                     progress.MasteredTimestamp = DateTime.UtcNow;
                 }
+                await _flashcardProgressService.UpdateFlashcardUserProgress(progress);
                 return Ok(progressDto);
             }
             throw new FlashcardUserProgressNotFoundException(user.UserId, flashcardId);

@@ -16,12 +16,12 @@ namespace learn.it.Utils
         {
             if (authorizeResult.Challenged)
             {
-                throw new UnauthorizedAccessException("Unauthorized - please log in.");
+                throw new UnauthorizedAccessException("Brak dostępu - zaloguj się ponownie.");
             }
 
             if (authorizeResult.Forbidden)
             {
-                throw new ForbiddenAccessException("Forbidden - you do not have access to this endpoint.");
+                throw new ForbiddenAccessException("Brak dostępu - niewystarczające uprawnienia.");
 
             }
             
