@@ -6,7 +6,7 @@ namespace learn.it.Models.Dtos.Response
     {
         public int UserId { get; set; }
         public int CreatorId { get; set; }
-        public int GroupId { get; set; }
+        public BasicGroupDto Group { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
 
@@ -14,7 +14,7 @@ namespace learn.it.Models.Dtos.Response
         {
             UserId = groupJoinRequest.UserId;
             CreatorId = groupJoinRequest.Creator.UserId;
-            GroupId = groupJoinRequest.GroupId;
+            Group = new BasicGroupDto(groupJoinRequest.Group);
             CreatedAt = groupJoinRequest.CreatedAt;
             ExpiresAt = groupJoinRequest.ExpiresAt;
         }

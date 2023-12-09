@@ -341,6 +341,7 @@ namespace learn.it.Tests.UnitTests
                 UserId = 1,
                 Username = "creator"
             };
+            var group1 = await _groupsService.GetGroupById(1);
             _groupsRepositoryMock.Setup(x => x.GetAllGroupJoinRequestsForGroup(1)).ReturnsAsync(new List<GroupJoinRequest>
             {
                 new()
@@ -349,7 +350,8 @@ namespace learn.it.Tests.UnitTests
                     ExpiresAt = DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
                     GroupId = 1,
                     UserId = 3,
-                    Creator = creator
+                    Creator = creator,
+                    Group = group1
                 },
                 new()
                 {
@@ -357,7 +359,13 @@ namespace learn.it.Tests.UnitTests
                     ExpiresAt = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
                     GroupId = 1,
                     UserId = 2,
-                    Creator = creator
+                    Creator = creator,
+                    Group = new Group()
+                    {
+                        GroupId = 2,
+                        Name = "group2",
+                        Creator = creator
+                    }
                 }
             });
             var result = await _groupsService.GetAllGroupJoinRequestsForGroup(1);
@@ -374,6 +382,7 @@ namespace learn.it.Tests.UnitTests
                 UserId = 1,
                 Username = "creator"
             };
+            var group1 = await _groupsService.GetGroupById(1);
             _groupsRepositoryMock.Setup(x => x.GetAllGroupJoinRequestsForUser(3)).ReturnsAsync(new List<GroupJoinRequest>
             {
                 new()
@@ -382,7 +391,8 @@ namespace learn.it.Tests.UnitTests
                     ExpiresAt = DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
                     GroupId = 1,
                     UserId = 3,
-                    Creator = creator
+                    Creator = creator,
+                    Group = group1
                 },
                 new()
                 {
@@ -390,7 +400,13 @@ namespace learn.it.Tests.UnitTests
                     ExpiresAt = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
                     GroupId = 2,
                     UserId = 3,
-                    Creator = creator
+                    Creator = creator,
+                    Group = new Group()
+                    {
+                        GroupId = 2,
+                        Name = "group2",
+                        Creator = creator
+                    }
                 }
             });
             var result = await _groupsService.GetAllGroupJoinRequestsForUser(3);

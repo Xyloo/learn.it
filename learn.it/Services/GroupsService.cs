@@ -147,7 +147,8 @@ namespace learn.it.Services
                 UserId = userId,
                 CreatedAt = DateTime.UtcNow,
                 ExpiresAt = DateTime.UtcNow.AddDays(7),
-                Creator = creator
+                Creator = creator,
+                Group = group
             };
 
             return await _groupsRepository.CreateGroupJoinRequest(groupJoinRequest);
