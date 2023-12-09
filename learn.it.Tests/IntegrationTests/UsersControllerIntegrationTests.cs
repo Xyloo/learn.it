@@ -98,6 +98,7 @@ namespace learn.it.Tests.IntegrationTests
         [Test]
         [Category("User")]
         [Category("Login")]
+        [Category("GetUserAchievements")]
         public async Task Login_GrantsAchievements_IfValidLogin()
         {
             var client = _factory.CreateClient();
@@ -351,6 +352,24 @@ namespace learn.it.Tests.IntegrationTests
             var response = await client.PostAsync($"/api/users/avatar/{_users[1].UserId}", formContent);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        [Category("User")]
+        [Category("ValidInput")]
+        [Category("GetUserGroups")]
+        public async Task GetUserGroups_ReturnsOK_IfUserExists()
+        {
+            var client = _factory.CreateClient();
+            var token = await Utilities.LoginUser(_users[1], client);
+
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.GetAsync($"/api/users/{_users[1].UserId}/groups");
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var data = await response.Content.ReadFromJsonAsync<List<GroupDto>>();
+            Assert.That(data, Has.Count.EqualTo(1));
+            Assert.That(data[0].GroupId, Is.EqualTo(_groups[0].GroupId));
         }
     }
 }
