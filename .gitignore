@@ -364,3 +364,6 @@ FodyWeavers.xsd
 /learn.it/efpt.config.json
 /learn.it/wwwroot/Avatars
 /learn.it/wwwroot/FlashcardImages
+/learn.it/Migrations/20231204211601_test.cs
+/learn.it/Migrations/20231204211601_test.Designer.cs
+/learn.it/Migrations/LearnitDbContextModelSnapshot.cs
