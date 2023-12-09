@@ -41,6 +41,7 @@ namespace learn.it.Tests
             {
                 new()
                 {
+                    UserId = 1,
                     Username = "testAdmin",
                     Email = "admin@admin.com",
                     Permissions = permissions[0],
@@ -51,6 +52,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    UserId = 2,
                     Username = "testUser1",
                     Email = "user1@user.com",
                     Permissions = permissions[1],
@@ -61,6 +63,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    UserId = 3,
                     Username = "testUser2",
                     Email = "user2@user.com",
                     Permissions = permissions[1],
@@ -71,6 +74,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    UserId = 4,
                     Username = "testUser3",
                     Email = "user3@user.com",
                     Permissions = permissions[1],
@@ -89,6 +93,7 @@ namespace learn.it.Tests
             {
                 new()
                 {
+                    AchievementId = 1,
                     Name = "1 Total Login",
                     ImagePath = "testPath1.jpg",
                     Description = "testDescription1",
@@ -97,6 +102,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    AchievementId = 2,
                     Name = "1 Consecutive Login",
                     ImagePath = "testPath2.jpg",
                     Description = "testDescription2",
@@ -105,6 +111,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    AchievementId = 3,
                     Name = "1 Flashcard Added",
                     ImagePath = "testPath3.jpg",
                     Description = "testDescription3",
@@ -113,6 +120,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    AchievementId = 4,
                     Name = "1 Set Added",
                     ImagePath = "testPath4.jpg",
                     Description = "testDescription4",
@@ -121,6 +129,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    AchievementId = 5,
                     Name = "1 Flashcard Mastered",
                     ImagePath = "testPath5.jpg",
                     Description = "testDescription5",
@@ -129,6 +138,7 @@ namespace learn.it.Tests
 
                 new()
                 {
+                    AchievementId = 6,
                     Name = "1 Set Mastered",
                     ImagePath = "testPath6.jpg",
                     Description = "testDescription6",
@@ -140,6 +150,7 @@ namespace learn.it.Tests
             {
                 new()
                 {
+                    GroupId = 1,
                     Creator = users[1], //testUser1
                     Name = "testGroup1",
                     Users = new List<User>

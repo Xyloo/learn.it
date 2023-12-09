@@ -64,7 +64,7 @@ namespace learn.it.Controllers
             {
                 var progress = await _flashcardProgressService.GetFlashcardUserProgressesByUserId(user.UserId);
                 var flashcards = await _flashcardsService.GetFlashcardsInSet(studySetId);
-                progress = progress.Where(p => flashcards.Any(f => f.Id == p.Flashcard.Id));
+                progress = progress.Where(p => flashcards.Any(f => f.FlashcardId == p.Flashcard.FlashcardId));
                 return Ok(progress);
             }
 

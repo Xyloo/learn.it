@@ -30,9 +30,9 @@ namespace learn.it.Controllers
 
         [HttpGet("{achievementId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetAchievementDetails([FromRoute] int id)
+        public async Task<IActionResult> GetAchievementDetails([FromRoute] int achievementId)
         {
-            var achievement = await _achievementsService.GetAchievement(id);
+            var achievement = await _achievementsService.GetAchievement(achievementId);
             return Ok(achievement);
         }
 

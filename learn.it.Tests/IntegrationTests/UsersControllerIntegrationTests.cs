@@ -95,6 +95,7 @@ namespace learn.it.Tests.IntegrationTests
             Assert.That(data.LastLogin, Is.Not.Null);
             Assert.That(data.UserStats.ConsecutiveLoginDays, Is.EqualTo(1));
             Assert.That(data.UserStats.TotalLoginDays, Is.EqualTo(1));
+            Assert.That(data.UserId, Is.EqualTo(_users[1].UserId));
         }
 
         [Test]
@@ -118,7 +119,7 @@ namespace learn.it.Tests.IntegrationTests
             response = await client.GetAsync($"/api/users/{_users[1].UserId}/achievements");
             response.EnsureSuccessStatusCode();
             var achievementsData = await response.Content.ReadFromJsonAsync<List<UserAchievementsDto>>();
-            achievementsData.Sort((a,b) => a.Achievement.Id - b.Achievement.Id);
+            achievementsData.Sort((a,b) => a.Achievement.AchievementId - b.Achievement.AchievementId);
 
             Assert.That(achievementsData.Count, Is.EqualTo(2));
             Assert.That(achievementsData[0].Achievement.Name, Is.EqualTo(_achievements[0].Name));
