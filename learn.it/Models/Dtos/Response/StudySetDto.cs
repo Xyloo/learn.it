@@ -2,6 +2,7 @@
 {
     public class StudySetDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public Visibility Visibility { get; set; }
@@ -11,6 +12,7 @@
 
         public StudySetDto(StudySet studySet)
         {
+            Id = studySet.StudySetId;
             Name = studySet.Name;
             Description = studySet.Description;
             Visibility = studySet.Visibility;
