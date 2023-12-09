@@ -4,35 +4,72 @@
       <h1 class="login-title">learn.it</h1>
       <img src="/assets/project-logo.svg" alt="Icon" class="login-icon" />
     </div>
-    <form class="login-form">
+    <form [formGroup]="form" class="login-form" (ngSubmit)="onSubmit()">
       <div class="form-group icon-input">
         <label for="email" class="input-label">Email</label>
         <img src="/assets/email-icon.svg" alt="Email Icon" class="input-icon" />
-        <input type="email" class="form-control" id="email" placeholder="Email">
+        <input type="email" class="form-control" id="email" placeholder="Email" formControlName="email"
+               [class.error-border]="submitted && f.email.errors"
+               [class.sucess-border]="successMessage">
+      </div>
+      <div *ngIf="submitted && f.email.errors" class="error-message">
+        <div *ngIf="f.email.errors.required">Email jest wymagany.</div>
+        <div *ngIf="f.email.errors.email">Proszę wprowadzić prawidłowy adres email.</div>
+        <div *ngIf="f.email.errors?.customError" class="error-message">
+          {{ f.email.errors.customError }}
+        </div>
+        <div class="margin-20"></div>
       </div>
       <div class="form-group icon-input">
         <label for="username" class="input-label">Nazwa użytkownika</label>
         <img src="/assets/user-icon.svg" alt="User Icon" class="input-icon" />
-        <input type="text" class="form-control" id="username" placeholder="Nazwa użytkownika">
+        <input type="text" class="form-control" id="username" placeholder="Nazwa użytkownika" formControlName="username"
+               [class.error-border]="submitted && f.username.errors"
+               [class.sucess-border]="successMessage">
+      </div>
+      <div *ngIf="submitted && f.username.errors" class="error-message">
+        <div *ngIf="f.username.errors.required">Nazwa użytkownika jest wymagana.</div>
+        <div *ngIf="f.username.errors?.customError" class="error-message">
+          {{ f.username.errors.customError }}
+        </div>
+        <div class="margin-20"></div>
       </div>
       <div class="form-group icon-input">
         <label for="password" class="input-label">Hasło</label>
         <img src="/assets/password-icon.svg" alt="Password Icon" class="input-icon" />
-        <input type="password" class="form-control" id="password" placeholder="Hasło">
+        <input type="password" class="form-control" id="password" placeholder="Hasło" formControlName="password"
+               [class.sucess-border]="successMessage">
+      </div>
+      <div *ngIf="submitted && f.password.errors" class="error-message">
+        <div *ngIf="f.password.errors.required">Hasło jest wymagane.</div>
+        <div *ngIf="f.password.errors.pattern">{{passwordRegexErrorMessage}}</div>
+        <div class="margin-20"></div>
       </div>
       <div class="form-group icon-input">
         <label for="confirm-password" class="input-label">Powtórz hasło</label>
         <img src="/assets/password-icon.svg" alt="Password Icon" class="input-icon" />
-        <input type="password" class="form-control" id="confirm-password" placeholder="Powtórz hasło">
+        <input type="password" class="form-control" id="confirm-password" placeholder="Powtórz hasło" formControlName="confirmPassword"
+               [class.sucess-border]="successMessage">
       </div>
-
-
+      <div *ngIf="submitted && f.confirmPassword.errors" class="error-message">
+        <div *ngIf="f.confirmPassword.errors.required">Należy ponownie wpisać hasło.</div>
+      </div>
+      <div *ngIf="form.get('confirmPassword')?.errors?.mustMatch" class="error-message">
+        Hasła nie są identyczne.
+      </div>
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
       <div class="register-link">
-        <a href="#" class="btn-login sign-up-btn">Zarejestruj się</a>
+        <button type="submit" class="btn-login sign-up-btn">Zarejestruj się</button>
       </div>
 
       <div class="decorator">
         <div class="line"></div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-popup">
+        {{ errorMessage }}
       </div>
 
       <div class="login-form-footer">

@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; 
+  height: 100vh;
 }
 
 .login-panel {
@@ -20,13 +20,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 .login-icon {
   width: 5rem;
   height: auto;
-  margin-left: 8px; 
+  margin-left: 8px;
 }
 
 
@@ -40,6 +39,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .icon-input {
   position: relative;
 }
@@ -48,7 +48,7 @@
   position: absolute;
   left: 10px;
   top: 55%;
-  height: 22px; 
+  height: 22px;
   width: auto;
 }
 
@@ -72,7 +72,7 @@
   margin: 5px 0px 15px 5px;
   color: #ffffff; /* White text color */
   text-decoration: none;
-  text-align:left;
+  text-align: left;
 }
 
 .btn-login {
@@ -93,15 +93,15 @@
   width: 100%;
 }
 
-.register-link{
-    display: flex;
-    margin-top: 10px;
-    width: 100%;
+.register-link {
+  display: flex;
+  margin-top: 10px;
+  width: 100%;
 }
 
-.register-link a {
-  text-decoration: none;
-}
+  .register-link a {
+    text-decoration: none;
+  }
 
 
 .decorator {
@@ -109,14 +109,14 @@
   display: flex;
   align-items: center;
   text-align: center;
-  justify-content: space-around; 
+  justify-content: space-around;
 }
 
 .line {
-  flex-grow: 1; 
-  background: #FFFFFF; 
-  height: 1px; 
-  margin: 0 10px; 
+  flex-grow: 1;
+  background: #FFFFFF;
+  height: 1px;
+  margin: 0 10px;
   width: 100%;
 }
 
@@ -125,25 +125,25 @@
   text-align: start;
   text-font: bold;
   font-size: 1.2rem;
-  margin-bottom: 5px; 
-  color: #FFFFFF; 
-  font-size: 1rem; 
+  margin-bottom: 5px;
+  color: var(--text-color);
+  font-size: 1rem;
 }
 
 .text {
   white-space: nowrap;
-  padding: 0 10px; 
-  color: #FFFFFF; 
+  padding: 0 10px;
+  color: var(--text-color);
 }
 
 .login-form-footer {
-  text-align: center; 
+  text-align: center;
 }
 
-.login-form-footer span {
-  margin-right: 0.5rem;
-  color: #fff; /* or any color that fits your design */
-}
+  .login-form-footer span {
+    margin-right: 0.5rem;
+    color: var(--text-color);
+  }
 
 .login-link {
   color: var(--green-light-main); /* Use a color that stands out against the form background */
@@ -156,7 +156,38 @@
     text-decoration: none;
   }
 
+.margin-20 {
+  margin: 20px 0px;
+}
 
+.error-message {
+  color: var(--red);
+}
+
+.error-border {
+  border: 1px solid red;
+}
+
+.sucess-border{
+  border: 1px solid green;
+}
+
+.success-message{
+    color: var(--green-light);
+}
+
+.error-popup {
+  position: fixed; /* Fixed or absolute positioning */
+  top: 92%; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffcccc; /* Light red background */
+  color: #a94442; /* Dark red text */
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Make sure it's above other content */
+}
 
 @media max-width: 768px) {
   .login-panel {
