@@ -1,6 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ChooseGroupDialogComponent } from '../choose-group-dialog/choose-group-dialog.component';
+
 
 @Component({
   selector: 'app-learningSetManager',
@@ -10,7 +13,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class LearningSetManagerComponent {
   @ViewChild('newFlashcard') newFlashcardElement: ElementRef | undefined;
   @ViewChild('flashcardContainer') flashcardContainerElement: ElementRef | undefined;
-  constructor(private location: Location, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private location: Location,
+    private router: Router,
+    private route: ActivatedRoute,
+    private dialog: MatDialog) { }
 
   isEditMode: boolean = false;
 
@@ -73,4 +80,15 @@ export class LearningSetManagerComponent {
     //set creation logic
   }
 
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ChooseGroupDialogComponent, {
+      width: '250px',
+      data: { /* any data you want to pass */ }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      // Use result.groupId and result.visibility
+    });
+  }
 }
