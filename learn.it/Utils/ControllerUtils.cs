@@ -87,12 +87,16 @@ namespace learn.it.Utils
             var userDtos = new List<AnonymousUserResponseDto>();
             // Initialize users list with users who have mastered the first flashcard
             var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().FlashcardId)).ToList();
+            if (firstFlashcardProgress.Count == 0)
+                return new List<User>();
             userDtos.AddRange(firstFlashcardProgress.Where(p => p.IsMastered).Select(p => p.User));
 
             // Iterate through the remaining flashcards
             foreach (var flashcard in flashcards.Skip(1))
             {
                 var progress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcard.FlashcardId)).ToList();
+                if (progress.Count == 0)
+                    continue;
                 var usersWhoMasteredFlashcard = progress.Where(p => p.IsMastered).Select(p => p.User).ToList();
 
                 // Update users list to only include users who have mastered the current flashcard
