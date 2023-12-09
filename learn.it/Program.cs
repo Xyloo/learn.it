@@ -123,12 +123,14 @@ builder.Services.AddScoped<ILoginsRepository, LoginsRepository>();
 builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
 builder.Services.AddScoped<IStudySetsRepository, StudySetsRepository>();
 builder.Services.AddScoped<IFlashcardsRepository, FlashcardsRepository>();
+builder.Services.AddScoped<IFlashcardUserProgressRepository, FlashcardUserProgressRepository>();
 
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ILoginsService, LoginsService>();
 builder.Services.AddScoped<IGroupsService, GroupsService>();
 builder.Services.AddScoped<IStudySetsService, StudySetsService>();
 builder.Services.AddScoped<IFlashcardsService, FlashcardsService>();
+builder.Services.AddScoped<IFlashcardUserProgressService, FlashcardUserProgressService>();
 
 builder.Services.AddCors(options =>
 {
@@ -170,6 +172,8 @@ app.UseProblemDetails();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<JwtBlacklistMiddleware>();
@@ -179,7 +183,5 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
-
-app.UseCors("AllowAll");
 
 app.Run();
