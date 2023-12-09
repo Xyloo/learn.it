@@ -20,11 +20,10 @@ namespace learn.it.Controllers
         private readonly ILoginsService _loginsService;
         private readonly IGroupsService _groupsService;
         private readonly IStudySetsService _studySetsService;
-        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IStudySetsService studySetsService)
         private readonly IAchievementsService _achievementsService;
         private readonly IAnswersService _answersService;
 
-        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService, IAnswersService answersService)
+        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService, IAnswersService answersService, IStudySetsService studySetsService)
         {
             _usersService = usersService;
             _loginsService = loginsService;

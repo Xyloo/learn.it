@@ -136,6 +136,9 @@ builder.Services.AddScoped<IFlashcardUserProgressService, FlashcardUserProgressS
 builder.Services.AddScoped<IAnswersService, AnswersService>();
 builder.Services.AddScoped<IAchievementsService, AchievementsService>();
 
+
+builder.Services.AddScoped<IImageHandler, ImageHandler>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
