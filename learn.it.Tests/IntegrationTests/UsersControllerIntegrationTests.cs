@@ -19,23 +19,20 @@ namespace learn.it.Tests.IntegrationTests
     public class UsersControllerIntegrationTests
     {
         private  WebApplicationFactory<Program> _factory;
-        private List<Permission> _permissions;
         private List<User> _users;
         private List<Achievement> _achievements;
         private List<Group> _groups;
         private LearnitDbContext _db;
-
-        public UsersControllerIntegrationTests()
-        {
-            
-        }
 
         [SetUp]
         public void Init()
         {
             _factory = new TestWebApplicationFactory<Program>();
             _db = _factory.Services.CreateScope().ServiceProvider.GetRequiredService<LearnitDbContext>();
-            (_permissions, _users, _achievements, _groups) = DatabaseSeeder.Prepare(_db);
+            var data = DatabaseSeeder.Prepare(_db);
+            _users = data.Users;
+            _achievements = data.Achievements;
+            _groups = data.Groups;
         }
 
         [Test]

@@ -12,16 +12,15 @@ namespace learn.it.Tests
     public static class DatabaseSeeder
     {
 
-        public static (List<Permission> Permissions, List<User> Users, List<Achievement> Achievements, List<Group> Groups) Prepare(LearnitDbContext context)
+        public static (List<Permission> Permissions, List<User> Users, List<Achievement> Achievements, List<Group> Groups, List<StudySet> StudySets, List<Flashcard> Flashcards) Prepare(LearnitDbContext context)
         {
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            var f = Seed(context);
-            return f;
+            return Seed(context);
         }
 
-        public static (List<Permission> Permissions, List<User> Users, List<Achievement> Achievements, List<Group> Groups) Seed(LearnitDbContext context)
+        public static (List<Permission> Permissions, List<User> Users, List<Achievement> Achievements, List<Group> Groups, List<StudySet> StudySets, List<Flashcard> Flashcards) Seed(LearnitDbContext context)
         {
             var hasher = new PasswordHasher<User>();
 
@@ -158,23 +157,100 @@ namespace learn.it.Tests
                         users[1], //testUser1
                         users[2] //testUser2
                     }
+                },
+                new()
+                {
+                    GroupId = 2,
+                    Creator = users[3], //testUser3
+                    Name = "testGroup2",
+                    Users = new List<User>
+                    {
+                        users[3] //testUser3
+                    }
                 }
             };
             users[1].GroupCreator = new List<Group> { groups[0] };
             users[1].Groups = new List<Group> { groups[0] };
             users[2].Groups = new List<Group> { groups[0] };
 
+            var studySets = new List<StudySet>
+            {
+                 new()
+                 {
+                    StudySetId = 1,
+                    Creator = users[1], //testUser1
+                    Name = "testSet1",
+                    Description = "testDescription1",
+                    Visibility = Visibility.Public,
+                 },
+                 new()
+                 {
+                     StudySetId = 2,
+                     Creator = users[3], //testUser3
+                     Name = "testSet2",
+                     Description = "testDescription2",
+                     Visibility = Visibility.Private,
+                 },
+                 new()
+                 {
+                     StudySetId = 3,
+                     Creator = users[1], //testUser3
+                     Name = "testSet3",
+                     Description = "testDescription3",
+                     Visibility = Visibility.Group,
+                     Group = groups[0]
+                 }
+            };
+
+            var flashcards = new List<Flashcard>
+            {
+                new()
+                {
+                    Term = "testTerm1",
+                    Definition = "testDefinition1",
+                    StudySet = studySets[0],
+                    IsTermText = true
+                },
+                new()
+                {
+                    Term = "testTerm2",
+                    Definition = "testDefinition2",
+                    StudySet = studySets[0],
+                    IsTermText = true
+                },
+                new()
+                {
+                    Term = "testTerm3",
+                    Definition = "testDefinition3",
+                    StudySet = studySets[1],
+                    IsTermText = true
+                },
+                new()
+                {
+                    Term = "testTerm4",
+                    Definition = "testDefinition4",
+                    StudySet = studySets[2],
+                    IsTermText = false
+                }
+            };
+
+            studySets[0].Flashcards = new List<Flashcard> { flashcards[0], flashcards[1] };
+            studySets[1].Flashcards = new List<Flashcard> { flashcards[2] };
+            studySets[2].Flashcards = new List<Flashcard> { flashcards[3] };
+
             context.Permissions.AddRange(permissions);
             context.Users.AddRange(users);
             context.Achievements.AddRange(achievements);
             context.Groups.AddRange(groups);
+            context.StudySets.AddRange(studySets);
+            context.Flashcards.AddRange(flashcards);
             context.SaveChanges();
 
             users[0].Password = "testAdmin1";
             users[1].Password = "testUser1";
             users[2].Password = "testUser2";
             users[3].Password = "testUser3";
-            return (Permissions: permissions, Users: users, Achievements: achievements, Groups: groups);
+            return (Permissions: permissions, Users: users, Achievements: achievements, Groups: groups, StudySets: studySets, Flashcards: flashcards);
         }
     }
 }

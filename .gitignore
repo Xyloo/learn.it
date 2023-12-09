@@ -362,5 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /learn.it/efpt.config.json
-/learn.it/wwwroot/Avatars
-/learn.it/wwwroot/FlashcardImages
+/learn.it/wwwroot/*
