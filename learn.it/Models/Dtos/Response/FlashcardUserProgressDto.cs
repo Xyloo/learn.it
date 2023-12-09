@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class FlashcardUserProgressDto
     {
@@ -17,6 +19,11 @@
             ConsecutiveCorrectAnswers = flashcardUserProgress.ConsecutiveCorrectAnswers;
             IsMastered = flashcardUserProgress.IsMastered;
             MasteredTimestamp = flashcardUserProgress.MasteredTimestamp;
+        }
+
+        [JsonConstructor]
+        public FlashcardUserProgressDto()
+        {
         }
     }
 }

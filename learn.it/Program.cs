@@ -190,3 +190,5 @@ app.MapFallbackToFile("index.html");
 app.UseCors("AllowAll");
 
 app.Run();
+
+public partial class Program { }

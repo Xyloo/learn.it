@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class AchievementDto
     {
@@ -13,6 +15,11 @@
             Name = achievement.Name;
             Description = achievement.Description;
             ImagePath = achievement.ImagePath;
+        }
+
+        [JsonConstructor]
+        public AchievementDto()
+        {
         }
     }
 }

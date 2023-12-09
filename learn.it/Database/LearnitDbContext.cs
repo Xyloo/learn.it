@@ -211,7 +211,7 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(u => u.UserPreferences).WithOne(us => us.User).HasForeignKey<UserPreferences>(us => us.UserId).OnDelete(DeleteBehavior.ClientCascade);
 
             entity.Property(e => e.UserId).ValueGeneratedOnAdd();
-            entity.Property(e => e.Avatar).HasDefaultValueSql("(N'default.png')");
+            //entity.Property(e => e.Avatar).HasDefaultValueSql("(N'default.png')");
             entity.Property(e => e.CreateTime).HasDefaultValueSql("(getdate())");
 
             entity.HasOne(d => d.Permissions).WithMany(p => p.Users)

@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class AnswerDto
     {
@@ -15,6 +17,11 @@
             AnswerTime = answer.AnswerTime;
             Flashcard = new FlashcardDto(answer.Flashcard);
             AnswerTimestamp = answer.AnswerTimestamp;
+        }
+
+        [JsonConstructor]
+        public AnswerDto()
+        {
         }
     }
 }

@@ -318,7 +318,7 @@ namespace learn.it.Tests.UnitTests
         [Test]
         [Category("AcceptGroupJoinRequest")]
         [Category("ValidInput")]
-        public async Task AcceptGroupJoinRequest_ValidInput_DoesNotThrow()
+        public void AcceptGroupJoinRequest_ValidInput_DoesNotThrow()
         {
             _groupsRepositoryMock.Setup(x => x.GetGroupJoinRequest(3, 1)).ReturnsAsync(new GroupJoinRequest
             {

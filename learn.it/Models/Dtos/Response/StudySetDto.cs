@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class StudySetDto
     {
@@ -17,6 +19,11 @@
             Creator = new AnonymousUserResponseDto(studySet.Creator);
             Flashcards = studySet.Flashcards.Select(flashcard => new FlashcardDto(flashcard)).ToList();
             Group = studySet.Group != null ? new BasicGroupDto(studySet.Group) : null;
+        }
+
+        [JsonConstructor]
+        public StudySetDto()
+        {
         }
     }
 }

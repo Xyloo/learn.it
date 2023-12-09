@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class SelfUserResponseDto : AnonymousUserResponseDto
     {
@@ -19,6 +21,11 @@
             Permissions = user.Permissions.Name;
             UserPreferences = user.UserPreferences;
             UserStats = user.UserStats;
+        }
+
+        [JsonConstructor]
+        public SelfUserResponseDto()
+        {
         }
     }
 }

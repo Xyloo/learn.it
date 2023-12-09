@@ -4,6 +4,7 @@ using System.Security.Claims;
 using learn.it.Exceptions;
 using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
+using SixLabors.ImageSharp;
 
 namespace learn.it.Utils
 {
@@ -18,19 +19,17 @@ namespace learn.it.Utils
                 case > 10 * 1024 * 1024:
                     throw new InvalidInputDataException("Wysłany plik jest zbyt duży (maks. 10 MB).");
             }
-
-            // Check the file content type
-            if (file.ContentType.ToLower().StartsWith("image/"))
+            try
             {
-                return;
+                var imageInfo = Image.Identify(file.OpenReadStream());
+                if(imageInfo == null)
+                    throw new InvalidInputDataException("Przesłany plik nie jest obrazem.");
+            }
+            catch (Exception)
+            {
+                throw new InvalidInputDataException("Przesłany plik nie jest obrazem.");
             }
 
-            // Alternatively, check the file extension
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
-            var extension = Path.GetExtension(file.FileName).ToLower();
-
-            if(!allowedExtensions.Contains(extension))
-                throw new InvalidInputDataException("Przesłany plik nie jest obrazem.");
         }
 
         public static bool IsUserAdminOrSelf(User user, ClaimsPrincipal data)

@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class GroupJoinRequestDto
     {
@@ -15,6 +17,11 @@
             GroupId = groupJoinRequest.GroupId;
             CreatedAt = groupJoinRequest.CreatedAt;
             ExpiresAt = groupJoinRequest.ExpiresAt;
+        }
+
+        [JsonConstructor]
+        public GroupJoinRequestDto()
+        {
         }
     }
 }

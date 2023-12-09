@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class BasicGroupDto
     {
@@ -11,6 +13,11 @@
             GroupId = group.GroupId;
             Name = group.Name;
             Creator = new AnonymousUserResponseDto(group.Creator);
+        }
+
+        [JsonConstructor]
+        public BasicGroupDto()
+        {
         }
     }
 }

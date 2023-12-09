@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class FlashcardDto
     {
@@ -16,5 +18,9 @@
             Definition = flashcard.Definition;
             IsTermText = flashcard.IsTermText;
         }
+
+        [JsonConstructor]
+        public FlashcardDto()
+        { }
     }
 }

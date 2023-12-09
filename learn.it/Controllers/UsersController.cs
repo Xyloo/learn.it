@@ -281,5 +281,23 @@ namespace learn.it.Controllers
             answers = answers.OrderByDescending(x => x.AnswerTimestamp).Take(3);
             return Ok(answers);
         }
+
+        [HttpGet("logins")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetUserLogins()
+        {
+            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
+            var logins = await _loginsService.GetUserLogins(user);
+            return Ok(logins);
+        }
+
+        [HttpGet("logins/{userId}")]
+        [Authorize(Policy = "Admins")]
+        public async Task<IActionResult> GetUserLogins([FromRoute] string userId)
+        {
+            var user = await _usersService.GetUserByIdOrUsername(userId);
+            var logins = await _loginsService.GetUserLogins(user);
+            return Ok(logins);
+        }
     }
 }
