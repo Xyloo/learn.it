@@ -2,6 +2,7 @@
 using learn.it.Exceptions;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
+using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;
 using Microsoft.AspNetCore.Authentication;
@@ -18,12 +19,13 @@ namespace learn.it.Controllers
         private readonly IUsersService _usersService;
         private readonly ILoginsService _loginsService;
         private readonly IGroupsService _groupsService;
-        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService)
+        private readonly IStudySetsService _studySetsService;
+        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IStudySetsService studySetsService)
         {
             _usersService = usersService;
             _loginsService = loginsService;
             _groupsService = groupsService;
-
+            _studySetsService = studySetsService;
         }
 
         [HttpPost("login")]
@@ -73,7 +75,10 @@ namespace learn.it.Controllers
                 Timestamp = DateTime.UtcNow
             };
             await _loginsService.CreateLogin(successfulLogin);
-            return Ok(new { token });
+            return Ok(new {
+                token = token,
+                userId = user.UserId
+            });
         }
 
         [HttpGet("logout")]
@@ -225,5 +230,20 @@ namespace learn.it.Controllers
 
             return Forbid();
         }
+
+        [HttpGet("{userId}/studysets")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetUserStudyStes([FromRoute] int userId)
+        {
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+
+            if(ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
+            {
+                var studySets = await _studySetsService.GetAllStudySetsByCreator(userId);
+                return Ok(studySets);
+            }
+            return Forbid();
+        }
+
     }
 }
