@@ -227,7 +227,7 @@ namespace learn.it.Tests
                 },
                 new()
                 {
-                    Term = "testTerm4",
+                    Term = "testTerm4.jpg",
                     Definition = "testDefinition4",
                     StudySet = studySets[2],
                     IsTermText = false

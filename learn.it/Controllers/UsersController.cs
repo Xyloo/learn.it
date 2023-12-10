@@ -242,7 +242,7 @@ namespace learn.it.Controllers
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 var achievements = (await _achievementsService.GetUserAchievements(queriedUser.UserId))
-                    .Select(a => new UserAchievementsDto(a)).ToList();
+                    .Select(a => new UserAchievementsDto(a));
                 return Ok(achievements);
             }
 

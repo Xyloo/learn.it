@@ -83,6 +83,8 @@ namespace learn.it.Utils
             IUsersService usersService)
         {
             var flashcards = (await flashcardsService.GetFlashcardsInSet(studySet.StudySetId)).ToList();
+            if (flashcards.Count == 0)
+                return new List<User>();
 
             var userDtos = new List<AnonymousUserResponseDto>();
             // Initialize users list with users who have mastered the first flashcard

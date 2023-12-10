@@ -49,6 +49,7 @@ namespace learn.it.Repos
         {
             var achievements = await _dbContext.UserAchievements
                 .Include(u => u.Achievement)
+                .Include(u => u.User)
                 .Where(u => u.User.UserId == userId)
                 .ToListAsync();
             return achievements;
