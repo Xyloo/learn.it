@@ -132,7 +132,7 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetAnswersByUserId(int userId)
         {
-            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
+            var user = await _usersService.GetUserByIdOrUsername(userId.ToString());
             if (ControllerUtils.IsUserAdminOrSelf(user, User))
             {
                 return Ok((await _answersService.GetAnswersByUserId(userId)).Select(a => new AnswerDto(a)));

@@ -644,6 +644,32 @@ namespace learn.it.Tests.IntegrationTests
         [Test]
         [Category("UpdateToTextFlashcard")]
         [Category("User")]
+        [Category("InvalidInput")]
+        public async Task UpdateToTextFlashcard_InvalidInput_StudySetDoesNotExist_ReturnsNotFound()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var flashcard = _flashcards[0];
+            var flashcardDto = new UpdateFlashcardDto()
+            {
+                Term = "New Term",
+                Definition = "Test Definition",
+                StudySetId = _studySets.Last().StudySetId + 1
+            };
+            var token = await Utilities.LoginUser(user, client);
+
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PutAsJsonAsync($"/api/flashcards/{flashcard.FlashcardId}", flashcardDto);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        }
+
+        [Test]
+        [Category("UpdateToTextFlashcard")]
+        [Category("User")]
         [Category("ValidInput")]
         public async Task UpdateToTextFlashcard_ValidInput_ReturnsOK()
         {
@@ -760,6 +786,37 @@ namespace learn.it.Tests.IntegrationTests
         [Category("UpdateToImageFlashcard")]
         [Category("User")]
         [Category("InvalidInput")]
+        public async Task UpdateToImageFlashcard_StudySetDoesntExist_ReturnsNotFound()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var flashcard = _flashcards[0];
+            var flashcardDto = new UpdateFlashcardDto()
+            {
+                Term = "New Term",
+                Definition = "Test Definition",
+                StudySetId = _studySets.Count + 1
+            };
+            var token = await Utilities.LoginUser(user, client);
+
+            var image = File.OpenRead("Salesforce-logo.png");
+            var multipartContent = new MultipartFormDataContent();
+            multipartContent.Add(new StreamContent(image), "image", "Salesforce-logo.png");
+            multipartContent.Add(new StringContent(flashcardDto.Term), "Term");
+            multipartContent.Add(new StringContent(flashcardDto.Definition), "Definition");
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PutAsync($"/api/flashcards/{_flashcards.Count + 1}/withImage", multipartContent);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        }
+
+        [Test]
+        [Category("UpdateToImageFlashcard")]
+        [Category("User")]
+        [Category("ValidInput")]
         public async Task UpdateToImageFlashcard_NoTermIfPreviouslyText_ReturnsOK()
         {
             // Arrange
@@ -776,6 +833,37 @@ namespace learn.it.Tests.IntegrationTests
             var multipartContent = new MultipartFormDataContent();
             multipartContent.Add(new StreamContent(image), "image", "Salesforce-logo.png");
             multipartContent.Add(new StringContent(flashcardDto.Definition), "Definition");
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PutAsync($"/api/flashcards/{flashcard.FlashcardId}/withImage", multipartContent);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Category("UpdateToImageFlashcard")]
+        [Category("User")]
+        [Category("ValidInput")]
+        public async Task UpdateToImageFlashcard_ChangingToStudySetWithAccess_ReturnsOK()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var flashcard = _flashcards[3];
+            var flashcardDto = new UpdateFlashcardDto()
+            {
+                Term = "Test term",
+                Definition = "Test Definition",
+                StudySetId = _studySets[0].StudySetId
+            };
+            var token = await Utilities.LoginUser(user, client);
+
+            var image = File.OpenRead("Salesforce-logo.png");
+            var multipartContent = new MultipartFormDataContent();
+            multipartContent.Add(new StreamContent(image), "image", "Salesforce-logo.png");
+            multipartContent.Add(new StringContent(flashcardDto.Definition), "Definition");
+            multipartContent.Add(new StringContent(flashcardDto.Term), "Term");
             // Act
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             var response = await client.PutAsync($"/api/flashcards/{flashcard.FlashcardId}/withImage", multipartContent);

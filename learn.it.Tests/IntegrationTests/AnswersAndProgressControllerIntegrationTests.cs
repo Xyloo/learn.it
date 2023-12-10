@@ -336,6 +336,84 @@ namespace learn.it.Tests.IntegrationTests
         [Category("ValidInput")]
         [Category("UpdateProgress")]
         [Category("GrantAchievement")]
+        public async Task AddAnswer_ValidInput_UpdatesProgressToMastered_AndDecrementsAfterRemovingFlashcard()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var flashcard = _flashcards[0];
+            var token = await Utilities.LoginUser(user, client);
+            var answer = new CreateAnswerDto()
+            {
+                FlashcardId = flashcard.FlashcardId,
+                AnswerTime = 1000,
+                IsCorrect = true
+            };
+
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PostAsJsonAsync("/api/answers", answer);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+
+            // Assert
+            response = await client.GetAsync($"/api/flashcard_progress/flashcard/{flashcard.FlashcardId}");
+            response.EnsureSuccessStatusCode();
+            var progress = await response.Content.ReadFromJsonAsync<FlashcardUserProgressDto>();
+            Assert.That(progress, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(progress.Flashcard.FlashcardId, Is.EqualTo(answer.FlashcardId));
+                Assert.That(progress.User.Username, Is.EqualTo(user.Username));
+                Assert.That(progress.IsMastered, Is.EqualTo(false));
+                Assert.That(progress.ConsecutiveCorrectAnswers, Is.EqualTo(1));
+            });
+
+            // Act
+            for (var i = 0; i < 4; i++)
+            {
+                answer.IsCorrect = true;
+                response = await client.PostAsJsonAsync("/api/answers", answer);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+            }
+
+            // Assert
+            response = await client.GetAsync($"/api/flashcard_progress/flashcard/{flashcard.FlashcardId}");
+            response.EnsureSuccessStatusCode();
+            progress = await response.Content.ReadFromJsonAsync<FlashcardUserProgressDto>();
+            Assert.That(progress, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(progress.Flashcard.FlashcardId, Is.EqualTo(answer.FlashcardId));
+                Assert.That(progress.User.Username, Is.EqualTo(user.Username));
+                Assert.That(progress.IsMastered, Is.EqualTo(true));
+                Assert.That(progress.ConsecutiveCorrectAnswers, Is.EqualTo(5));
+            });
+
+            response = await client.GetAsync($"/api/users/{user.UserId}/achievements");
+            response.EnsureSuccessStatusCode();
+            var achievements = await response.Content.ReadFromJsonAsync<List<UserAchievementsDto>>();
+            Assert.That(achievements, Has.Count.EqualTo(3));
+            Assert.That(achievements.Count(a => a.Achievement.Name.Contains("Flashcard Mastered")), Is.EqualTo(1));
+
+            response = await client.DeleteAsync($"/api/flashcards/{flashcard.FlashcardId}");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+
+            response = await client.GetAsync($"/api/flashcard_progress/flashcard/{flashcard.FlashcardId}");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+
+            response = await client.GetAsync($"/api/users/{user.UserId}");
+            response.EnsureSuccessStatusCode();
+            var updatedUser = await response.Content.ReadFromJsonAsync<SelfUserResponseDto>();
+            Assert.That(updatedUser, Is.Not.Null);
+            Assert.That(updatedUser.UserStats.TotalFlashcardsMastered, Is.EqualTo(0));
+        }
+
+        [Test]
+        [Category("AddAnswer")]
+        [Category("User")]
+        [Category("ValidInput")]
+        [Category("UpdateProgress")]
+        [Category("GrantAchievement")]
         public async Task AddAnswer_ValidInput_UpdatesFlashcardAndSetToMastered()
         {
             // Arrange
@@ -735,6 +813,67 @@ namespace learn.it.Tests.IntegrationTests
         [Category("GetAnswerByFlashcardId")]
         [Category("User")]
         [Category("InvalidInput")]
+        public async Task GetAnswerByFlashcardId_WithNoAccessToSet_ShouldReturnForbidden()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var token = await Utilities.LoginUser(user, client);
+
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.GetAsync($"/api/answers/flashcard/{_flashcards[2].FlashcardId}");
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+        }
+
+        [Test]
+        [Category("GetAnswerByFlashcardId")]
+        [Category("Admin")]
+        [Category("ValidInput")]
+        public async Task GetAnswerByFlashcardId_AsAdmin_GetsAllAnswers()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var adminUser = _users[0];
+            var user1 = _users[1];
+            var token = await Utilities.LoginUser(user1, client);
+            var flashcard = _flashcards[0];
+
+            var answerDto = new CreateAnswerDto()
+            {
+                FlashcardId = flashcard.FlashcardId,
+                AnswerTime = 1000,
+                IsCorrect = true
+            };
+
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PostAsJsonAsync("/api/answers", answerDto);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+
+            var token2 = await Utilities.LoginUser(_users[2], client);
+            client.DefaultRequestHeaders.Remove("Authorization");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token2}");
+            response = await client.PostAsJsonAsync("/api/answers", answerDto);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+
+            client.DefaultRequestHeaders.Remove("Authorization");
+            var token3 = await Utilities.LoginUser(adminUser, client);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token3}");
+            response = await client.GetAsync($"/api/answers/flashcard/{flashcard.FlashcardId}");
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var answerDtoResponse = await response.Content.ReadFromJsonAsync<List<AnswerDto>>();
+            Assert.That(answerDtoResponse, Has.Count.EqualTo(2));
+        }
+
+        [Test]
+        [Category("GetAnswerByFlashcardId")]
+        [Category("User")]
+        [Category("InvalidInput")]
         public async Task GetAnswerByFlashcardId_WithNoAnswers_ShouldReturnEmptySet()
         {
             // Arrange
@@ -750,6 +889,100 @@ namespace learn.it.Tests.IntegrationTests
             var answerDtoResponse = await response.Content.ReadFromJsonAsync<List<AnswerDto>>();
             Assert.That(answerDtoResponse, Is.Empty);
         }
+
+        [Test]
+        [Category("GetAnswersByUserId")]
+        [Category("User")]
+        [Category("ValidInput")]
+        public async Task GetAnswersByUserId_ShouldReturnAnswers()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var token = await Utilities.LoginUser(user, client);
+            var flashcard = _flashcards[0];
+            var answerDto = new CreateAnswerDto()
+            {
+                FlashcardId = flashcard.FlashcardId,
+                AnswerTime = 1000,
+                IsCorrect = true
+            };
+
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PostAsJsonAsync("/api/answers", answerDto);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+            var answer = await response.Content.ReadFromJsonAsync<AnswerDto>();
+
+            // Act
+            response = await client.GetAsync($"/api/answers/user/{user.UserId}");
+            response.EnsureSuccessStatusCode();
+            var answerDtoResponse = await response.Content.ReadFromJsonAsync<List<AnswerDto>>();
+
+            // Assert
+            Assert.That(answerDtoResponse, Has.Count.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(answerDtoResponse[0].AnswerId, Is.EqualTo(answer.AnswerId));
+                Assert.That(answerDtoResponse[0].Flashcard.FlashcardId, Is.EqualTo(answer.Flashcard.FlashcardId));
+                Assert.That(answerDtoResponse[0].User.Username, Is.EqualTo(answer.User.Username));
+                Assert.That(answerDtoResponse[0].AnswerTime, Is.EqualTo(answer.AnswerTime));
+                Assert.That(answerDtoResponse[0].IsCorrect, Is.EqualTo(answer.IsCorrect));
+            });
+        }
+
+        [Test]
+        [Category("GetAnswersByUserId")]
+        [Category("User")]
+        [Category("ValidInput")]
+        public async Task GetAnswersByUserId_IfNotAdmin_AndTryingToGetOtherUserAnswers_ShouldReturnForbidden()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var token = await Utilities.LoginUser(user, client);
+
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.GetAsync($"/api/answers/user/{_users[2].UserId}");
+            
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+        }
+
+        [Test]
+        [Category("RemoveAnswer")]
+        [Category("Admin")]
+        [Category("ValidInput")]
+        public async Task RemoveAnswer_ShouldRemoveAnswer()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var token = await Utilities.LoginUser(user, client);
+            var flashcard = _flashcards[0];
+            var answerDto = new CreateAnswerDto()
+            {
+                FlashcardId = flashcard.FlashcardId,
+                AnswerTime = 1000,
+                IsCorrect = true
+            };
+
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PostAsJsonAsync("/api/answers", answerDto);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+            var answer = await response.Content.ReadFromJsonAsync<AnswerDto>();
+
+            // Act
+            client.DefaultRequestHeaders.Remove("Authorization");
+            var token2 = await Utilities.LoginUser(_users[0], client);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token2}");
+            response = await client.DeleteAsync($"/api/answers/{answer.AnswerId}");
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
 
         [Test]
         [Category("GetStudySetProgress")]
@@ -789,6 +1022,39 @@ namespace learn.it.Tests.IntegrationTests
                 Assert.That(studySetProgressDto[0].Flashcard.FlashcardId, Is.EqualTo(answer.Flashcard.FlashcardId));
                 Assert.That(studySetProgressDto[0].User.Username, Is.EqualTo(answer.User.Username));
             });
+        }
+
+        [Test]
+        [Category("GetFlashcardProgress")]
+        [Category("Admin")]
+        [Category("ValidInput")]
+        public async Task GetFlashcardProgress_ValidInput_ReturnsOK()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var user = _users[1];
+            var flashcard = _flashcards[0];
+            var token = await Utilities.LoginUser(user, client);
+            var answerDto = new CreateAnswerDto()
+            {
+                FlashcardId = flashcard.FlashcardId,
+                AnswerTime = 1000,
+                IsCorrect = true
+            };
+            // Act
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var response = await client.PostAsJsonAsync("/api/answers", answerDto);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+
+            var adminUser = _users[0];
+            var adminToken = await Utilities.LoginUser(adminUser, client);
+            // Act
+            client.DefaultRequestHeaders.Remove("Authorization");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {adminToken}");
+            response = await client.GetAsync($"/api/flashcard_progress/{flashcard.FlashcardId}/{user.UserId}");
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
     }
