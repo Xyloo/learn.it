@@ -9,20 +9,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
-[Table("user_preferences", Schema = "learnitdb")]
+[Table("UserPreferences", Schema = "learnitdb")]
 [Index("UserId", Name = "fk_user_preferences_users1_idx")]
 public partial class UserPreferences
 {
     [Key, ForeignKey("User")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("user_id")]
     public int UserId { get; private set; }
 
-    [Column("high_contrast_mode")]
-    public short HighContrastMode { get; set; } = 0;
+    public bool HighContrastMode { get; set; } = false;
 
-    [Column("auto_tts")]
-    public short AutoTts { get; set; } = 0;
+    public bool AutoTts { get; set; } = false;
 
     [JsonIgnore]
     public virtual User User { get; set; }

@@ -10,16 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
-[Table("groups", Schema = "learnitdb")]
+[Table("Groups", Schema = "learnitdb")]
 [Index("CreatorId", Name = "fk_groups_users1_idx")]
 public partial class Group
 {
     [Key]
-    [Column("group_id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int GroupId { get; private set; }
+    public int GroupId { get; set; }
 
-    [Column("name")]
     public string Name { get; set; }
 
     [ForeignKey("CreatorId")]

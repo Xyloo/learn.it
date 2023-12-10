@@ -13,10 +13,10 @@ namespace learn.it.Models;
  * If modifying the db schema, add the following to the created migration **BEFORE** running the update-database command:
  * migrationBuilder.InsertData(
                 schema: "learnitdb",
-                table: "users",
+                table: "Users",
                 columns: new[]
                 {
-                    "user_id", "username", "email", "password", "create_time", "last_login", "avatar", "PermissionId"
+                    "UserId", "Username", "Email", "Password", "CreateTime", "LastLogin", "Avatar", "PermissionId"
                 },
                 values: new object[,]
                 {
@@ -25,11 +25,11 @@ namespace learn.it.Models;
 
             migrationBuilder.InsertData(
                 schema: "learnitdb",
-                table: "user_stats",
+                table: "UserStats",
                 columns: new[]
                 {
-                    "user_id", "sets_completed", "total_login_days", "total_flashcards_mastered",
-                    "consecutive_login_days", "sets_added", "flashcards_added"
+                    "UserId", "TotalSetsMastered", "TotalLoginDays", "TotalFlashcardsMastered",
+                    "ConsecutiveLoginDays", "TotalSetsAdded", "TotalFlashcardsAdded"
                 },
                 values: new object[,]
                 {
@@ -38,12 +38,12 @@ namespace learn.it.Models;
 
             migrationBuilder.InsertData(
                 schema: "learnitdb",
-                table: "user_preferences",
+                table: "UserPreferences",
                 columns: new[]
-                { "user_id", "high_contrast_mode", "email_reminders", "auto_tts" },
+                    { "UserId", "HighContrastMode", "AutoTts" },
                 values: new object[,]
                 {
-                    { -1, 0, 0, 0 }
+                    { -1, false, false }
                 });
  */
 
@@ -133,6 +133,8 @@ public partial class LearnitDbContext : DbContext
             entity.Property(e => e.GroupId).ValueGeneratedOnAdd();
 
             entity.HasOne(d => d.Creator).WithMany(p => p.GroupCreator).HasConstraintName("groups$fk_groups_users1").OnDelete(DeleteBehavior.ClientCascade);
+
+            entity.HasMany(d => d.Users).WithMany(p => p.Groups);
         });
 
         modelBuilder.Entity<Login>(entity =>
@@ -215,27 +217,7 @@ public partial class LearnitDbContext : DbContext
             entity.HasOne(d => d.Permissions).WithMany(p => p.Users)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("users$fk_users_permissions1");
-
-            entity.HasMany(d => d.Groups).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UsersHasGroups",
-                    r => r.HasOne<Group>().WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .HasConstraintName("users_has_groups$fk_users_has_groups_groups1"),
-                    l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .HasConstraintName("users_has_groups$fk_users_has_groups_users1"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "GroupId").HasName("PK_users_has_groups_user_id");
-                        j.ToTable("users_has_groups", "learnitdb");
-                        j.HasIndex(new[] { "GroupId" }, "fk_users_has_groups_groups1_idx");
-                        j.HasIndex(new[] { "UserId" }, "fk_users_has_groups_users1_idx");
-                        j.IndexerProperty<int>("UserId").HasColumnName("user_id");
-                        j.IndexerProperty<int>("GroupId").HasColumnName("group_id");
-                    });
+            entity.HasMany(u => u.Groups).WithMany(g => g.Users);
         });
         modelBuilder.Seed();
         OnModelCreatingPartial(modelBuilder);

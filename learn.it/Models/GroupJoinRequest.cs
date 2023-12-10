@@ -5,21 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models
 {
-    [Table("group_join_request", Schema = "learnitdb")]
+    [Table("GroupJoinRequest", Schema = "learnitdb")]
     public class GroupJoinRequest
     {
         //by using a compound key, we can ensure that a user can only request to join a group once
         [Key]
-        [Column("group_id")]
         public int GroupId { get; set; }
         [Key]
-        [Column("user_id")]
         public int UserId { get; set; }
         [Precision(0)]
-        [Column("created_at")]
         public DateTime CreatedAt { get; set; }
         [Precision(0)]
-        [Column("expires_at")]
         public DateTime ExpiresAt { get; set; }
         [ForeignKey("CreatorId")]
         [InverseProperty("GroupJoinRequests")]

@@ -11,7 +11,7 @@ namespace learn.it.Utils
     {
         public static void CheckIfValidImage(IFormFile file)
         {
-            switch (file.Length)
+            switch(file.Length)
             {
                 case 0:
                     throw new InvalidInputDataException("Nie wysłano pliku.");
@@ -20,7 +20,7 @@ namespace learn.it.Utils
             }
 
             // Check the file content type
-            if (file.ContentType.ToLower().StartsWith("image/"))
+            if(file.ContentType.ToLower().StartsWith("image/"))
             {
                 return;
             }
@@ -46,7 +46,7 @@ namespace learn.it.Utils
         public static int GetUserIdFromClaims(ClaimsPrincipal data)
         {
             var parseSuccessful = int.TryParse(data.FindFirst(ClaimTypes.NameIdentifier)?.Value!, out int creatorId);
-            if (!parseSuccessful)
+            if(!parseSuccessful)
             {
                 //should never happen
                 throw new InvalidCredentialException("Uzyskanie id użytkownika z tokenu nie było możliwe.");
@@ -85,15 +85,24 @@ namespace learn.it.Utils
         {
             var flashcards = (await flashcardsService.GetFlashcardsInSet(studySet.StudySetId)).ToList();
 
+            if(!flashcards.Any())
+            {
+                return new List<User>();
+            }
+
             var userDtos = new List<AnonymousUserResponseDto>();
             // Initialize users list with users who have mastered the first flashcard
             var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().Id)).ToList();
+            if(firstFlashcardProgress?.Count == 0)
+                return new List<User>();
             userDtos.AddRange(firstFlashcardProgress.Where(p => p.IsMastered).Select(p => p.User));
-
+            
             // Iterate through the remaining flashcards
-            foreach (var flashcard in flashcards.Skip(1))
+            foreach(var flashcard in flashcards.Skip(1))
             {
                 var progress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcard.Id)).ToList();
+                if(progress.Count == 0)
+                    continue;
                 var usersWhoMasteredFlashcard = progress.Where(p => p.IsMastered).Select(p => p.User).ToList();
 
                 // Update users list to only include users who have mastered the current flashcard
@@ -101,7 +110,7 @@ namespace learn.it.Utils
             }
 
             var users = new List<User>();
-            foreach (var user in userDtos)
+            foreach(var user in userDtos)
             {
                 users.Add(await usersService.GetUserByIdOrUsername(user.Username));
             }

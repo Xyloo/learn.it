@@ -9,22 +9,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
-[Table("flashcards", Schema = "learnitdb")]
+[Table("Flashcards", Schema = "learnitdb")]
 [Index("StudySetId", Name = "fk_flashcards_study_sets1_idx")]
 public partial class Flashcard
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("flashcard_id")]
     public int FlashcardId { get; private set; }
 
-    [Column("term")]
     public string Term { get; set; }
 
-    [Column("definition")]
     public string Definition { get; set; }
 
-    [Column("is_term_text")]
     public bool IsTermText { get; set; }
 
     [InverseProperty("Flashcard")]

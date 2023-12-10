@@ -9,29 +9,23 @@ using Microsoft.EntityFrameworkCore;
 namespace learn.it.Models;
 
 [PrimaryKey("UserId", "FlashcardId")]
-[Table("flashcard_user_progress", Schema = "learnitdb")]
+[Table("FlashcardUserProgress", Schema = "learnitdb")]
 [Index("FlashcardId", Name = "fk_flashcard_user_progress_flashcards1_idx")]
 public partial class FlashcardUserProgress
 {
     [Key]
-    [Column("user_id")]
     public int UserId { get; private set; }
 
     [Key]
-    [Column("flashcard_id")]
     public int FlashcardId { get; private set; }
 
-    [Column("consecutive_correct_answers")]
     public int ConsecutiveCorrectAnswers { get; set; }
 
-    [Column("is_mastered")]
     public bool IsMastered { get; set; }
 
-    [Column("mastered_timestamp")]
     [Precision(0)]
     public DateTime? MasteredTimestamp { get; set; }
 
-    [Column("needs_more_repetitions")]
     public bool NeedsMoreRepetitions { get; set; }
 
     [ForeignKey("FlashcardId")]
