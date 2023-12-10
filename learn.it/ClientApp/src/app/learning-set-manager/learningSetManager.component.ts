@@ -3,6 +3,13 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ChooseGroupDialogComponent } from '../choose-group-dialog/choose-group-dialog.component';
+import { StudySetsService } from '../services/study-sets/study-sets.service';
+import { NgForm } from '@angular/forms';
+import { Visibility } from '../models/study-sets/study-set-visibility.dto';
+import { Flashcard } from '../models/flashcard';
+import { FlashcardService } from '../services/flashcard/flashcard.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { StudySet } from '../models/study-sets/study-set';
 
 
 @Component({
@@ -13,40 +20,85 @@ import { ChooseGroupDialogComponent } from '../choose-group-dialog/choose-group-
 export class LearningSetManagerComponent {
   @ViewChild('newFlashcard') newFlashcardElement: ElementRef | undefined;
   @ViewChild('flashcardContainer') flashcardContainerElement: ElementRef | undefined;
+  @ViewChild('form') form!: NgForm;
+
+  studySet: StudySet = {
+    id: -1,
+    name: '',
+    description: '',
+    visibility: 0,
+    group: -1,
+    flashcards: [],
+    flashcardsCount: 0,
+    creator: {
+      username: '',
+      avatar: null
+    }
+  };
+
+  /*  studySet.name: string = '';
+    studySet.description: string = '';
+    studySet.visibility: number = 0; // po dodaniu ui
+    studySet.group: number; // po dodaniu ui
+    studySet.id: number = -1;
+  */
+  showAddError = false;
+  flashcards: Flashcard[] = [
+    { id: 1, term: 'Wpisz dane', definition: 'Wpisz dane', isTermText: true }
+  ];
+
+  originalFlashcards: Flashcard[] = [];
+  initialSetData: StudySet;
+
+  nextId = 2; //hardcoded for now ????
+
+
+
   constructor(
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private studySetsService: StudySetsService,
+    private flashcardService: FlashcardService,
+    private snackBar: MatSnackBar
+  ) { }
 
   isEditMode: boolean = false;
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       if (params.has('id')) {
+        const setIdParam = params.get('id');
         this.isEditMode = true;
-        const id = params.get('id');
+        this.studySet.id = Number(setIdParam);
 
-          //set service - load data, fill title, desc, flashcards it
-      } else {
-        this.isEditMode = false;        
+        this.studySetsService.getStudySet(this.studySet.id).subscribe(set => {
+          this.studySet.name = set.name;
+          this.studySet.description = set.description;
+          this.studySet.visibility = set.visibility;
+          this.flashcards = set.flashcards;
+          this.originalFlashcards = JSON.parse(JSON.stringify(set.flashcards));
+          this.initialSetData = JSON.parse(JSON.stringify(set));
+        });
+
+
+
+        //dodatkowo pobieranie visibility
+
+        // zakladowanie id, desc, visibility.....
+        //set service - load data, fill title, desc, flashcards it
+      }
+      else {
+        this.isEditMode = false;
       }
     });
   }
 
-
-  showAddError = false;
-  flashcards = [
-    { id: 1, term: 'lorem ipsum', definition: 'lorem ipsum' }
-  ];
-  nextId = 2; //hardcoded for now
-
-  learningSetTitle: string = '';
-
   addFlashcard() {
     if (this.canAddFlashcard()) {
       const newId = this.getMaxId() + 1; // Get the current max id and add 1
-      this.flashcards.push({ id: newId, term: '', definition: '' });
+      this.flashcards.push({ id: newId, term: '', definition: '', isTermText: true });
       this.showAddError = false;
       setTimeout(() => {
         if (this.newFlashcardElement) {
@@ -56,12 +108,24 @@ export class LearningSetManagerComponent {
     }
     else
       this.showAddError = true;
-}
+  }
 
 
   deleteFlashcard(flashcardId: number) {
-    if (this.flashcards.length>1)
+    if (this.flashcards.length > 1)
       this.flashcards = this.flashcards.filter(flashcard => flashcard.id !== flashcardId);
+
+    if (this.isEditMode) {
+      this.flashcardService.deleteFlashcard(flashcardId).subscribe({
+        next: () => {
+          this.openSnackBar("Fiszka została pomyślnie usunięta.", "Zamknij");
+        },
+        error: () => {
+          this.openSnackBar("Wystąpił błąd podczas usuwania fiszki.", "Zamknij");
+        }
+      });
+    }
+
   }
 
   getMaxId() {
@@ -77,18 +141,138 @@ export class LearningSetManagerComponent {
   }
 
   saveSet() {
-    //set creation logic
+
+    if (!this.form.valid) {
+      this.openSnackBar("Wypełnij wszystkie wymagane pola", "Zamknij");
+      return;
+    }
+
+    if (this.isEditMode) {
+
+      const { added, modified } = this.getFlashcardChanges();
+
+      added.forEach(flashcard => {
+
+        var backendFlashcard = {
+          Term: flashcard.term,
+          Definition: flashcard.definition,
+          StudySetId: this.studySet.id
+        };
+        this.flashcardService.createFlashcards([backendFlashcard]);
+
+      });
+
+      modified.forEach(flashcard => {
+        var backendFlashcard = {
+          Term: flashcard.term,
+          Definition: flashcard.definition,
+          StudySetId: this.studySet.id
+        };
+        //create subsrtivbe to see errors
+        this.flashcardService.updateFlashcard(flashcard.id, backendFlashcard).subscribe({
+          next: results => {
+            this.openSnackBar("Zestaw został pomyślnie zapisany", "Zamknij");
+          },
+          error: error => {
+            this.openSnackBar("Wystąpił błąd podczas zapisu zestawu", "Zamknij");
+          }
+        });
+      });
+      if (JSON.stringify(this.initialSetData) !== JSON.stringify(this.studySet)) {
+
+        var studySetDto = {
+          name: this.studySet.name,
+          description: this.studySet.description,
+          visibility: this.studySet.visibility,
+          groupId: this.studySet.group == -1 ? undefined : this.studySet.group
+        };
+        this.studySetsService.updateStudySet(this.studySet.id, studySetDto).subscribe({
+          next: results => {
+            this.openSnackBar("Zestaw został pomyślnie zapisany", "Zamknij");
+          },
+          error: error => {
+            this.openSnackBar("Wystąpił błąd podczas zapisu zestawu", "Zamknij");
+          }
+        });;
+      }
+      //this.router.navigate(['/']);
+    }
+
+    else {
+      const newStudySet = {
+        name: this.studySet.name,
+        description: this.studySet.description,
+        visibility: this.studySet.visibility,
+        groupId: this.studySet.group || undefined
+      };
+
+      var createdSetId = -1;
+
+
+      this.studySetsService.createStudySet(newStudySet).subscribe({
+        next: (response) => {
+          createdSetId = response.id;
+
+          const flashcardsForBackend = this.flashcards.map(flashcard => ({
+            term: flashcard.term,
+            definition: flashcard.definition,
+            studySetId: createdSetId
+          }));
+
+          this.createFlashcards(flashcardsForBackend);
+        },
+        error: (error) => {
+          this.openSnackBar("Wystąpił błąd podczas tworzenia zestawu", "Zamknij");
+        }
+      });
+    }
+  }
+
+  createFlashcards(flashcards: any[]) {
+    this.flashcardService.createFlashcards(flashcards).subscribe({
+      next: results => {
+        this.openSnackBar("Zestaw został utworzony pomyślnie", "Zamknij");
+        this.router.navigate(['/']);
+      },
+      error: error => {
+        console.error('Error creating flashcards', error);
+        this.openSnackBar("Wystąpił błąd podczas tworzenia zestawu", "Zamknij");
+      }
+    });
+  }
+
+  getFlashcardChanges() {
+    const added = this.flashcards.filter(fc => !fc.id);
+    const modified = this.flashcards.filter(fc => {
+      if (!fc.id) return false;
+      const original = this.originalFlashcards.find(ofc => ofc.id === fc.id);
+      return original && (fc.term !== original.term || fc.definition !== original.definition);
+    });
+
+    return { added, modified };
+  }
+
+
+
+  openSnackBar(message: string, action: string = 'Zamknij') {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ChooseGroupDialogComponent, {
-      width: '250px',
-      data: { /* any data you want to pass */ }
+      width: '260px',
+      data: { setId: this.studySet.id, lerningSetVisibility: this.studySet.visibility }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed', result);
-      // Use result.groupId and result.visibility
+      if (result) {
+        this.studySet.group = result.groupId;
+        this.studySet.visibility = result.visibility;
+      }
     });
   }
 }

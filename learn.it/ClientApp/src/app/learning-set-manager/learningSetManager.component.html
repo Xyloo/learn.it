@@ -1,83 +1,86 @@
 <div class="wrapper">
-  <div class="details-section">
-    <div class="label-wrapper">
-      <h2 class="label-text">{{isEditMode ? 'Edycja zestawu' : 'Nowy zestaw fiszek'}}</h2>
-      <button routerLink="/set" (click)="goBack()" class="icon-btn">
-        <img src="/assets/plus-icon.svg" alt="Icon" />
-      </button>
-    </div>
-    <div class="set-details">
-      <div class="set-info-wrapper set-color">
-        <div class="set-info">
-          Tytuł
+  <form #form="ngForm" (ngSubmit)="saveSet()">
+    <div class="details-section">
+      <div class="label-wrapper">
+        <h2 class="label-text">{{isEditMode ? 'Edycja zestawu' : 'Nowy zestaw fiszek'}}</h2>
+        <button type="button" routerLink="/set" (click)="goBack()" class="icon-btn">
+          <img src="/assets/plus-icon.svg" alt="Icon" />
+        </button>
+      </div>
+
+      <div class="set-details">
+        <div class="set-info-wrapper set-color">
+          <div class="set-info">
+            Tytuł
+          </div>
+          <div class="set-info set-details-input">
+            <div class="input-wrapper">
+              <input [(ngModel)]="studySet.name" name="studySet.name" #title="ngModel" minlength="4" required />
+              <img src="/assets/error-icon.svg" alt="Icon"
+                   *ngIf="title.invalid && (title.dirty || title.touched)" class="error-icon"
+                   matTooltip="Pole nie może być puste i musi zawierać co najmniej 4 znaki."
+                   matTooltipPosition="below"
+                   aria-label="Error" />
+
+            </div>
+          </div>
         </div>
-        <div class="set-info set-details-input">
+        <div class="set-info-wrapper set-color">
+          <div class="set-info">
+            Opis
+          </div>
+          <div class="set-info set-details-input large">
+            <textarea [(ngModel)]="studySet.description" name="studySet.description"></textarea>
+          </div>
+          <button type="button" (click)="openDialog()" class="icon-btn settings-icon">
+            <img src="/assets/settings-icon.svg" alt="Icon" />
+          </button>
+        </div>
+      </div>
+      <div class="straight-line"></div>
+    </div>
+
+    <div class="flashcard-set">
+      <div class="header">
+        <div class="label">Pojęcie</div>
+        <div class="label">Definicja</div>
+      </div>
+
+      <div class="flashcard-container" #flashcardContainer>
+        <div class="flashcard set-info set-details-input" *ngFor="let flashcard of flashcards; let i = index">
+          <div class="number">{{ i + 1 }}</div>
           <div class="input-wrapper">
-          <input [(ngModel)]="learningSetTitle" />           
+            <input [(ngModel)]="flashcard.term" name="term-{{i}}" required placeholder="Wpisz pojęcie"/>
             <img src="/assets/error-icon.svg" alt="Icon"
-                 *ngIf="learningSetTitle.trim() === ''" class="error-icon"
+                 *ngIf="flashcard.term.trim() === ''" class="error-icon"
+                 matTooltip="Pole nie może być puste." />
+          </div>
+
+          <div class="vertical-line"></div>
+          <div class="input-wrapper">
+            <input [(ngModel)]="flashcard.definition" name="definition-{{i}}" required placeholder="Wpisz definicję" />
+            <img src="/assets/error-icon.svg" alt="Icon"
+                 *ngIf="flashcard.definition.trim() === ''" class="error-icon"
                  matTooltip="Pole nie może być puste."
                  matTooltipPosition="below"
                  aria-label="Error" />
           </div>
-        </div>
-      </div>
-      <div class="set-info-wrapper set-color">
-        <div class="set-info">
-          Opis
-        </div>
-        <div class="set-info set-details-input large">
-          <textarea></textarea>
-        </div>
-        <button (click)="openDialog()" class="icon-btn settings-icon">
-          <img src="/assets/settings-icon.svg" alt="Icon" />
-        </button>
-      </div>
-    </div>
-    <div class="straight-line"></div>
-  </div>
+          <button type="button" class="delete" (click)="deleteFlashcard(flashcard.id)">X</button>
 
-  <div class="flashcard-set">
-    <div class="header">
-      <div class="label">Pojęcie</div>
-      <div class="label">Definicja</div>
-    </div>
-
-    <div class="flashcard-container" #flashcardContainer>
-      <div class="flashcard set-info set-details-input" *ngFor="let flashcard of flashcards; let i = index">
-        <div class="number">{{ i + 1 }}</div>
-        <div class="input-wrapper">
-          <input [(ngModel)]="flashcard.term" name="term-{{i}}" required placeholder="Wpisz pojęcie" />
-          <img src="/assets/error-icon.svg" alt="Icon"
-               *ngIf="flashcard.term.trim() === ''" class="error-icon"
-               matTooltip="Pole nie może być puste." />
         </div>
-
-        <div class="vertical-line"></div>
-        <div class="input-wrapper">
-          <input [(ngModel)]="flashcard.definition" name="definition-{{i}}" required placeholder="Wpisz definicję" />
-          <img src="/assets/error-icon.svg" alt="Icon"
-               *ngIf="flashcard.definition.trim() === ''" class="error-icon"
-               matTooltip="Pole nie może być puste."
-               matTooltipPosition="below"
-               aria-label="Error" />
+        <div class="flashcard set-info add-wrapper">
+          <button type="button" class="add" (click)="addFlashcard()" [disabled]="!canAddFlashcard()">
+            <img src="/assets/plus-icon.svg" alt="Icon" class="gap" />
+            Dodaj fiszkę
+          </button>
         </div>
-        <button class="delete" (click)="deleteFlashcard(flashcard.id)">X</button>
-
+        <div #newFlashcard></div>
       </div>
-      <div class="flashcard set-info add-wrapper">
-        <button class="add" (click)="addFlashcard()" [disabled]="!canAddFlashcard()">
-          <img src="/assets/plus-icon.svg" alt="Icon" class="gap" />
-          Dodaj fiszkę
-        </button>
-      </div>
-      <div #newFlashcard></div>
-    </div>
 
     </div>
-   <div class="create-set-button">
-     <button class="icon-btn icon-btn-small" (click)="saveSet()">{{isEditMode ? 'Zapisz' : 'Stwórz zestaw'}}</button>
-   </div>
-
-  </div>
+    <div class="create-set-button">
+      <button type="submit" class="icon-btn icon-btn-small">{{isEditMode ? 'Zapisz' : 'Stwórz zestaw'}}</button>
+    </div>
+  </form>
+</div>
 
