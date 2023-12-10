@@ -194,7 +194,7 @@ namespace learn.it.Tests
                  new()
                  {
                      StudySetId = 3,
-                     Creator = users[1], //testUser3
+                     Creator = users[1], //testUser1
                      Name = "testSet3",
                      Description = "testDescription3",
                      Visibility = Visibility.Group,

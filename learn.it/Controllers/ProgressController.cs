@@ -1,4 +1,6 @@
 ﻿using learn.it.Exceptions.NotFound;
+using learn.it.Models;
+using learn.it.Models.Dtos.Request;
 using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
 using learn.it.Utils;
@@ -12,23 +14,23 @@ namespace learn.it.Controllers
     public class ProgressController : ControllerBase
     {
         private readonly IFlashcardsService _flashcardsService;
-        private readonly IAnswersService _answersService;
+        private readonly IAchievementsService _achievementsService;
         private readonly IStudySetsService _studySetsService;
         private readonly IUsersService _usersService;
         private readonly IFlashcardUserProgressService _flashcardProgressService;
 
-        public ProgressController(IFlashcardsService flashcardsService, IAnswersService answersService,
+        public ProgressController(IFlashcardsService flashcardsService, IAchievementsService achievementsService,
             IStudySetsService studySetsService, IUsersService usersService,
             IFlashcardUserProgressService flashcardProgressService)
         {
             _flashcardsService = flashcardsService;
-            _answersService = answersService;
+            _achievementsService = achievementsService;
             _studySetsService = studySetsService;
             _usersService = usersService;
             _flashcardProgressService = flashcardProgressService;
         }
 
-        [HttpGet("{flashcardId}")]
+        [HttpGet("flashcard/{flashcardId}")]
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetFlashcardProgress([FromRoute] int flashcardId)
         {
@@ -54,7 +56,7 @@ namespace learn.it.Controllers
             return Ok(progress);
         }
 
-        [HttpGet("{studySetId}")]
+        [HttpGet("set/{studySetId}")]
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetStudySetProgress([FromRoute] int studySetId)
         {
@@ -74,7 +76,7 @@ namespace learn.it.Controllers
         [HttpPut("{flashcardId}")]
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> UpdateFlashcardProgress([FromRoute] int flashcardId,
-            [FromBody] FlashcardUserProgressDto progressDto)
+            [FromBody] UpdateFlashcardUserProgressDto progressDto)
         {
             var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             var flashcard = await _flashcardsService.GetFlashcard(flashcardId);
@@ -87,6 +89,7 @@ namespace learn.it.Controllers
                 {
                     progress.IsMastered = false;
                     progress.MasteredTimestamp = null;
+                    user.UserStats.TotalFlashcardsMastered--;
                 }
 
                 if (!progressDto.NeedsMoreRepetitions && !progress.IsMastered &&
@@ -94,8 +97,16 @@ namespace learn.it.Controllers
                 {
                     progress.IsMastered = true;
                     progress.MasteredTimestamp = DateTime.UtcNow;
+                    user.UserStats.TotalFlashcardsMastered++;
                 }
                 await _flashcardProgressService.UpdateFlashcardUserProgress(progress);
+                if (await ControllerUtils.IsStudySetMastered(flashcard.StudySet, user, _flashcardsService, _flashcardProgressService))
+                {
+                    user.UserStats.TotalSetsMastered++;
+                }
+                await _usersService.UpdateUser(user);
+                await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsMastered), user);
+                await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalSetsMastered), user);
                 return Ok(progressDto);
             }
             throw new FlashcardUserProgressNotFoundException(user.UserId, flashcardId);
