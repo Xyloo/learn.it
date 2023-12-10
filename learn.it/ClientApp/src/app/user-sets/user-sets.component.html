@@ -14,7 +14,7 @@
           {{result.description}}
        </div>
         <div class="set-buttons">
-          <button (click)="deleteSet(result.id)" class="icon-btn-clear rotate45">
+          <button *ngIf="canDeleteSet(result.username)" (click)="deleteSet(result.id)" class="icon-btn-clear rotate45">
             <img src="/assets/plus-icon.svg" alt="Icon" />
           </button>
           <button [routerLink]="['/set/', result.id]" class="icon-btn-clear">

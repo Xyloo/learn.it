@@ -1,5 +1,6 @@
 <div class="wrapper">
-    <h3>Twoje grupy</h3>
+  <h3>Twoje grupy</h3>
+  <div class="group-list">
     <div *ngFor="let group of userGroups; let i = index" class="item">
       <div class="center-text">{{ i + 1 }}. {{ group.name }}</div>
       <div>
@@ -8,4 +9,19 @@
         </button>
       </div>
     </div>
+  </div>
+  <h3>Zaproszenia do grup</h3>
+  <div class="group-list">
+    <div *ngFor="let invitation of userInvitations; let i = index" class="item">
+      <div class="center-text">{{ i + 1 }}. {{ invitation.groupName }}</div>
+      <div class="button-wrapper">
+        <button (click)="acceptInvitation(invitation.groupId)" class="icon-btn-clear">
+          <img src="/assets/accept-icon.svg" alt="Icon" />
+        </button>
+        <button (click)="declineInvitation(invitation.groupId)" class="icon-btn-clear rotate45">
+          <img src="/assets/plus-icon.svg" alt="Icon" />
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

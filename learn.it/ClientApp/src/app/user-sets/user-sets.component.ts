@@ -3,6 +3,9 @@ import { UserSetDto } from '../models/user-sets.dto';
 import { Location } from '@angular/common';
 import { StudySetsService } from '../services/study-sets/study-sets.service';
 import { style } from '@angular/animations';
+import { User } from 'oidc-client';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AccountService } from '../services/account.service';
 
 @Component({
   selector: 'app-user-sets',
@@ -12,32 +15,59 @@ import { style } from '@angular/animations';
 export class UserSetsComponent implements OnInit {
 
   userSets: UserSetDto[] = [];
-  constructor(private location: Location, private studySetService: StudySetsService) { }
+  currentUsername: string | null = null;
+
+  constructor(
+    private location: Location,
+    private studySetService: StudySetsService,
+    private accountService: AccountService,
+    private snackBar: MatSnackBar
+  ) { }
+
+
   ngOnInit(): void {
+    this.currentUsername = this.accountService.userValue ? this.accountService.userValue.uniqueName : null;
+
     this.studySetService.getStudySets().subscribe({
       next: (sets) => {
-        this.userSets = sets; 
+        this.userSets = sets;
+        console.log(this.userSets); 
       },
       error: (error) => {
         console.error('Error fetching study sets:', error);
       }
-    });  
+    });
   }
 
-  //usuwanie info gdy nie jestes group ownerem 
+  openSnackBar(message: string, action: string = 'Close') {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
+  }
+
   deleteSet(itemId: number) {
+    console.log(itemId);
+    console.log(this.userSets )
     this.studySetService.deleteStudySet(itemId).subscribe({
       next: () => {
-        console.log('Study set deleted successfully');
+        this.userSets = this.userSets.filter(item => item.id !== itemId);
       },
       error: (error) => {
-        console.error('Error deleting study set:', error);
+        this.openSnackBar('Wystąpił błąd podczas usuwania zestawu.', 'Close') 
       }
     });
   }
 
-  goBack() {
-    this.location.back(); 
+  canDeleteSet(username: string): boolean {
+    return this.currentUsername === username;
   }
+
+  goBack() {
+    this.location.back();
+  }
+
+
 
 }

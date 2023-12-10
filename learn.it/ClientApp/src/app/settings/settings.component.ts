@@ -13,7 +13,10 @@ import { GroupsComponent } from './components/groups/groups.component';
 export class SettingsComponent {
 
   @ViewChild(DynamicHostDirective, { static: true }) dynamicHost: DynamicHostDirective;
-  constructor(private componentFactoryResolver: ComponentFactoryResolver, private location: Location) { }
+  constructor(
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private location: Location
+  ) { }
 
   selectedTab = 'profile'; 
 

@@ -33,6 +33,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AuthInterceptor } from './auth.interceptor';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -68,6 +71,9 @@ import { AuthInterceptor } from './auth.interceptor';
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatButtonModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
