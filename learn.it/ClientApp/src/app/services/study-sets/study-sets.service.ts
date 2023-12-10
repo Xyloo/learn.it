@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable, catchError, map, throwError } from 'rxjs';
 import { UserSetDto } from '../../models/user-sets.dto';
+import { CreateStudySetDto } from '../../models/study-sets/create-study-set.dto';
+import { StudySet } from '../../models/study-sets/study-set';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +23,7 @@ export class StudySetsService {
         id: item.id,
         setName: item.name,
         description: item.description,
-        username: item.creator.username,
+        username: item.creator.username
       })))
     );
   }
@@ -32,6 +34,23 @@ export class StudySetsService {
         catchError(this.handleError)
       );
   }
+
+  createStudySet(studySet: CreateStudySetDto): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/studysets`, studySet);
+  }
+
+  getStudySet(setId: number): Observable<StudySet> {
+    return this.http.get<StudySet>(`${environment.apiUrl}/studysets/${setId}`);
+  }
+
+  updateStudySet(setId: number, studySet: any): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/studysets/${setId}`, studySet);
+  }
+  findStudySets(query: string): Observable<StudySet[]> {
+    return this.http.get<StudySet[]>(`${environment.apiUrl}/studysets/find/${query}`);
+  }
+
+
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error occurred';
