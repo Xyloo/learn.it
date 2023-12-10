@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -27,6 +27,12 @@ import { DynamicHostDirective } from './dynamic-host.directive';
 import { ProfileComponent } from './settings/components/profile/profile.component';
 import { PasswordComponent } from './settings/components/password/password.component';
 import { GroupsComponent } from './settings/components/groups/groups.component';
+import { ChooseGroupDialogComponent } from './choose-group-dialog/choose-group-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { AuthInterceptor } from './auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -50,6 +56,7 @@ import { GroupsComponent } from './settings/components/groups/groups.component';
     ProfileComponent,
     PasswordComponent,
     GroupsComponent,
+    ChooseGroupDialogComponent,
 
   ],
   imports: [
@@ -57,6 +64,10 @@ import { GroupsComponent } from './settings/components/groups/groups.component';
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
@@ -73,7 +84,7 @@ import { GroupsComponent } from './settings/components/groups/groups.component';
     BrowserAnimationsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

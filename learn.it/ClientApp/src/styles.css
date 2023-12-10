@@ -6,7 +6,7 @@
   --secondary-bg-color: #8ccfff;
   --text-color: #ffffff;
   --text-black: #000000;
-  --black-30:#4d4d4d;
+  --black-30: #4d4d4d;
   --light-gray: #e0e0e0;
   --login-button-bg: #ffffff;
   --white: #ffffff;
@@ -20,6 +20,9 @@
   --green-light-main-dark-15: #67db91;
   --green-dark-main: #32533D;
   --light-blue-main: #C4E7F2;
+  --green: green;
+  --red: red;
+  --green-light: #96E6B3;
 }
 
 

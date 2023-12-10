@@ -19,16 +19,18 @@ namespace learn.it.Controllers
         private readonly IUsersService _usersService;
         private readonly ILoginsService _loginsService;
         private readonly IGroupsService _groupsService;
+        private readonly IStudySetsService _studySetsService;
         private readonly IAchievementsService _achievementsService;
         private readonly IAnswersService _answersService;
 
-        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService, IAnswersService answersService)
+        public UsersController(IUsersService usersService, ILoginsService loginsService, IGroupsService groupsService, IAchievementsService achievementsService, IAnswersService answersService, IStudySetsService studySetsService)
         {
             _usersService = usersService;
             _loginsService = loginsService;
             _groupsService = groupsService;
             _achievementsService = achievementsService;
             _answersService = answersService;
+            _studySetsService = studySetsService;
         }
 
         [HttpPost("login")]
@@ -81,10 +83,9 @@ namespace learn.it.Controllers
                 Timestamp = DateTime.UtcNow
             };
             await _loginsService.CreateLogin(successfulLogin);
-            return Ok(new
-            {
-                Token = token,
-                user.UserId
+            return Ok(new {
+                token = token,
+                userId = user.UserId
             });
         }
 
@@ -230,6 +231,20 @@ namespace learn.it.Controllers
                 return Ok(groups);
             }
 
+            return Forbid();
+        }
+
+        [HttpGet("{userId}/studysets")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetUserStudyStes([FromRoute] int userId)
+        {
+            var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
+
+            if(ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
+            {
+                var studySets = await _studySetsService.GetAllStudySetsByCreator(userId);
+                return Ok(studySets);
+            }
             return Forbid();
         }
 

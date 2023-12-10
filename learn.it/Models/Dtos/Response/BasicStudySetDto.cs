@@ -4,6 +4,7 @@ namespace learn.it.Models.Dtos.Response
 {
     public class BasicStudySetDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public Visibility Visibility { get; set; }
@@ -12,6 +13,7 @@ namespace learn.it.Models.Dtos.Response
 
         public BasicStudySetDto(StudySet studySet)
         {
+            Id = studySet.StudySetId;
             Name = studySet.Name;
             Description = studySet.Description;
             Visibility = studySet.Visibility;

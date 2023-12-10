@@ -137,6 +137,9 @@ builder.Services.AddScoped<IAnswersService, AnswersService>();
 builder.Services.AddScoped<IAchievementsService, AchievementsService>();
 builder.Services.AddScoped<IImageHandler, ImageHandler>();
 
+
+builder.Services.AddScoped<IImageHandler, ImageHandler>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -177,6 +180,8 @@ app.UseProblemDetails();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<JwtBlacklistMiddleware>();
@@ -186,8 +191,6 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
-
-app.UseCors("AllowAll");
 
 app.Run();
 

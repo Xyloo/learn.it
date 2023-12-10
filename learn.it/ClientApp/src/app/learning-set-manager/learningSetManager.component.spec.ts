@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LearningSetManagerComponent } from './learningsetcreator.component';
+import { LearningSetManagerComponent } from './learningSetManager.component';
 
 describe('LearningSetManagerComponent', () => {
   let component: LearningSetManagerComponent;

@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>Ustawienia zestawu</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Group ID</mat-label>
+    <input matInput [(ngModel)]="groupId">
+  </mat-form-field>
+
+  <mat-checkbox [(ngModel)]="visibility">Set Visibility</mat-checkbox>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="{groupId: groupId, visibility: visibility}">Zatwierdź</button>
+  <button mat-button mat-dialog-close>Anuluj</button>
+</mat-dialog-actions>

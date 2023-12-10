@@ -1,4 +1,4 @@
-export interface UserSetsDto {
+export interface UserSetDto {
   id: number;
   setName: string,
   description: string;
