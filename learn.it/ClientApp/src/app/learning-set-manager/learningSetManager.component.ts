@@ -44,7 +44,7 @@ export class LearningSetManagerComponent {
   */
   showAddError = false;
   flashcards: Flashcard[] = [
-    { id: 1, term: 'Wpisz dane', definition: 'Wpisz dane', isTermText: true }
+    { flashcardId: 1, term: 'Wpisz dane', definition: 'Wpisz dane', isTermText: true }
   ];
 
   originalFlashcards: Flashcard[] = [];
@@ -68,6 +68,7 @@ export class LearningSetManagerComponent {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
+      console.log(params)
       if (params.has('id')) {
         const setIdParam = params.get('id');
         this.isEditMode = true;
@@ -81,8 +82,6 @@ export class LearningSetManagerComponent {
           this.originalFlashcards = JSON.parse(JSON.stringify(set.flashcards));
           this.initialSetData = JSON.parse(JSON.stringify(set));
         });
-
-
 
         //dodatkowo pobieranie visibility
 
@@ -98,7 +97,7 @@ export class LearningSetManagerComponent {
   addFlashcard() {
     if (this.canAddFlashcard()) {
       const newId = this.getMaxId() + 1; // Get the current max id and add 1
-      this.flashcards.push({ id: newId, term: '', definition: '', isTermText: true });
+      this.flashcards.push({ flashcardId: newId, term: '', definition: '', isTermText: true });
       this.showAddError = false;
       setTimeout(() => {
         if (this.newFlashcardElement) {
@@ -113,7 +112,7 @@ export class LearningSetManagerComponent {
 
   deleteFlashcard(flashcardId: number) {
     if (this.flashcards.length > 1)
-      this.flashcards = this.flashcards.filter(flashcard => flashcard.id !== flashcardId);
+      this.flashcards = this.flashcards.filter(flashcard => flashcard.flashcardId !== flashcardId);
 
     if (this.isEditMode) {
       this.flashcardService.deleteFlashcard(flashcardId).subscribe({
@@ -129,7 +128,7 @@ export class LearningSetManagerComponent {
   }
 
   getMaxId() {
-    return this.flashcards.reduce((max, flashcard) => flashcard.id > max ? flashcard.id : max, 0);
+    return this.flashcards.reduce((max, flashcard) => flashcard.flashcardId > max ? flashcard.flashcardId : max, 0);
   }
 
   canAddFlashcard(): boolean {
@@ -169,7 +168,7 @@ export class LearningSetManagerComponent {
           StudySetId: this.studySet.id
         };
         //create subsrtivbe to see errors
-        this.flashcardService.updateFlashcard(flashcard.id, backendFlashcard).subscribe({
+        this.flashcardService.updateFlashcard(flashcard.flashcardId, backendFlashcard).subscribe({
           next: results => {
             this.openSnackBar("Zestaw został pomyślnie zapisany", "Zamknij");
           },
@@ -229,6 +228,7 @@ export class LearningSetManagerComponent {
   }
 
   createFlashcards(flashcards: any[]) {
+
     this.flashcardService.createFlashcards(flashcards).subscribe({
       next: results => {
         this.openSnackBar("Zestaw został utworzony pomyślnie", "Zamknij");
@@ -242,10 +242,10 @@ export class LearningSetManagerComponent {
   }
 
   getFlashcardChanges() {
-    const added = this.flashcards.filter(fc => !fc.id);
+    const added = this.flashcards.filter(fc => !fc.flashcardId);
     const modified = this.flashcards.filter(fc => {
-      if (!fc.id) return false;
-      const original = this.originalFlashcards.find(ofc => ofc.id === fc.id);
+      if (!fc.flashcardId) return false;
+      const original = this.originalFlashcards.find(ofc => ofc.flashcardId === fc.flashcardId);
       return original && (fc.term !== original.term || fc.definition !== original.definition);
     });
 

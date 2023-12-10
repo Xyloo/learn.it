@@ -36,6 +36,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { UserGroupsComponent } from './user-groups/user-groups.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { MatButtonModule } from '@angular/material/button';
     PasswordComponent,
     GroupsComponent,
     ChooseGroupDialogComponent,
+    UserGroupsComponent,
 
   ],
   imports: [
@@ -85,7 +87,8 @@ import { MatButtonModule } from '@angular/material/button';
       { path: 'learn', component: LearningModuleComponent },
       { path: 'search', component: SearchComponent },
       { path: 'sets', component: UserSetsComponent },
-      { path: 'settings', component: SettingsComponent }
+      { path: 'settings', component: SettingsComponent },
+      { path: 'groups', component: UserGroupsComponent },
     ]),
     BrowserAnimationsModule,
     ReactiveFormsModule

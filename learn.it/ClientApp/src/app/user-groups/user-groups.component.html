@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="label-wrapper">
+    <h2 class="label-text">Dostępne grupy </h2>
+    <button routerLink="/set" (click)="goBack()" class="icon-btn rotate45">
+      <img src="/assets/plus-icon.svg" alt="Icon" />
+    </button>
+  </div>
+  <div class="sets-wrapper">
+    <div class="sets-row" *ngFor="let groups of userGroups" (click)="redirectToGroup(groups.id)">
+      <div class="set-info">
+        {{groups.name}}
+      </div>
+      <div class="set-buttons">
+        <button (click)="leaveGroup(groups.id)" class="icon-btn-clear rotate45">
+          <img src="/assets/plus-icon.svg" alt="Icon" />
+          <span class="tooltip-text">Opuść grupę</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

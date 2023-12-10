@@ -31,7 +31,6 @@ export class UserSetsComponent implements OnInit {
     this.studySetService.getStudySets().subscribe({
       next: (sets) => {
         this.userSets = sets;
-        console.log(this.userSets); 
       },
       error: (error) => {
         console.error('Error fetching study sets:', error);

@@ -91,7 +91,7 @@ namespace learn.it.Utils
 
             var userDtos = new List<AnonymousUserResponseDto>();
             // Initialize users list with users who have mastered the first flashcard
-            var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().Id)).ToList();
+            var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().FlashcardId)).ToList();
             if(firstFlashcardProgress?.Count == 0)
                 return new List<User>();
             userDtos.AddRange(firstFlashcardProgress.Where(p => p.IsMastered).Select(p => p.User));

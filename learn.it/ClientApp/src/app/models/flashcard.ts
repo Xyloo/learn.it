@@ -1,5 +1,5 @@
 export interface Flashcard {
-  id: number; 
+  flashcardId: number; 
   term: string;
   definition: string;
   isTermText: boolean;
