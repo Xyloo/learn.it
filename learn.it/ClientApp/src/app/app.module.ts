@@ -37,6 +37,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { UserGroupsComponent } from './user-groups/user-groups.component';
+import { GroupDetailsComponent } from './group-details/group-details.component';
+import { CreateGroupDialogComponent } from './create-group-dialog/create-group-dialog.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,8 @@ import { UserGroupsComponent } from './user-groups/user-groups.component';
     GroupsComponent,
     ChooseGroupDialogComponent,
     UserGroupsComponent,
+    GroupDetailsComponent,
+    CreateGroupDialogComponent,
 
   ],
   imports: [
@@ -89,6 +93,7 @@ import { UserGroupsComponent } from './user-groups/user-groups.component';
       { path: 'sets', component: UserSetsComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'groups', component: UserGroupsComponent },
+      { path: 'groups/:id', component: GroupDetailsComponent },
     ]),
     BrowserAnimationsModule,
     ReactiveFormsModule

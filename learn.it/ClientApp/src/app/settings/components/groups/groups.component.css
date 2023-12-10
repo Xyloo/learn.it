@@ -64,3 +64,24 @@ input, textarea, button {
     flex-direction: row;
     gap: 10px;
 }
+
+.header-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
+button {
+  height: 2rem;
+  width: 20%;
+  border-radius: 25px;
+  border: none;
+  padding: 1.3rem;
+  border: 1px solid var(--text-black);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid var(--text-black);
+}

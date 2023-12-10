@@ -1,5 +1,8 @@
 <div class="wrapper">
-  <h3>Twoje grupy</h3>
+  <div class="header-wrapper">
+    <h3>Twoje grupy</h3>
+    <button (click)="createGroup()">Stwórz grupę</button>
+  </div>
   <div class="group-list">
     <div *ngFor="let group of userGroups; let i = index" class="item">
       <div class="center-text">{{ i + 1 }}. {{ group.name }}</div>

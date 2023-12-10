@@ -4,6 +4,8 @@ import { UserService } from '../../../services/user/user.service';
 import { GroupsService } from '../../../services/groups/groups.service';
 import { SnackbarService } from '../../../services/snackbar.service';
 import { GroupInvitation } from '../../../models/groups/group-invitation';
+import { CreateGroupDialogComponent } from '../../../create-group-dialog/create-group-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-groups',
@@ -17,7 +19,8 @@ export class GroupsComponent implements OnInit {
   constructor(
     private userService: UserService,
     private groupsService: GroupsService,
-    private snackBarService: SnackbarService
+    private snackBarService: SnackbarService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -67,4 +70,25 @@ export class GroupsComponent implements OnInit {
     });
   }
 
+  createGroup() {
+    const dialogRef = this.dialog.open(CreateGroupDialogComponent, {
+      width: '270px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.groupsService.createGroup(result).subscribe({
+          next: () => {
+            this.snackBarService.openSnackBar(`Pomyślnie utworzono grupę - ${result.name}`, "Zamknij");
+            this.userService.getUserGroups().subscribe(groups => {
+              this.userGroups = groups;
+            });
+          },
+          error: () => {
+            this.snackBarService.openSnackBar("Wystąpił błąd podczas tworzenia grupy.", "Zamknij");
+          }
+        });
+      }
+    });
+  }
 }
