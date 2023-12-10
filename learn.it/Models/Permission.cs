@@ -9,16 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
-[Table("permissions", Schema = "learnitdb")]
+[Table("Permissions", Schema = "learnitdb")]
 public partial class Permission
 {
     [Key]
-    [Column("permission_id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int PermissionId { get; set; }
 
     [Required]
-    [Column("name")]
     [StringLength(45)]
     public string Name { get; set; }
 

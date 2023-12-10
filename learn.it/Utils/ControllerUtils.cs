@@ -4,6 +4,7 @@ using System.Security.Claims;
 using learn.it.Exceptions;
 using learn.it.Models.Dtos.Response;
 using learn.it.Services.Interfaces;
+using SixLabors.ImageSharp;
 
 namespace learn.it.Utils
 {
@@ -18,19 +19,17 @@ namespace learn.it.Utils
                 case > 10 * 1024 * 1024:
                     throw new InvalidInputDataException("Wysłany plik jest zbyt duży (maks. 10 MB).");
             }
-
-            // Check the file content type
-            if (file.ContentType.ToLower().StartsWith("image/"))
+            try
             {
-                return;
+                var imageInfo = Image.Identify(file.OpenReadStream());
+                if(imageInfo == null)
+                    throw new InvalidInputDataException("Przesłany plik nie jest obrazem.");
+            }
+            catch (Exception)
+            {
+                throw new InvalidInputDataException("Przesłany plik nie jest obrazem.");
             }
 
-            // Alternatively, check the file extension
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
-            var extension = Path.GetExtension(file.FileName).ToLower();
-
-            if(!allowedExtensions.Contains(extension))
-                throw new InvalidInputDataException("Przesłany plik nie jest obrazem.");
         }
 
         public static bool IsUserAdminOrSelf(User user, ClaimsPrincipal data)
@@ -84,16 +83,22 @@ namespace learn.it.Utils
             IUsersService usersService)
         {
             var flashcards = (await flashcardsService.GetFlashcardsInSet(studySet.StudySetId)).ToList();
+            if (flashcards.Count == 0)
+                return new List<User>();
 
             var userDtos = new List<AnonymousUserResponseDto>();
             // Initialize users list with users who have mastered the first flashcard
-            var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().Id)).ToList();
+            var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().FlashcardId)).ToList();
+            if (firstFlashcardProgress.Count == 0)
+                return new List<User>();
             userDtos.AddRange(firstFlashcardProgress.Where(p => p.IsMastered).Select(p => p.User));
 
             // Iterate through the remaining flashcards
             foreach (var flashcard in flashcards.Skip(1))
             {
-                var progress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcard.Id)).ToList();
+                var progress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcard.FlashcardId)).ToList();
+                if (progress.Count == 0)
+                    continue;
                 var usersWhoMasteredFlashcard = progress.Where(p => p.IsMastered).Select(p => p.User).ToList();
 
                 // Update users list to only include users who have mastered the current flashcard

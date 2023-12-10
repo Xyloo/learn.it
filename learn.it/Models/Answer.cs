@@ -8,23 +8,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace learn.it.Models;
 
-[Table("answers", Schema = "learnitdb")]
+[Table("Answers", Schema = "learnitdb")]
 [Index("FlashcardId", Name = "fk_answers_flashcards1_idx")]
 [Index("UserId", Name = "fk_answers_users1_idx")]
 public partial class Answer
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("answer_id")]
     public int AnswerId { get; private set; }
 
-    [Column("is_correct")]
     public bool IsCorrect { get; set; }
 
-    [Column("answer_time")]
     public int AnswerTime { get; set; }
 
-    [Column("answer_timestamp")]
     public DateTime AnswerTimestamp { get; set; }
 
     [ForeignKey("FlashcardId")]

@@ -227,7 +227,7 @@ namespace learn.it.Controllers
             var studySet = await _studySetsService.GetStudySetById(flashcard.StudySet.StudySetId);
             var creator = await _usersService.GetUserByIdOrUsername(studySet.Creator.UserId.ToString());
             var progressedFlashcard = await _flashcardProgressService.GetFlashcardUserProgressesByFlashcardId(flashcardId);
-            var masteredFlashcard = progressedFlashcard.Where(f => f.IsMastered);
+            var masteredFlashcard = progressedFlashcard.Where(f => f.IsMastered).ToList();
             if (ControllerUtils.IsUserAdminOrSelf(studySet.Creator, User))
             {
                 await _flashcardsService.RemoveFlashcard(flashcardId);

@@ -32,85 +32,63 @@ namespace learn.it.Migrations
 
                     b.HasKey("GroupId", "UserId");
 
-                    b.ToTable("GroupUser");
-                });
+                    b.HasIndex("UserId");
 
-            modelBuilder.Entity("UsersHasGroups", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int")
-                        .HasColumnName("group_id");
-
-                    b.HasKey("UserId", "GroupId")
-                        .HasName("PK_users_has_groups_user_id");
-
-                    b.HasIndex(new[] { "GroupId" }, "fk_users_has_groups_groups1_idx");
-
-                    b.HasIndex(new[] { "UserId" }, "fk_users_has_groups_users1_idx");
-
-                    b.ToTable("users_has_groups", "learnitdb");
+                    b.ToTable("GroupUser", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.Achievement", b =>
                 {
                     b.Property<int>("AchievementId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("achievement_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AchievementId"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("description");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ImagePath")
-                        .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("image_url");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("name");
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Predicate")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("AchievementId")
                         .HasName("PK_achievements_achievement_id");
 
-                    b.ToTable("achievements", "learnitdb");
+                    b.HasIndex(new[] { "Predicate" }, "predicate_UNIQUE")
+                        .IsUnique()
+                        .HasFilter("[Predicate] IS NOT NULL");
+
+                    b.ToTable("Achievements", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.Answer", b =>
                 {
                     b.Property<int>("AnswerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("answer_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AnswerId"));
 
                     b.Property<int>("AnswerTime")
-                        .HasColumnType("int")
-                        .HasColumnName("answer_time");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("AnswerTimestamp")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("answer_timestamp");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("FlashcardId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_correct");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -122,82 +100,71 @@ namespace learn.it.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "fk_answers_users1_idx");
 
-                    b.ToTable("answers", "learnitdb");
+                    b.ToTable("Answers", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.Flashcard", b =>
                 {
                     b.Property<int>("FlashcardId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("flashcard_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FlashcardId"));
 
                     b.Property<string>("Definition")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("definition");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsTermText")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_term_text");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("StudySetId")
                         .HasColumnType("int");
 
                     b.Property<string>("Term")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("term");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FlashcardId")
                         .HasName("PK_flashcards_flashcard_id");
 
                     b.HasIndex(new[] { "StudySetId" }, "fk_flashcards_study_sets1_idx");
 
-                    b.ToTable("flashcards", "learnitdb");
+                    b.ToTable("Flashcards", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.FlashcardUserProgress", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<int>("FlashcardId")
-                        .HasColumnType("int")
-                        .HasColumnName("flashcard_id");
+                        .HasColumnType("int");
 
                     b.Property<int>("ConsecutiveCorrectAnswers")
-                        .HasColumnType("int")
-                        .HasColumnName("consecutive_correct_answers");
+                        .HasColumnType("int");
 
-                    b.Property<short>("IsMastered")
-                        .HasColumnType("smallint")
-                        .HasColumnName("is_mastered");
+                    b.Property<bool>("IsMastered")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("MasteredTimestamp")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)")
-                        .HasColumnName("mastered_timestamp");
+                        .HasColumnType("datetime2(0)");
 
-                    b.Property<short>("NeedsMoreRepetitions")
-                        .HasColumnType("smallint")
-                        .HasColumnName("needs_more_repetitions");
+                    b.Property<bool>("NeedsMoreRepetitions")
+                        .HasColumnType("bit");
 
                     b.HasKey("UserId", "FlashcardId")
                         .HasName("PK_flashcard_user_progress_user_id");
 
                     b.HasIndex(new[] { "FlashcardId" }, "fk_flashcard_user_progress_flashcards1_idx");
 
-                    b.ToTable("flashcard_user_progress", "learnitdb");
+                    b.ToTable("FlashcardUserProgress", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.Group", b =>
                 {
                     b.Property<int>("GroupId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("group_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupId"));
 
@@ -205,39 +172,34 @@ namespace learn.it.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("name");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("GroupId")
                         .HasName("PK_groups_group_id");
 
                     b.HasIndex(new[] { "CreatorId" }, "fk_groups_users1_idx");
 
-                    b.ToTable("groups", "learnitdb");
+                    b.ToTable("Groups", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.GroupJoinRequest", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<int>("GroupId")
-                        .HasColumnType("int")
-                        .HasColumnName("group_id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)")
-                        .HasColumnName("expires_at");
+                        .HasColumnType("datetime2(0)");
 
                     b.HasKey("UserId", "GroupId")
                         .HasName("PK_group_join_requests_user_id");
@@ -246,40 +208,35 @@ namespace learn.it.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("group_join_request", "learnitdb");
+                    b.ToTable("GroupJoinRequest", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.Login", b =>
                 {
                     b.Property<int>("LoginId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("login_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoginId"));
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
-                        .HasColumnName("ip_address");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<bool>("IsSuccessful")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_successful");
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(0)
                         .HasColumnType("datetime2(0)")
-                        .HasColumnName("timestamp")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("UserAgent")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("user_agent");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -289,28 +246,26 @@ namespace learn.it.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "fk_logins_users_idx");
 
-                    b.ToTable("logins", "learnitdb");
+                    b.ToTable("Logins", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.Permission", b =>
                 {
                     b.Property<int>("PermissionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("permission_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
-                        .HasColumnName("name");
+                        .HasColumnType("nvarchar(45)");
 
                     b.HasKey("PermissionId")
                         .HasName("PK_permissions_permission_id");
 
-                    b.ToTable("permissions", "learnitdb");
+                    b.ToTable("Permissions", "learnitdb");
 
                     b.HasData(
                         new
@@ -329,8 +284,7 @@ namespace learn.it.Migrations
                 {
                     b.Property<int>("StudySetId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("study_set_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudySetId"));
 
@@ -338,22 +292,17 @@ namespace learn.it.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("description");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("name");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Visibility")
-                        .HasColumnType("int")
-                        .HasColumnName("visibility");
+                        .HasColumnType("int");
 
                     b.HasKey("StudySetId")
                         .HasName("PK_study_sets_study_set_id");
@@ -362,53 +311,46 @@ namespace learn.it.Migrations
 
                     b.HasIndex(new[] { "CreatorId" }, "fk_study_sets_users1_idx");
 
-                    b.ToTable("study_sets", "learnitdb");
+                    b.ToTable("StudySets", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Avatar")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("avatar")
                         .HasDefaultValueSql("(N'default.png')");
 
                     b.Property<DateTime>("CreateTime")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(0)
                         .HasColumnType("datetime2(0)")
-                        .HasColumnName("create_time")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("email");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("LastLogin")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)")
-                        .HasColumnName("last_login");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("password");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PermissionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("username");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UserId")
                         .HasName("PK_users_user_id");
@@ -421,25 +363,22 @@ namespace learn.it.Migrations
                     b.HasIndex(new[] { "Username" }, "users$username_UNIQUE")
                         .IsUnique();
 
-                    b.ToTable("users", "learnitdb");
+                    b.ToTable("Users", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.UserAchievements", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<int>("AchievementId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("achievement_id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(0)
                         .HasColumnType("datetime2(0)")
-                        .HasColumnName("timestamp")
                         .HasDefaultValueSql("(getdate())");
 
                     b.HasKey("UserId", "AchievementId")
@@ -449,88 +388,72 @@ namespace learn.it.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "fk_user_achievements_users1_idx");
 
-                    b.ToTable("user_achievements", "learnitdb");
+                    b.ToTable("UserAchievements", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.UserPreferences", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
-                    b.Property<short>("AutoTts")
-                        .HasColumnType("smallint")
-                        .HasColumnName("auto_tts");
+                    b.Property<bool>("AutoTts")
+                        .HasColumnType("bit");
 
-                    b.Property<short>("EmailReminders")
-                        .HasColumnType("smallint")
-                        .HasColumnName("email_reminders");
-
-                    b.Property<short>("HighContrastMode")
-                        .HasColumnType("smallint")
-                        .HasColumnName("high_contrast_mode");
+                    b.Property<bool>("HighContrastMode")
+                        .HasColumnType("bit");
 
                     b.HasKey("UserId")
                         .HasName("PK_user_preferences_user_id");
 
                     b.HasIndex(new[] { "UserId" }, "fk_user_preferences_users1_idx");
 
-                    b.ToTable("user_preferences", "learnitdb");
+                    b.ToTable("UserPreferences", "learnitdb");
                 });
 
             modelBuilder.Entity("learn.it.Models.UserStats", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<int>("ConsecutiveLoginDays")
-                        .HasColumnType("int")
-                        .HasColumnName("consecutive_login_days");
+                        .HasColumnType("int");
 
                     b.Property<int>("TotalFlashcardsAdded")
-                        .HasColumnType("int")
-                        .HasColumnName("flashcards_added");
-
-                    b.Property<int>("TotalSetsAdded")
-                        .HasColumnType("int")
-                        .HasColumnName("sets_added");
-
-                    b.Property<int>("TotalSetsMastered")
-                        .HasColumnType("int")
-                        .HasColumnName("sets_completed");
+                        .HasColumnType("int");
 
                     b.Property<int>("TotalFlashcardsMastered")
-                        .HasColumnType("int")
-                        .HasColumnName("total_flashcards_mastered");
+                        .HasColumnType("int");
 
                     b.Property<int>("TotalLoginDays")
-                        .HasColumnType("int")
-                        .HasColumnName("total_login_days");
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalSetsAdded")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalSetsMastered")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId")
                         .HasName("PK_user_stats_user_id");
 
                     b.HasIndex(new[] { "UserId" }, "fk_user_stats_users1_idx");
 
-                    b.ToTable("user_stats", "learnitdb");
+                    b.ToTable("UserStats", "learnitdb");
                 });
 
-            modelBuilder.Entity("UsersHasGroups", b =>
+            modelBuilder.Entity("GroupUser", b =>
                 {
                     b.HasOne("learn.it.Models.Group", null)
                         .WithMany()
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired()
-                        .HasConstraintName("users_has_groups$fk_users_has_groups_groups1");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("learn.it.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired()
-                        .HasConstraintName("users_has_groups$fk_users_has_groups_users1");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("learn.it.Models.Answer", b =>

@@ -83,12 +83,18 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<GroupJoinRequest>> GetAllGroupJoinRequestsForGroup(int groupId)
         {
-            return await _context.GroupJoinRequests.Where(request => request.GroupId == groupId).Include(g => g.Creator).ToListAsync();
+            return await _context.GroupJoinRequests.Where(request => request.GroupId == groupId)
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator).ToListAsync();
         }
 
         public async Task<IEnumerable<GroupJoinRequest>> GetAllGroupJoinRequestsForUser(int userId)
         {
-            return await _context.GroupJoinRequests.Where(request => request.UserId == userId).Include(g => g.Creator).ToListAsync();
+            return await _context.GroupJoinRequests.Where(request => request.UserId == userId)
+                .Include(g => g.Creator)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator).ToListAsync();
         } 
 
         public async Task<GroupJoinRequest?> GetGroupJoinRequest(int userId, int groupId)

@@ -34,7 +34,7 @@ namespace learn.it.Controllers
             _achievementsService = achievementsService;
         }
 
-        [HttpGet("allSets")]
+        [HttpGet("all")]
         [Authorize(Policy = "Admins")]
         public async Task<IActionResult> GetAllStudySets()
         {
@@ -67,7 +67,7 @@ namespace learn.it.Controllers
         {
             var studySets = (await _studySetsService.GetStudySetsContainingName(name)).ToList();
             if (studySets.Count == 0)
-                throw new InvalidInputDataException($"Nie odnaleziono zestawów zawierających frazę [{name}].");
+                throw new NotFoundException($"Nie odnaleziono zestawów zawierających frazę [{name}].");
 
             User? user;
             try
@@ -100,7 +100,8 @@ namespace learn.it.Controllers
                 else if (studySet.Creator.Username == user.Username)
                     studySetsToReturn.Add(studySet);
             }
-
+            if (studySetsToReturn.Count == 0)
+                throw new NotFoundException($"Nie odnaleziono zestawów zawierających frazę [{name}].");
             return Ok(studySetsToReturn);
         }
 
@@ -110,7 +111,7 @@ namespace learn.it.Controllers
         {
             var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
             Group? group;
-            if (studySet.GroupId == null)
+            if (studySet.GroupId == null || (studySet.GroupId != null && studySet.Visibility != Visibility.Group))
                 group = null;
             else
             {
@@ -170,6 +171,12 @@ namespace learn.it.Controllers
                     _flashcardsService,
                     _flashcardProgressService, _usersService)).ToList();
                 var masteredSetUsersBeforeVisibilityChange = masteredSetUsers.Where(u => ControllerUtils.CanUserAccessStudySet(u, studySetToUpdate)).ToList();
+
+                if(studySet.GroupId == null && studySet.Visibility == Visibility.Group)
+                    throw new InvalidInputDataException("Nie można zmienić widoczności zestawu na grupę bez uzupełnienia pola grupy.");
+
+                if(studySet.GroupId != null && studySet.Visibility != Visibility.Group)
+                    studySet.GroupId = null;
 
                 studySetToUpdate.Name = studySet.Name ?? studySetToUpdate.Name;
                 studySetToUpdate.Description = studySet.Description ?? studySetToUpdate.Description;

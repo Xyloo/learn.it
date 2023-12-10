@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class BasicStudySetDto
     {
@@ -17,6 +19,11 @@
             Visibility = studySet.Visibility;
             Creator = new AnonymousUserResponseDto(studySet.Creator);
             Group = studySet.Group is null ? null : new BasicGroupDto(studySet.Group);
+        }
+
+        [JsonConstructor]
+        public BasicStudySetDto()
+        {
         }
     }
 }

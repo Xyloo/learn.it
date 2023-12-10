@@ -257,7 +257,7 @@ namespace learn.it.Controllers
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
                 var achievements = (await _achievementsService.GetUserAchievements(queriedUser.UserId))
-                    .Select(a => new UserAchievementsDto(a)).ToList();
+                    .Select(a => new UserAchievementsDto(a));
                 return Ok(achievements);
             }
 
@@ -295,6 +295,24 @@ namespace learn.it.Controllers
             var answers = await _answersService.GetAnswersByUserId(ControllerUtils.GetUserIdFromClaims(User));
             answers = answers.OrderByDescending(x => x.AnswerTimestamp).Take(3);
             return Ok(answers);
+        }
+
+        [HttpGet("logins")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> GetUserLogins()
+        {
+            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
+            var logins = await _loginsService.GetUserLogins(user);
+            return Ok(logins);
+        }
+
+        [HttpGet("logins/{userId}")]
+        [Authorize(Policy = "Admins")]
+        public async Task<IActionResult> GetUserLogins([FromRoute] string userId)
+        {
+            var user = await _usersService.GetUserByIdOrUsername(userId);
+            var logins = await _loginsService.GetUserLogins(user);
+            return Ok(logins);
         }
     }
 }
