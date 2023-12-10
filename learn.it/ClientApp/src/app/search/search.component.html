@@ -8,12 +8,11 @@
   <div class="search-results-container">
     <div class="result-row" *ngFor="let result of searchResults | slice:0:displayLimit" (click)="goToSet(result.id)">
       <div class="result-item">
-        <div class="set-title">{{ result.setName }}</div>
-        <div class="set-count">{{ result.setCount }} sets</div>
+        <div class="set-title">{{ result.name }}</div>
+        <div class="set-count"> {{result.flashcardsCount}} fiszek</div>
         <div class="user-info">
-          <!--<img [src]="result.avatarUrl" alt="Avatar" class="user-avatar">-->
-          <img [src]="result.avatarUrl" alt="Avatar" class="user-avatar">
-          <div class="username">{{ result.username }}</div>
+          <img [src]="result.creator.avatar || '/assets/temp-avatar.png'" alt="Avatar" class="user-avatar">
+          <div class="username">{{ result.creator.username }}</div>
         </div>
       </div>
     </div>

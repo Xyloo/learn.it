@@ -49,15 +49,25 @@ a {
   border-radius: 20px;
 }
 
+  .search-container button {
+    border: 0px;
+    border-radius: 20px;
+    background-color: var(--white); 
+    padding: 10px 20px; 
+    margin-left: -10px;
+    cursor: pointer;
+  }
+
 .search-container input[type="search"] {
   width: 100%;
   border: 0px;
   border-radius: 20px;
 }
 
-.search-container input[type="search"]:focus {
-  outline: none;
-}
+  .search-container input[type="search"]:focus {
+    outline: none;
+    padding-right: 10px;
+  }
 
 .search-icon {
   height: 2.5rem;

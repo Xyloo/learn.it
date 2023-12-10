@@ -10,12 +10,20 @@ import { AccountService } from '../services/account.service';
 export class NavMenuComponent {
 
   @ViewChild('searchInput') searchInput: ElementRef;
-
+  searchQuery: string = '';
   constructor(private router: Router, private accountService: AccountService) { }
 
   showDropdown: boolean = false;
   toggleDropdown() {
     this.showDropdown = !this.showDropdown;
+  }
+
+  onSearch(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/search'], { queryParams: { query: this.searchQuery } });
+      console.log("searching for " + this.searchQuery)
+      this.closeDropdown();
+    }
   }
 
   closeDropdown() {

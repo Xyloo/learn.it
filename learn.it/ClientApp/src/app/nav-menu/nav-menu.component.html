@@ -8,7 +8,8 @@
         <label for="search" class="search-icon-label">
           <img src="/assets/search-icon.svg" alt="Icon" class="search-icon" />
         </label>
-        <input #searchInput type="search" placeholder="Wyszukaj materiały do nauki">
+        <input #searchInput type="search" [(ngModel)]="searchQuery" placeholder="Wyszukaj materiały do nauki">
+        <button (click)="onSearch()" class="search-button">Szukaj</button>
       </div>
 
       <div class="nav-icons">
