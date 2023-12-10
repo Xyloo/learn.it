@@ -367,3 +367,6 @@ FodyWeavers.xsd
 /learn.it/Migrations/20231204211601_test.cs
 /learn.it/Migrations/20231204211601_test.Designer.cs
 /learn.it/Migrations/LearnitDbContextModelSnapshot.cs
+/learn.it/Migrations/20231206221843_Initial.cs
+/learn.it/Migrations/20231206221843_Initial.Designer.cs
+/learn.it/Migrations/LearnitDbContextModelSnapshot.cs
