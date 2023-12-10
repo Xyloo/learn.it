@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class UserAchievementsDto
     {
@@ -11,6 +13,11 @@
             User = new AnonymousUserResponseDto(userAchievement.User);
             Achievement = new AchievementDto(userAchievement.Achievement);
             Timestamp = userAchievement.Timestamp;
+        }
+
+        [JsonConstructor]
+        public UserAchievementsDto()
+        {
         }
     }
 }

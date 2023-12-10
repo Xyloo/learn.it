@@ -21,17 +21,17 @@ namespace learn.it.Repos
 
         public async Task<Answer?> GetAnswerById(int answerId)
         {
-            return await _context.Answers.Where(a => a.AnswerId == answerId).Include(a => a.User).Include(a => a.Flashcard).FirstOrDefaultAsync();
+            return await _context.Answers.Where(a => a.AnswerId == answerId).Include(a => a.User).ThenInclude(u => u.Permissions).Include(a => a.Flashcard).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Answer>> GetAnswersByFlashcardId(int flashcardId)
         {
-            return await _context.Answers.Where(a => a.Flashcard.FlashcardId == flashcardId).Include(a => a.User).Include(a => a.Flashcard).ToListAsync();
+            return await _context.Answers.Where(a => a.Flashcard.FlashcardId == flashcardId).Include(a => a.User).ThenInclude(u => u.Permissions).Include(a => a.Flashcard).ToListAsync();
         }
 
         public async Task<IEnumerable<Answer>> GetAnswersByUserId(int userId)
         {
-            return await _context.Answers.Where(a => a.User.UserId == userId).Include(a => a.User).Include(a => a.Flashcard).ToListAsync();
+            return await _context.Answers.Where(a => a.User.UserId == userId).Include(a => a.User).ThenInclude(u => u.Permissions).Include(a => a.Flashcard).ToListAsync();
         }
 
         public async Task RemoveAnswer(Answer answer)

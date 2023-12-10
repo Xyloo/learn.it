@@ -1,4 +1,6 @@
-﻿namespace learn.it.Models.Dtos.Response
+﻿using System.Text.Json.Serialization;
+
+namespace learn.it.Models.Dtos.Response
 {
     public class AnonymousUserResponseDto
     {
@@ -9,6 +11,11 @@
         {
             Username = user.Username;
             Avatar = user.Avatar;
+        }
+
+        [JsonConstructor]
+        public AnonymousUserResponseDto()
+        {
         }
     }
 }

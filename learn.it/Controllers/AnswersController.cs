@@ -84,7 +84,9 @@ namespace learn.it.Controllers
                         ConsecutiveCorrectAnswers = answer.IsCorrect ? 1 : 0,
                         IsMastered = false,
                         MasteredTimestamp = null,
-                        NeedsMoreRepetitions = false
+                        NeedsMoreRepetitions = false,
+                        UserId = user.UserId,
+                        FlashcardId = flashcard.FlashcardId
                     };
                     await _flashcardUserProgressService.AddFlashcardUserProgress(progress);
                 }
@@ -120,7 +122,7 @@ namespace learn.it.Controllers
 
             if (ControllerUtils.CanUserAccessStudySet(user, flashcard.StudySet))
             {
-                var answers = (await _answersService.GetAnswersByFlashcardId(flashcardId)).ToList().Where(g => g.User.UserId == user.UserId).ToList();
+                var answers = (await _answersService.GetAnswersByFlashcardId(flashcardId)).Where(g => g.User.UserId == user.UserId).ToList();
                 return Ok(answers.Select(a => new AnswerDto(a)));
             }
             throw new ForbiddenAccessException("Nie masz dostępu do tego zestawu.");
@@ -130,7 +132,7 @@ namespace learn.it.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> GetAnswersByUserId(int userId)
         {
-            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
+            var user = await _usersService.GetUserByIdOrUsername(userId.ToString());
             if (ControllerUtils.IsUserAdminOrSelf(user, User))
             {
                 return Ok((await _answersService.GetAnswersByUserId(userId)).Select(a => new AnswerDto(a)));

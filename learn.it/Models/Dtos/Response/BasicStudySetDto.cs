@@ -27,5 +27,10 @@ namespace learn.it.Models.Dtos.Response
         public BasicStudySetDto()
         {
         }
+
+        [JsonConstructor]
+        public BasicStudySetDto()
+        {
+        }
     }
 }

@@ -13,11 +13,11 @@ namespace learn.it.Models;
 [Index("FlashcardId", Name = "fk_flashcard_user_progress_flashcards1_idx")]
 public partial class FlashcardUserProgress
 {
-    [Key]
-    public int UserId { get; private set; }
+    [Key, ForeignKey("User")]
+    public int UserId { get; set; }
 
-    [Key]
-    public int FlashcardId { get; private set; }
+    [Key, ForeignKey("Flashcard")]
+    public int FlashcardId { get; set; }
 
     public int ConsecutiveCorrectAnswers { get; set; }
 
@@ -28,11 +28,7 @@ public partial class FlashcardUserProgress
 
     public bool NeedsMoreRepetitions { get; set; }
 
-    [ForeignKey("FlashcardId")]
-    [InverseProperty("FlashcardUserProgress")]
     public virtual Flashcard Flashcard { get; set; }
 
-    [ForeignKey("UserId")]
-    [InverseProperty("FlashcardUserProgress")]
     public virtual User User { get; set; }
 }

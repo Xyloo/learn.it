@@ -30,9 +30,9 @@ namespace learn.it.Controllers
 
         [HttpGet("{achievementId}")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetAchievementDetails([FromRoute] int id)
+        public async Task<IActionResult> GetAchievementDetails([FromRoute] int achievementId)
         {
-            var achievement = await _achievementsService.GetAchievement(id);
+            var achievement = await _achievementsService.GetAchievement(achievementId);
             return Ok(achievement);
         }
 
@@ -51,7 +51,8 @@ namespace learn.it.Controllers
             };
 
             var addedAchievement = await _achievementsService.AddAchievement(newAchievement, achievementImage);
-            return Ok(addedAchievement);
+            return CreatedAtAction(nameof(GetAchievementDetails), new { achievementId = addedAchievement.AchievementId },
+                               new AchievementDto(addedAchievement));
         }
 
         [HttpDelete("{achievementId}")]
@@ -85,12 +86,12 @@ namespace learn.it.Controllers
 
         [HttpPut("{achievementId}/image")]
         [Authorize(Policy = "Admins")]
-        public async Task<IActionResult> UpdateAchievementImage([FromRoute] int achievementId, IFormFile image)
+        public async Task<IActionResult> UpdateAchievementImage([FromRoute] int achievementId, IFormFile achievementImage)
         {
-            ControllerUtils.CheckIfValidImage(image);
+            ControllerUtils.CheckIfValidImage(achievementImage);
 
             var achievement = await _achievementsService.GetAchievement(achievementId);
-            var updatedAchievement = await _achievementsService.UpdateAchievementImage(achievement, image);
+            var updatedAchievement = await _achievementsService.UpdateAchievementImage(achievement, achievementImage);
             return Ok(updatedAchievement);
         }
     }

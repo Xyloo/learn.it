@@ -21,7 +21,7 @@ namespace learn.it.Repos
 
         public async Task<Flashcard?> GetFlashcard(int id)
         {
-            return await _context.Flashcards.Include(f => f.StudySet).FirstOrDefaultAsync(f => f.FlashcardId == id);
+            return await _context.Flashcards.Include(f => f.StudySet).ThenInclude(g => g.Group).Include(g => g.StudySet.Creator).FirstOrDefaultAsync(f => f.FlashcardId == id);
         }
 
         public async Task<Flashcard> AddFlashcard(Flashcard flashcard)
