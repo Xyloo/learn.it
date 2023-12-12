@@ -50,7 +50,7 @@ export class GroupsComponent implements OnInit {
     this.groupsService.acceptInvitation(groupId).subscribe({
       next: () => {
         this.snackBarService.openSnackBar("Pomyślnie dołączyłeś do grupy.", "Zamknij");
-        this.userInvitations = this.userInvitations.filter(invitation => invitation.groupId !== groupId);
+        this.userInvitations = this.userInvitations.filter(invitation => invitation.group.groupId !== groupId);
       },
       error: () => {
         this.snackBarService.openSnackBar("Wystąpił błąd podczas dołączania do grupy.", "Zamknij");
@@ -62,7 +62,7 @@ export class GroupsComponent implements OnInit {
     this.groupsService.declineInvitation(groupId).subscribe({
       next: () => {
         this.snackBarService.openSnackBar("Pomyślnie odrzuciłeś zaproszenie.", "Zamknij");
-        this.userInvitations = this.userInvitations.filter(invitation => invitation.groupId !== groupId);
+        this.userInvitations = this.userInvitations.filter(invitation => invitation.group.groupId !== groupId);
       },
       error: () => {
         this.snackBarService.openSnackBar("Wystąpił błąd podczas odrzucania zaproszenia.", "Zamknij");

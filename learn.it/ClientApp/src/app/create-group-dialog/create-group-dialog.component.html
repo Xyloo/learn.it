@@ -2,10 +2,17 @@
 <mat-dialog-content>
   <mat-form-field>
     <mat-label>Nazwa grupy</mat-label>
-    <input matInput [(ngModel)]="groupName">
+    <div class="wrapper">
+      <input matInput [(ngModel)]="groupName" #groupNameInput="ngModel" minlength="5" required>
+      <img src="/assets/error-icon.svg" alt="Icon"
+           *ngIf="groupNameInput.invalid && (groupNameInput.dirty || groupNameInput.touched)" class="error-icon"
+           matTooltip="Nazwa grupy nie może być pusta i musi zawierać co najmniej 5 znaki."
+           matTooltipPosition="below"
+           aria-label="Error" />
+    </div>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="{ name: groupName }">Zatwierdź</button>
+  <button mat-button [mat-dialog-close]="{ name: groupName }" [disabled]="groupNameInput.invalid">Zatwierdź</button>
   <button mat-button mat-dialog-close>Anuluj</button>
 </mat-dialog-actions>
