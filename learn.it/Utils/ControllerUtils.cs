@@ -79,41 +79,27 @@ namespace learn.it.Utils
         public static async Task<IEnumerable<User>> GetUsersWhoMasteredStudySet(
             StudySet studySet,
             IFlashcardsService flashcardsService,
-            IFlashcardUserProgressService flashcardUserProgressService,
+            IFlashcardUserProgressService userProgressService,
             IUsersService usersService)
         {
             var flashcards = (await flashcardsService.GetFlashcardsInSet(studySet.StudySetId)).ToList();
-
-            if(!flashcards.Any())
-            {
-                return new List<User>();
-            }
+            var users = new List<User>();
+            if (!flashcards.Any())
+                return users;
 
             var userDtos = new List<AnonymousUserResponseDto>();
-            // Initialize users list with users who have mastered the first flashcard
-            var firstFlashcardProgress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().FlashcardId)).ToList();
-            if(firstFlashcardProgress?.Count == 0)
-                return new List<User>();
+            var firstFlashcardProgress = (await userProgressService.GetFlashcardUserProgressesByFlashcardId(flashcards.First().FlashcardId)).ToList();
+            if (firstFlashcardProgress.Count == 0)
+                return users;
+
             userDtos.AddRange(firstFlashcardProgress.Where(p => p.IsMastered).Select(p => p.User));
-            
-            // Iterate through the remaining flashcards
-            foreach(var flashcard in flashcards.Skip(1))
+            foreach (var userDto in userDtos)
             {
-                var progress = (await flashcardUserProgressService.GetFlashcardUserProgressesByFlashcardId(flashcard.FlashcardId)).ToList();
-                if (progress.Count == 0)
-                    continue;
-                var usersWhoMasteredFlashcard = progress.Where(p => p.IsMastered).Select(p => p.User).ToList();
-
-                // Update users list to only include users who have mastered the current flashcard
-                userDtos = userDtos.Intersect(usersWhoMasteredFlashcard).ToList();
+                var user = await usersService.GetUserByIdOrUsername(userDto.Username);
+                if (await IsStudySetMastered(studySet, user, flashcardsService, userProgressService)) {
+                    users.Add(user);
+                }
             }
-
-            var users = new List<User>();
-            foreach(var user in userDtos)
-            {
-                users.Add(await usersService.GetUserByIdOrUsername(user.Username));
-            }
-            // Return users who have mastered all flashcards
             return users;
         }
 
