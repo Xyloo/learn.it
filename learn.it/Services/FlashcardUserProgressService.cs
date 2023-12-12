@@ -1,4 +1,5 @@
-﻿using learn.it.Exceptions.NotFound;
+﻿using learn.it.Exceptions.Conflict;
+using learn.it.Exceptions.NotFound;
 using learn.it.Models;
 using learn.it.Models.Dtos.Response;
 using learn.it.Repos.Interfaces;
@@ -17,6 +18,9 @@ namespace learn.it.Services
 
         public async Task<FlashcardUserProgress> AddFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress)
         {
+            var progress = await _flashcardUserProgressRepository.GetFlashcardUserProgressByFlashcardIdAndUserId(flashcardUserProgress.FlashcardId, flashcardUserProgress.UserId);
+            if(progress != null)
+                throw new FlashcardUserProgressExistsException($"Istnieje już postęp użytkownika o id [{progress.UserId}] na fiszce o id [{progress.FlashcardId}].");
             return await _flashcardUserProgressRepository.AddFlashcardUserProgress(flashcardUserProgress);
         }
 

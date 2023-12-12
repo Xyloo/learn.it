@@ -330,7 +330,7 @@ namespace learn.it.Tests.IntegrationTests
         [Category("CreateJoinRequest")]
         [Category("User")]
         [Category("InvalidInput")]
-        public async Task CreateJoinRequest_IfJoinRequestAlreadyExists_ShouldReturnBadRequest()
+        public async Task CreateJoinRequest_IfJoinRequestAlreadyExists_ShouldReturnConflict()
         {
             // Arrange
             var client = _factory.CreateClient();
@@ -343,7 +343,7 @@ namespace learn.it.Tests.IntegrationTests
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
             response = await client.GetAsync($"/api/groups/{_groups[0].GroupId}/join");
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
         }
 
         [Test]
@@ -407,7 +407,7 @@ namespace learn.it.Tests.IntegrationTests
         [Category("CreateInvitation")]
         [Category("User")]
         [Category("InvalidInput")]
-        public async Task CreateInvitation_IfInvitationAlreadyExists_ShouldReturnBadRequest()
+        public async Task CreateInvitation_IfInvitationAlreadyExists_ShouldReturnConflict()
         {
             // Arrange
             var client = _factory.CreateClient();
@@ -420,7 +420,7 @@ namespace learn.it.Tests.IntegrationTests
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
             response = await client.GetAsync($"/api/groups/{_groups[0].GroupId}/invite/{_users[3].UserId}");
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
         }
 
         [Test]

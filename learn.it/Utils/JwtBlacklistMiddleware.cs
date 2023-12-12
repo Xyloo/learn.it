@@ -1,6 +1,6 @@
 ﻿namespace learn.it.Utils
 {
-    public class JwtBlacklistMiddleware
+    public class JwtBlacklistMiddleware 
     {
         private readonly RequestDelegate _next;
 

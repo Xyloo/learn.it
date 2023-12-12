@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using learn.it.Exceptions;
+using learn.it.Exceptions.Conflict;
 using learn.it.Exceptions.NotFound;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
@@ -262,7 +263,7 @@ namespace learn.it.Tests.UnitTests
         public void CreateGroupJoinRequest_GroupJoinRequestAlreadyExists_ThrowsException()
         {
             _groupsRepositoryMock.Setup(x => x.GetGroupJoinRequest(3, 1)).ReturnsAsync(new GroupJoinRequest());
-            Assert.ThrowsAsync<InvalidInputDataException>(() => _groupsService.CreateGroupJoinRequest(1, 3, 1));
+            Assert.ThrowsAsync<GroupJoinRequestExistsException>(() => _groupsService.CreateGroupJoinRequest(1, 3, 1));
         }
 
         [Test]

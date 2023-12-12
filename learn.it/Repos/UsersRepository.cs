@@ -39,7 +39,8 @@ namespace learn.it.Repos
 
         public async Task<User?> GetUserByEmail(string email)
         {
-            return await _context.Users.Include(u => u.Permissions)
+            return await _context.Users
+                .Include(u => u.Permissions)
                 .Include(u => u.UserStats)
                 .Include(u => u.UserPreferences)
                 .Include(u => u.Groups)
