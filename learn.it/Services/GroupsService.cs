@@ -126,17 +126,17 @@ namespace learn.it.Services
             await GetUserByIdOrThrow(userId);
             var creator = await GetUserByIdOrThrow(creatorId);
 
-            if (group.Users.Any(u => u.UserId == userId))
+            if(group.Users.Any(u => u.UserId == userId))
             {
                 throw new InvalidInputDataException("Użytkownik należy już do tej grupy.");
             }
 
-            if (userId != creatorId && group.Creator.UserId != creatorId)
+            if(userId != creatorId && group.Creator.UserId != creatorId)
             {
                 throw new InvalidInputDataException("Tylko twórca grupy może zapraszać innych użytkowników.");
             }
 
-            if (await _groupsRepository.GetGroupJoinRequest(userId, groupId) != null)
+            if(await _groupsRepository.GetGroupJoinRequest(userId, groupId) != null)
             {
                 throw new InvalidInputDataException("Użytkownik złożył już prośbę o dołączenie do tej grupy.");
             }
@@ -147,8 +147,7 @@ namespace learn.it.Services
                 UserId = userId,
                 CreatedAt = DateTime.UtcNow,
                 ExpiresAt = DateTime.UtcNow.AddDays(7),
-                Creator = creator,
-                Group = group
+                Creator = creator
             };
 
             return await _groupsRepository.CreateGroupJoinRequest(groupJoinRequest);

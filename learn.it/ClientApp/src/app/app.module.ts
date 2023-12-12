@@ -39,6 +39,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { UserGroupsComponent } from './user-groups/user-groups.component';
 import { GroupDetailsComponent } from './group-details/group-details.component';
 import { CreateGroupDialogComponent } from './create-group-dialog/create-group-dialog.component';
+import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { CreateGroupDialogComponent } from './create-group-dialog/create-group-d
     UserGroupsComponent,
     GroupDetailsComponent,
     CreateGroupDialogComponent,
+    InviteUserDialogComponent,
 
   ],
   imports: [

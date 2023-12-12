@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Utwórz grupę</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Nazwa grupy</mat-label>
+    <input matInput [(ngModel)]="username">
+  </mat-form-field>
+  <div *ngIf="userNotFound" class="error-message">
+    Nie znaleziono użytkownika o podanej nazwie.
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="addUser()">Dodaj</button>
+  <button mat-button mat-dialog-close>Anuluj</button>
+</mat-dialog-actions>

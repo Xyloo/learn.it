@@ -45,13 +45,11 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-
     this.submitted = true;
-    
+
     if (!this.isFormValid()) {
       return;
     }
-
     this.accountService.register(this.f.username.value, this.f.email.value, this.f.password.value)
       .pipe(first())
       .subscribe({

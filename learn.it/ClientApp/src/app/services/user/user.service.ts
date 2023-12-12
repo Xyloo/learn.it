@@ -33,4 +33,10 @@ export class UserService {
   getUserInvitations(): Observable<GroupInvitation[]> {
     return this.http.get<GroupInvitation[]>(`${environment.apiUrl}/users/${this.accountService.userValue?.userId}/join-requests`);
   }
+
+  getUserByUsername(username: string) {
+    return this.http.get<any>(`${environment.apiUrl}/users/${username}`).pipe(
+      map(response => response.userId)
+    );
+  }
 }

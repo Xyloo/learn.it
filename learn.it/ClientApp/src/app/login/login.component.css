@@ -70,13 +70,13 @@
 .forgot-password {
   display: block;
   margin: 5px 0px 15px 5px;
-  color: #ffffff; /* White text color */
+  color: #ffffff;
   text-decoration: none;
   text-align:left;
 }
 
 .btn-login {
-  background-color: var(--green-light-main); /* White background */
+  background-color: var(--green-light-main); 
   color: black;
   font-weight: bold;
   padding: 10px 15px;
@@ -86,7 +86,7 @@
 }
 
   .btn-login:hover {
-    background-color: var(--green-light-main-dark-15); /* Light grey background for hover state */
+    background-color: var(--green-light-main-dark-15); 
   }
 
 .sign-up-btn {
@@ -116,7 +116,7 @@
   flex-grow: 1;
   background: #FFFFFF;
   height: 1px; 
-  margin-top: 10px;
+  margin: 10px 0px 15px 0px;
 }
 
 .error-border {

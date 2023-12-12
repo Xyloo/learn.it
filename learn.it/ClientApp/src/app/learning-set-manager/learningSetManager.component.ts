@@ -36,12 +36,6 @@ export class LearningSetManagerComponent {
     }
   };
 
-  /*  studySet.name: string = '';
-    studySet.description: string = '';
-    studySet.visibility: number = 0; // po dodaniu ui
-    studySet.group: number; // po dodaniu ui
-    studySet.id: number = -1;
-  */
   showAddError = false;
   flashcards: Flashcard[] = [
     { flashcardId: 1, term: 'Wpisz dane', definition: 'Wpisz dane', isTermText: true }
@@ -50,9 +44,7 @@ export class LearningSetManagerComponent {
   originalFlashcards: Flashcard[] = [];
   initialSetData: StudySet;
 
-  nextId = 2; //hardcoded for now ????
-
-
+  nextId = 2; 
 
   constructor(
     private location: Location,
@@ -68,7 +60,6 @@ export class LearningSetManagerComponent {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      console.log(params)
       if (params.has('id')) {
         const setIdParam = params.get('id');
         this.isEditMode = true;
@@ -82,11 +73,6 @@ export class LearningSetManagerComponent {
           this.originalFlashcards = JSON.parse(JSON.stringify(set.flashcards));
           this.initialSetData = JSON.parse(JSON.stringify(set));
         });
-
-        //dodatkowo pobieranie visibility
-
-        // zakladowanie id, desc, visibility.....
-        //set service - load data, fill title, desc, flashcards it
       }
       else {
         this.isEditMode = false;
@@ -96,7 +82,7 @@ export class LearningSetManagerComponent {
 
   addFlashcard() {
     if (this.canAddFlashcard()) {
-      const newId = this.getMaxId() + 1; // Get the current max id and add 1
+      const newId = this.getMaxId() + 1; 
       this.flashcards.push({ flashcardId: newId, term: '', definition: '', isTermText: true });
       this.showAddError = false;
       setTimeout(() => {
@@ -124,7 +110,6 @@ export class LearningSetManagerComponent {
         }
       });
     }
-
   }
 
   getMaxId() {
@@ -147,18 +132,14 @@ export class LearningSetManagerComponent {
     }
 
     if (this.isEditMode) {
-
       const { added, modified } = this.getFlashcardChanges();
-
       added.forEach(flashcard => {
-
         var backendFlashcard = {
           Term: flashcard.term,
           Definition: flashcard.definition,
           StudySetId: this.studySet.id
         };
         this.flashcardService.createFlashcards([backendFlashcard]);
-
       });
 
       modified.forEach(flashcard => {
@@ -167,7 +148,6 @@ export class LearningSetManagerComponent {
           Definition: flashcard.definition,
           StudySetId: this.studySet.id
         };
-        //create subsrtivbe to see errors
         this.flashcardService.updateFlashcard(flashcard.flashcardId, backendFlashcard).subscribe({
           next: results => {
             this.openSnackBar("Zestaw został pomyślnie zapisany", "Zamknij");
@@ -248,7 +228,6 @@ export class LearningSetManagerComponent {
       const original = this.originalFlashcards.find(ofc => ofc.flashcardId === fc.flashcardId);
       return original && (fc.term !== original.term || fc.definition !== original.definition);
     });
-
     return { added, modified };
   }
 

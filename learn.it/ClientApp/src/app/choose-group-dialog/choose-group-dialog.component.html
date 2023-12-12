@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Ustawienia zestawu</h2>
 <mat-dialog-content>
   <mat-form-field>
-    <mat-label>Visibility</mat-label>
+    <mat-label>Widoczność zestawu</mat-label>
     <mat-select [(value)]="selectedVisibility">
       <mat-option *ngFor="let option of visibilityOptions" [value]="option.value">
         {{ option.label }}
