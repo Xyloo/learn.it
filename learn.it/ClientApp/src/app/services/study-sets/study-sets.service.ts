@@ -36,6 +36,7 @@ export class StudySetsService {
   }
 
   createStudySet(studySet: CreateStudySetDto): Observable<any> {
+    console.log("StudySet: ", studySet);
     return this.http.post(`${environment.apiUrl}/studysets`, studySet);
   }
 

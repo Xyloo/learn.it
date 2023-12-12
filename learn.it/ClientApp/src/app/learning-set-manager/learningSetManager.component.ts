@@ -182,7 +182,7 @@ export class LearningSetManagerComponent {
         name: this.studySet.name,
         description: this.studySet.description,
         visibility: this.studySet.visibility,
-        groupId: this.studySet.group || undefined
+        groupId: this.studySet.group == -1 ? null : this.studySet.group
       };
 
       var createdSetId = -1;
@@ -190,8 +190,8 @@ export class LearningSetManagerComponent {
 
       this.studySetsService.createStudySet(newStudySet).subscribe({
         next: (response) => {
-          createdSetId = response.id;
-
+          createdSetId = response.studySetId;
+          console.log("created set id: " + createdSetId);
           const flashcardsForBackend = this.flashcards.map(flashcard => ({
             term: flashcard.term,
             definition: flashcard.definition,
