@@ -41,7 +41,7 @@ export class GroupDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const groupId = this.route.snapshot.paramMap.get('id');
-    /*if (groupId) {
+    if (groupId) {
       this.groupService.getGroupDetails(Number(groupId))
         .subscribe({
           next: (result) => {
@@ -52,7 +52,7 @@ export class GroupDetailsComponent implements OnInit {
             console.log(error);
           }
         });
-    }*/
+    }
   }
 
   redirectToSet(studySetId: number) {
