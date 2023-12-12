@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using learn.it.Exceptions;
+using learn.it.Exceptions.Conflict;
 using learn.it.Exceptions.NotFound;
 using learn.it.Models;
 using learn.it.Models.Dtos.Request;
@@ -138,7 +139,7 @@ namespace learn.it.Services
 
             if(await _groupsRepository.GetGroupJoinRequest(userId, groupId) != null)
             {
-                throw new InvalidInputDataException("Użytkownik złożył już prośbę o dołączenie do tej grupy.");
+                throw new GroupJoinRequestExistsException(userId, groupId);
             }
 
             var groupJoinRequest = new GroupJoinRequest

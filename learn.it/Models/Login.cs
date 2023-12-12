@@ -27,5 +27,5 @@ public partial class Login
 
     [ForeignKey("UserId")]
     [InverseProperty("Logins")]
-    public virtual User User { get; set; }
+    public virtual User? User { get; set; }
 }

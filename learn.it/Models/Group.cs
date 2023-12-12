@@ -33,6 +33,7 @@ public partial class Group
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 
     [InverseProperty("Group")]
+    [JsonIgnore]
     public virtual ICollection<GroupJoinRequest> GroupJoinRequests { get; set; } = new List<GroupJoinRequest>();
 
     public BasicGroupDto ToBasicGroupDto()
