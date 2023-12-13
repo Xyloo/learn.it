@@ -51,6 +51,9 @@ export class StudySetsService {
     return this.http.get<StudySet[]>(`${environment.apiUrl}/studysets/find/${query}`);
   }
 
+  getUserRecommendedSets() : Observable<StudySet[]> {
+    return this.http.get<StudySet[]>(`${environment.apiUrl}/studysets`);
+  }
 
 
   private handleError(error: HttpErrorResponse) {

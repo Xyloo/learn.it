@@ -11,13 +11,14 @@
     <h3>Avatar</h3>
     <div class="avatar-row">
       <div class="user-avatar">
-        <img src="/assets/temp-avatar.png" alt="User Avatar" />
+        <img [src]="userAvatarUrl" alt="User Avatar" />
       </div>
-      <button>Dodaj nowe zdjęcie</button>
-      <button>Usuń zdjęcie</button>
+      <input type="file" (change)="onAvatarSelected($event)" hidden #avatarInput>
+      <button (click)="avatarInput.click()">Dodaj nowe zdjęcie</button>
+      <button (click)="removeAvatar()">Usuń zdjęcie</button>
     </div>
   </div>
   <div class="save-wrapper">
-    <button>Zapisz zmiany</button>
+    <button (click)="saveChanges()">Zapisz zmiany</button>
   </div>
 </div>

@@ -32,6 +32,7 @@ export class SearchComponent implements OnInit{
         if (query) {
           this.studySetsService.findStudySets(query).subscribe(data => {
             this.searchResults = data;
+            this.searchedText = query;
           });
         }
       });

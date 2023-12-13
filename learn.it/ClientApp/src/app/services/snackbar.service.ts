@@ -9,9 +9,9 @@ export class SnackbarService {
 
   constructor(private snackBar: MatSnackBar) { }
 
-  openSnackBar(message: string, action: string = 'Zamknij') {
+  openSnackBar(message: string, action: string = 'Zamknij', duration: number = 2000) {
     this.snackBar.open(message, action, {
-      duration: 2000,
+      duration: duration,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
     });

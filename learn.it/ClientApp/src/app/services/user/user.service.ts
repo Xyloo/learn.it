@@ -39,4 +39,21 @@ export class UserService {
       map(response => response.userId)
     );
   }
+
+  validatePasswordChange(password: string) {
+    return this.http.post(`${environment.apiUrl}/users/validate-current-password`, { password });
+  }
+
+  changeUserPassword(newPassword: string) {
+    return this.http.put(`${environment.apiUrl}/users/${this.accountService.userValue?.userId}`, { password: newPassword });
+  }
+
+  uploadAvatar(formData: FormData): Observable<string> {
+    return this.http.post(`${environment.apiUrl}/users/avatar/${this.accountService.userValue?.userId}`, formData, { responseType: 'text' });
+  }
+
+  removeAvatar(): Observable<string> {
+    return this.http.delete(`${environment.apiUrl}/users/avatar/${this.accountService.userValue?.userId}`, { responseType: 'text' });
+  }  
+
 }
