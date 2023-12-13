@@ -1,12 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivityDto } from '../models/lastactivity.dto';
+import { StudySetsService } from '../services/study-sets/study-sets.service';
+import { StudySet } from '../models/study-sets/study-set';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   styleUrls: ['./home.component.css'],
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+
+  public studySets: StudySet[];
+  public userAchievements: any[] = []
+
+  constructor(
+    private studySetsService: StudySetsService,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    this.studySetsService.getUserRecommendedSets().subscribe((sets) => {
+      this.studySets = sets;
+    });
+
+
+
+  }
+
+
+  redirectToSet(id: number | null | undefined) {
+    console.log("id:" + id)
+    if (id !== null && id !== undefined) {
+      this.router.navigateByUrl(`/set/${id}`);
+    }
+  }
 
 
   usersLastActivity: ActivityDto[] = [

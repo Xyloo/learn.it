@@ -315,5 +315,18 @@ namespace learn.it.Controllers
             var logins = await _loginsService.GetUserLogins(user);
             return Ok(logins);
         }
+
+        [HttpPost("validate-current-password")]
+        [Authorize(Policy = "Users")]
+        public async Task<IActionResult> ValidatePassword([FromBody] PasswordValidationDto passwordValidationDto)
+        {
+            var user = await _usersService.GetUserByIdOrUsername(ControllerUtils.GetUserIdFromClaims(User).ToString());
+            if(_usersService.VerifyPassword(user, passwordValidationDto.Password))
+            {
+                throw new InvalidInputDataException("Twoje nowe hasło nie może być takie samo jak obecne. Proszę wybrać inne hasło.");
+            }
+            return Ok();
+        }
+
     }
 }

@@ -5,6 +5,7 @@ import { Observable, catchError, map, throwError } from 'rxjs';
 import { UserSetDto } from '../../models/user-sets.dto';
 import { CreateStudySetDto } from '../../models/study-sets/create-study-set.dto';
 import { StudySet } from '../../models/study-sets/study-set';
+import { AccountService } from '../account.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +13,17 @@ import { StudySet } from '../../models/study-sets/study-set';
 export class StudySetsService {
 
   private userId: number;
-  constructor(private http: HttpClient) {
-    const storedUser = JSON.parse(localStorage.getItem('userId')!);
-    this.userId = storedUser ? storedUser : null;
-  }
+  constructor(
+    private http: HttpClient,
+    private accountSerivce: AccountService
+  ) { }
+/*
+const storedUser = JSON.parse(localStorage.getItem('userId')!);
+this.userId = storedUser ? storedUser : null;*/
+
 
   getStudySets(): Observable<UserSetDto[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}/users/${this.userId}/studysets`).pipe(
+    return this.http.get<any[]>(`${environment.apiUrl}/users/${this.accountSerivce.userValue?.userId}/studysets`).pipe(
       map(response => response.map(item => ({
         id: item.id,
         setName: item.name,
@@ -51,6 +56,17 @@ export class StudySetsService {
     return this.http.get<StudySet[]>(`${environment.apiUrl}/studysets/find/${query}`);
   }
 
+  getUserRecommendedSets(): Observable<StudySet[]> {
+    return this.http.get<StudySet[]>(`${environment.apiUrl}/studysets`).pipe(
+      map(response => response.map(item => ({
+        ...item, 
+        creator: {
+          ...item.creator,
+          avatar: item.creator.avatar ? `/Avatars/${item.creator.avatar}` : '/assets/temp-avatar.png'
+        }
+      })))
+    );
+  }
 
 
   private handleError(error: HttpErrorResponse) {
