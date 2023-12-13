@@ -1,48 +1,52 @@
 <header>
-  <nav
-    class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
-    <div class="container">
-      <a class="nav-text nav-title" [routerLink]="['/']">learn.it</a>
-      <img src="/assets/project-logo.svg" alt="Icon" class="logo-icon" />
-      <div class="search-container">
-        <label for="search" class="search-icon-label">
-          <img src="/assets/search-icon.svg" alt="Icon" class="search-icon" />
-        </label>
-        <input #searchInput type="search" [(ngModel)]="searchQuery" placeholder="Wyszukaj materiały do nauki">
-        <button (click)="onSearch()" class="search-button">Szukaj</button>
-      </div>
-
-      <div class="nav-icons">
-        <button routerLink="/sets" class="icon-btn">
-          <img src="/assets/file-icon.svg" alt="Icon" />
-        </button>
-        <button routerLink="/" class="icon-btn">
-          <img src="/assets/home-icon.svg" alt="Icon" />
-        </button>
-        <button routerLink="/set" class="icon-btn">
-          <img src="/assets/plus-icon.svg" alt="Icon" />
-        </button>
-        <div class="dropdown" [class.show]="showDropdown">
-          <button class="icon-btn" (click)="toggleDropdown()">
-            <img src="/assets/expand-down-icon.svg" alt="Icon" />
-          </button>
-          <div class="dropdown-menu" *ngIf="showDropdown">
-            <div class="dropdown-wrapper">
-              <a href="#">Profil</a>
-              <a (click)="redirectTo('/settings')">Ustawienia</a>
-              <a (click)="redirectTo('/groups')">Grupy</a>
-              <a href="#" (click)="focusOnSearchInput(); $event.preventDefault()">Wyszukaj</a>
-              <a (click)="redirectTo('/set')">Dodaj zestaw</a>
-              <a href="#">Pomoc</a>
-              <a (click)="logout()" routerLink="/login">Wyloguj</a>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="nav-text nav-title" [routerLink]="['/']">learn.it</a>
+            <img src="/assets/project-logo.svg" alt="Icon" class="logo-icon" />
+            <div class="search-container">
+                <label for="search" class="search-icon-label">
+                    <img src="/assets/search-icon.svg" alt="Icon" class="search-icon" />
+                </label>
+                <input #searchInput type="search" [(ngModel)]="searchQuery" placeholder="Wyszukaj materiały do nauki">
+                <button (click)="onSearch()" class="search-button">Szukaj</button>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="user-avatar">
-        <img src="/assets/temp-avatar.png" alt="User Avatar" />
-      </div>
 
-    </div>
-  </nav>
+            <div class="nav-icons">
+                <button routerLink="/sets" class="icon-btn">
+                    <img src="/assets/file-icon.svg" alt="Icon" />
+                </button>
+                <button routerLink="/" class="icon-btn">
+                    <img src="/assets/home-icon.svg" alt="Icon" />
+                </button>
+                <button routerLink="/set" class="icon-btn">
+                    <img src="/assets/plus-icon.svg" alt="Icon" />
+                </button>
+                <div class="dropdown" [class.show]="showDropdown">
+                    <button class="icon-btn" (click)="toggleDropdown()">
+                        <img src="/assets/expand-down-icon.svg" alt="Icon" />
+                    </button>
+                    <div class="dropdown-menu" *ngIf="showDropdown">
+                        <div class="dropdown-wrapper">
+                            <a href="#">Profil</a>
+                            <a (click)="redirectTo('/settings')">Ustawienia</a>
+                            <a (click)="redirectTo('/groups')">Grupy</a>
+                            <a href="#" (click)="focusOnSearchInput(); $event.preventDefault()">Wyszukaj</a>
+                            <a (click)="redirectTo('/set')">Dodaj zestaw</a>
+                            <a href="#">Pomoc</a>
+                            <a (click)="logout()" routerLink="/login">Wyloguj</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="username">
+                    {{username}}
+                </div>
+                <div class="user-avatar">
+                  <img src="/Avatars/d043115c-80d7-4e52-8074-eacd160ed8bb.webp" />
+
+                </div>
+            </div>
+        </div>
+    </nav>
 </header>

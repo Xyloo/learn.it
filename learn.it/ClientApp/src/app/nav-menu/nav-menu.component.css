@@ -4,6 +4,14 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+.container{
+display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 20px;
+}
+
 html {
   font-size: 14px;
   color: var(--text-color);
@@ -75,11 +83,11 @@ a {
   width: auto;
   margin-left: 10px;
 }
-/* Media Query for smaller screens */
+
 @media (max-width: 768px) {
   .search-container {
-    width: 90%; /* You can adjust this value to give some margin on smaller screens */
-    max-width: none; /* On small screens, the max-width no longer applies */
+    width: 90%; 
+    max-width: none; 
   }
 }
 
@@ -116,7 +124,6 @@ a {
   border-radius: 50%; 
   border: 1px solid black;
   overflow: hidden;
-  margin-left: 5rem; 
   background: white;
 }
 
@@ -179,4 +186,12 @@ a {
 
 .show .dropdown-menu {
   display: block;
+}
+
+.user-info{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    margin-left: 15px;
 }
