@@ -5,7 +5,7 @@ namespace learn.it.Services.Interfaces
 {
     public interface IFlashcardUserProgressService
     {
-        Task<FlashcardUserProgress> AddFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress);
+        Task<FlashcardUserProgress> CreateFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress);
         Task<FlashcardUserProgress> GetFlashcardUserProgressByFlashcardIdAndUserId(int flashcardId, int userId);
         Task<FlashcardUserProgressDto> GetFlashcardUserProgressDtoByFlashcardIdAndUserId(int flashcardId, int userId);
         Task<IEnumerable<FlashcardUserProgressDto>> GetFlashcardUserProgressesByFlashcardId(int flashcardId);

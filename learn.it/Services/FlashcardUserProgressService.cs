@@ -16,7 +16,7 @@ namespace learn.it.Services
             _flashcardUserProgressRepository = flashcardUserProgressRepository;
         }
 
-        public async Task<FlashcardUserProgress> AddFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress)
+        public async Task<FlashcardUserProgress> CreateFlashcardUserProgress(FlashcardUserProgress flashcardUserProgress)
         {
             var progress = await _flashcardUserProgressRepository.GetFlashcardUserProgressByFlashcardIdAndUserId(flashcardUserProgress.FlashcardId, flashcardUserProgress.UserId);
             if(progress != null)

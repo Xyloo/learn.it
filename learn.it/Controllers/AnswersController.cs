@@ -88,7 +88,7 @@ namespace learn.it.Controllers
                         UserId = user.UserId,
                         FlashcardId = flashcard.FlashcardId
                     };
-                    await _flashcardUserProgressService.AddFlashcardUserProgress(progress);
+                    await _flashcardUserProgressService.CreateFlashcardUserProgress(progress);
                 }
 
                 var addedAnswer = await _answersService.AddAnswer(newAnswer);

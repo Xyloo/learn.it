@@ -14,9 +14,13 @@ namespace learn.it.Controllers
     public class ProgressController : ControllerBase
     {
         private readonly IFlashcardsService _flashcardsService;
+
         private readonly IAchievementsService _achievementsService;
+
         private readonly IStudySetsService _studySetsService;
+
         private readonly IUsersService _usersService;
+
         private readonly IFlashcardUserProgressService _flashcardProgressService;
 
         public ProgressController(IFlashcardsService flashcardsService, IAchievementsService achievementsService,
@@ -83,7 +87,27 @@ namespace learn.it.Controllers
             var studySet = await _studySetsService.GetStudySetById(flashcard.StudySet.StudySetId);
             if (ControllerUtils.CanUserAccessStudySet(user, studySet))
             {
-                var progress = await _flashcardProgressService.GetFlashcardUserProgressByFlashcardIdAndUserId(flashcard.FlashcardId, user.UserId);
+                FlashcardUserProgress progress;
+                try
+                {
+                    progress = await _flashcardProgressService.GetFlashcardUserProgressByFlashcardIdAndUserId(
+                            flashcard.FlashcardId, user.UserId);
+                }
+                catch (FlashcardUserProgressNotFoundException)
+                {
+                    var newProgress = new FlashcardUserProgress
+                    {
+                        Flashcard = flashcard,
+                        User = user,
+                        ConsecutiveCorrectAnswers = 0,
+                        IsMastered = false,
+                        MasteredTimestamp = null,
+                        NeedsMoreRepetitions = progressDto.NeedsMoreRepetitions
+                    };
+                    await _flashcardProgressService.CreateFlashcardUserProgress(newProgress);
+                    return Ok(new FlashcardUserProgressDto(newProgress));
+                }
+
                 progress.NeedsMoreRepetitions = progressDto.NeedsMoreRepetitions;
                 if (progressDto.NeedsMoreRepetitions && progress.IsMastered && progress.ConsecutiveCorrectAnswers < 7)
                 {
@@ -107,7 +131,7 @@ namespace learn.it.Controllers
                 await _usersService.UpdateUser(user);
                 await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalFlashcardsMastered), user);
                 await _achievementsService.GrantAchievementsContainingPredicate(nameof(UserStats.TotalSetsMastered), user);
-                return Ok(progressDto);
+                return Ok(new FlashcardUserProgressDto(progress));
             }
             throw new FlashcardUserProgressNotFoundException(user.UserId, flashcardId);
         }
