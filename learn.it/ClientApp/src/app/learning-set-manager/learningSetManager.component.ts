@@ -44,7 +44,7 @@ export class LearningSetManagerComponent {
   originalFlashcards: Flashcard[] = [];
   initialSetData: StudySet;
 
-  nextId = 2; 
+  nextId = 2;
 
   constructor(
     private location: Location,
@@ -82,7 +82,8 @@ export class LearningSetManagerComponent {
 
   addFlashcard() {
     if (this.canAddFlashcard()) {
-      const newId = this.getMaxId() + 1; 
+
+      const newId = this.getMaxId() + 1;
       this.flashcards.push({ flashcardId: newId, term: '', definition: '', isTermText: true });
       this.showAddError = false;
       setTimeout(() => {
@@ -117,6 +118,7 @@ export class LearningSetManagerComponent {
   }
 
   canAddFlashcard(): boolean {
+    
     const lastFlashcard = this.flashcards[this.flashcards.length - 1];
     return lastFlashcard.term.trim() !== '' && lastFlashcard.definition.trim() !== '';
   }
