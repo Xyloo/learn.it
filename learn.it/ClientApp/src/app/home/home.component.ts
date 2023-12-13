@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
 
   public studySets: StudySet[];
+  public userAchievements: any[] = []
 
   constructor(
     private studySetsService: StudySetsService,
@@ -22,8 +23,10 @@ export class HomeComponent implements OnInit {
     this.studySetsService.getUserRecommendedSets().subscribe((sets) => {
       this.studySets = sets;
     });
-  }
 
+
+
+  }
 
 
   redirectToSet(id: number | null | undefined) {

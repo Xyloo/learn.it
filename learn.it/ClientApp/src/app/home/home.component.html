@@ -54,8 +54,13 @@
         <div class="data-label">
           <span>Twoje osiągnięcia</span>
         </div>
+        <ng-container *ngIf="userAchievements && userAchievements.length; else noAchievementsTemplate">
 
+        </ng-container>
       </div>
+      <ng-template #noAchievementsTemplate>
+        <div class="no-data">Brak zdobytych osiągnieć.</div>
+      </ng-template>
     </div>
   </div>
 </div>
