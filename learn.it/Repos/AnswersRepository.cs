@@ -31,7 +31,7 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<Answer>> GetAnswersByUserId(int userId)
         {
-            return await _context.Answers.Where(a => a.User.UserId == userId).Include(a => a.User).ThenInclude(u => u.Permissions).Include(a => a.Flashcard).ToListAsync();
+            return await _context.Answers.Where(a => a.User.UserId == userId).Include(a => a.User).ThenInclude(u => u.Permissions).Include(a => a.Flashcard).ThenInclude(f => f.StudySet).ToListAsync();
         }
 
         public async Task RemoveAnswer(Answer answer)

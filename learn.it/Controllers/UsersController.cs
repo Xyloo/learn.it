@@ -294,7 +294,8 @@ namespace learn.it.Controllers
         {
             var answers = await _answersService.GetAnswersByUserId(ControllerUtils.GetUserIdFromClaims(User));
             answers = answers.OrderByDescending(x => x.AnswerTimestamp).Take(3);
-            return Ok(answers);
+            var sets = answers.Select(x => new BasicStudySetDto(x.Flashcard.StudySet));
+            return Ok(sets);
         }
 
         [HttpGet("logins")]
