@@ -4,4 +4,5 @@ export class UserLoginDto {
   uniqueName: string;
   email: string;
   userId: number;
+  avatarName: string | null;
 }

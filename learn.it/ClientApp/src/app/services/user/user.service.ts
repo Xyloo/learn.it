@@ -56,4 +56,9 @@ export class UserService {
     return this.http.delete(`${environment.apiUrl}/users/avatar/${this.accountService.userValue?.userId}`, { responseType: 'text' });
   }  
 
+  getUserAvatar(userId: number): Observable<string | null> {
+    return this.http.get<any>(`${environment.apiUrl}/users/${this.accountService.userValue?.userId}`).pipe(
+      map(user => user.avatar)
+    );
+  }
 }

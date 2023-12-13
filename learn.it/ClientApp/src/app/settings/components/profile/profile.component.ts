@@ -27,7 +27,6 @@ export class ProfileComponent {
       this.userAvatarUrl = URL.createObjectURL(file);
     } else {
       this.selectedAvatarFile = null;
-      // Optionally reset the avatar URL to the default
       this.userAvatarUrl = '/assets/temp-avatar.png';
     }
   }

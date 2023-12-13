@@ -29,12 +29,31 @@ export class AccountService {
 
   login(username: string, password: string) {
     return this.http.post<UserLoginDto>(`${environment.apiUrl}/users/login`, { username, password })
-      .pipe(map(response => {
-        localStorage.setItem('token', response.token);
-        const user = this.decodeToken(response.token);
-        this.userSubject.next(user);
-        return response;
-      }));
+      .pipe(
+        map(response => {
+          localStorage.setItem('token', response.token);
+          const user = this.decodeToken(response.token);
+          this.userSubject.next(user);
+
+          if (user) {
+            this.getUserAvatar(user.userId).subscribe(
+              avatar => {
+                console.log("avartar:" + avatar ? `/Avatars/${avatar}` : '/assets/temp-avatar.png' )
+                const updatedUser = { ...user, avatarName: avatar ? `/Avatars/${avatar}` : '/assets/temp-avatar.png' };
+                this.userSubject.next(updatedUser);
+              },
+              error => {
+                console.error('Error fetching avatar:', error);
+                const updatedUser = { ...user, avatarName: '/assets/temp-avatar.png' };
+                this.userSubject.next(updatedUser);
+              }
+            );
+            console.log("user avatar name: " + user.avatarName)
+          }
+
+          return response;
+        })
+      );
   }
 
   register(username: string, email: string, password: string) {
@@ -47,15 +66,22 @@ export class AccountService {
     this.router.navigate(['/login']);
   }
 
+  getUserAvatar(id: number): Observable<string | null> {
+    return this.http.get<any>(`${environment.apiUrl}/users/${id}`).pipe(
+      map(user => user.avatar)
+    );
+  }
+
   private decodeToken(token: string): UserLoginDto | null {
     try {
-      const decoded = jwtDecode<any>(token); 
+      const decoded = jwtDecode<any>(token);
       return {
         token: token,
         role: decoded.role,
         uniqueName: decoded.unique_name,
         email: decoded.email,
-        userId: parseInt(decoded.nameid)
+        userId: parseInt(decoded.nameid),
+        avatarName: null
       };
     } catch (error) {
       console.error('Error decoding token:', error);
