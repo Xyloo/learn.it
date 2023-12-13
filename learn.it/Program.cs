@@ -175,7 +175,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseProblemDetails();
 app.UseStaticFiles();
 app.UseRouting();

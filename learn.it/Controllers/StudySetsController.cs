@@ -260,9 +260,15 @@ namespace learn.it.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPublicStudySets()
         {
-            var sets = await _studySetsService.GetAllStudySets();
-            sets = sets.Where(s => s.Visibility == Visibility.Public).Take(3);
-            return Ok(sets);
+            var random = new Random();
+            var sets = (await _studySetsService.GetAllStudySets()).Where(s => s.Visibility == Visibility.Public).ToList();
+            var randomSets = new HashSet<BasicStudySetDto>();
+            for (var i = 0; randomSets.Count < 3; i++)
+            {
+                var randomSet = sets.ElementAt(random.Next(sets.Count));
+                randomSets.Add(randomSet);
+            }
+            return Ok(randomSets);
         }
     }
 }
