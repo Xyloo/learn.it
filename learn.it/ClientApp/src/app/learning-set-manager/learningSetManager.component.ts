@@ -120,7 +120,7 @@ export class LearningSetManagerComponent {
   canAddFlashcard(): boolean {
     
     const lastFlashcard = this.flashcards[this.flashcards.length - 1];
-    return lastFlashcard.term.trim() !== '' && lastFlashcard.definition.trim() !== '';
+    return lastFlashcard?.term.trim() !== '' && lastFlashcard.definition?.trim() !== '';
   }
   goBack() {
     this.location.back();
