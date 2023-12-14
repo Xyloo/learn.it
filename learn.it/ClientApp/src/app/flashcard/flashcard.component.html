@@ -14,15 +14,15 @@
         <img src="/assets/edit-icon.svg" alt="Icon" />
       </button>
     </div>
-    <div class="term-data">
-      <h3>{{ term }}</h3>
+    <div (click)="toggleFlashcard()" class="term-data">
+      <h3>{{ displayedTerm }}</h3>
     </div>
   </div>
   <div class="buttons-wrapper">
-    <button (click)="goBack()" class="icon-btn">
+    <button (click)="showTerm()" class="icon-btn">
       <img src="/assets/arrow-right-icon-long.svg" alt="Icon" />
     </button>
-    <button (click)="goBack()" class="icon-btn">
+    <button (click)="checkAnswer()" class="icon-btn">
       <img src="/assets/arrow-right-icon-long.svg" alt="Icon" />
     </button>
   </div>

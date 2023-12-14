@@ -6,6 +6,11 @@
   height: 100%;
 }
 
+button {
+  border: none;
+  background: none;
+}
+
 .term-wrapper {
   display: flex;
   flex-direction: column;
@@ -87,3 +92,4 @@
   .skip-btn img {
     margin-left: 10px; 
   }
+

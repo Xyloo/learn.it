@@ -88,3 +88,12 @@
     margin-right: 16px;
 }
 
+.correct-answer {
+  border: 5px solid green;
+  border-radius: 25px;
+}
+
+.incorrect-answer {
+  border: 3px solid red;
+  border-radius: 30px;
+}

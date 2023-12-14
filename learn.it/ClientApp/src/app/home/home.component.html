@@ -9,16 +9,18 @@
       <div class="data-label">
         <span>Ostatnia aktywność</span>
       </div>
-      <ng-container *ngIf="usersLastActivity && usersLastActivity.length; else noActivityTemplate">
-        <div class="data-item" *ngFor="let item of usersLastActivity; let i = index">
+      <ng-container *ngIf="userLastActivity && userLastActivity.length; else noActivityTemplate">
+        <div class="data-item" *ngFor="let item of userLastActivity; let i = index" (click)="redirectToSet(item.id)">
           <div class="item-left">
             <img src="/assets/expand-down-icon.svg" alt="Icon" class="rotate270" />
             {{item.name}}
           </div>
           <div class="item-right min-width-250">
-            <img src="{{item.avatarUrl}}" alt="userAvatar" class="user-avatar" />
-            {{item.username}}
-            <img *ngIf="item.isPrivate; else privatePlaceholder" src="/assets/lock-icon.svg" alt="Private Icon" class="private-icon-placeholder" />
+            <img [src]="item.creator.avatar ? item.creator.avatar : '/assets/temp-avatar.png'"
+                 alt="userAvatar" class="user-avatar" />
+            {{item.creator.username}}
+            <img *ngIf="item.visibility == 1; else privatePlaceholder" src="/assets/lock-icon.svg"
+                 alt="Private Icon" class="private-icon-placeholder" />
             <ng-template #privatePlaceholder>
               <div class="private-icon-placeholder"></div>
             </ng-template>

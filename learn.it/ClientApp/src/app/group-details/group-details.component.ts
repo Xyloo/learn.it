@@ -66,12 +66,13 @@ export class GroupDetailsComponent implements OnInit {
 
 
   saveChanges() {
+
     this.groupService.updateGroup(this.groupDetails.groupId, this.groupDetails.name).subscribe({
         next: () => {
           this.snackBarService.openSnackBar("Pomyślnie zaktualizowano nazwę grupy.", "Zamknij");
         },
-        error: (error) => {
-          console.log(error);
+      error: (error) => {
+        this.snackBarService.openSnackBar(error.error.errors.Name);
         }
       });
   }

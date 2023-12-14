@@ -5,6 +5,8 @@ import { UserGroupsInfo } from '../../models/groups/user-group-info.dto';
 import { Observable, map, of } from 'rxjs';
 import { AccountService } from '../account.service';
 import { GroupInvitation } from '../../models/groups/group-invitation';
+import { LastActivityDto } from '../../models/user/last-activity.dto';
+import { AchievementsDto } from '../../models/achievements/user-achievements.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -61,4 +63,22 @@ export class UserService {
       map(user => user.avatar)
     );
   }
+
+  getLastActivity(): Observable<LastActivityDto[]> {
+    return this.http.get<LastActivityDto[]>(`${environment.apiUrl}/users/lastActivity`).pipe(
+      map(response => response.map(item => ({
+        ...item,
+        creator: {
+          ...item.creator,
+          avatar: item.creator.avatar ? `/Avatars/${item.creator.avatar}` : '/assets/temp-avatar.png'
+        }
+      })))
+    );
+  }
+
+  getAchievements(): Observable<AchievementsDto[]>{
+    return this.http.get<AchievementsDto[]>(`${environment.apiUrl}/achievements`);
+  }
+
+
 }

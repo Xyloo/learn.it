@@ -15,10 +15,12 @@
       <h3>{{ term }}</h3>
     </div>
     <div class="input-wrapper">
-      <input type="text" placeholder="Wpisz pojęcie...">      
-      <button class="skip-btn">
+      <input [(ngModel)]="userInput" type="text" placeholder="Wpisz pojęcie...">      
+      <button (click)="skipAnswer()" class="skip-btn">
         Pomiń
-          <img src="/assets/arrow-right-icon.svg" alt="Icon" class="icon-btn" />
+      </button>
+      <button (click)="checkAnswer(userInput)">
+        <img src="/assets/arrow-right-icon.svg" alt="Icon" class="icon-btn" />
       </button>
     </div>
   </div>  

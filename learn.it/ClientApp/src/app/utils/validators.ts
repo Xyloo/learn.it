@@ -5,15 +5,12 @@ export function mustMatch(controlName: string, matchingControlName: string): Val
     const formGroup = control as FormGroup; 
     const controlToMatch = formGroup.controls[controlName];
     const matchingControl = formGroup.controls[matchingControlName];
-
     if (!controlToMatch || !matchingControl) {
       return null;
     }
-
     if (matchingControl.errors && !matchingControl.errors.mustMatch) {
       return null;
     }
-
     if (controlToMatch.value !== matchingControl.value) {
       matchingControl.setErrors({ mustMatch: true });
       return { mustMatch: true };
@@ -23,3 +20,6 @@ export function mustMatch(controlName: string, matchingControlName: string): Val
     }
   };
 }
+
+
+

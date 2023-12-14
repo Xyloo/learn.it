@@ -12,7 +12,7 @@
       </button>
     </div>
     <div class="term-data">
-        <h3>{{ term }}</h3>
+      <h3>{{ term }}</h3>
     </div>
     <div class="term-bottom">
       <button (click)="goBack()" class="icon-btn">
@@ -21,8 +21,11 @@
     </div>
   </div>
   <div class="buttons-wrapper">
-    <div *ngFor="let option of options">
-      <button (click)="checkAnswer(option)">{{ option }}</button>
+    <div class="option" *ngFor="let option of options" [ngClass]="{'correct-answer': selectedOption === option && isCorrect,
+                          'incorrect-answer': selectedOption === option && isCorrect === false}">
+      <button (click)="checkAnswer(option)">
+        {{ option }}
+      </button>
     </div>
   </div>
 </div>

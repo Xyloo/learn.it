@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { Flashcard } from '../../models/flashcard';
+import { FlashcardAnswer } from '../../models/flashcards/answer.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -26,4 +27,7 @@ export class FlashcardService {
     return this.http.put(`${environment.apiUrl}/flashcards/${flashcardId}`, flashcard);
   }
 
+  generateAnswer(answer: FlashcardAnswer): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/answers`, answer);
+  }
 }

@@ -10,7 +10,7 @@
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedVisibility === Visibility.Grupa">
-    <mat-label>Group</mat-label>
+    <mat-label>Nazwa grupy</mat-label>
     <mat-select [(value)]="selectedGroupId">
       <mat-option *ngFor="let group of groups" [value]="group.id">
         {{ group.name }}
