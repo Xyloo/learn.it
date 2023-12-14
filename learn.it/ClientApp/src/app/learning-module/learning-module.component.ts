@@ -35,7 +35,6 @@ export class LearningModuleComponent implements OnInit {
 
   ngOnInit(): void {
     const studySetId = this.activatedRoute.snapshot.paramMap.get('id');
-    //const studySetId = 31;
     if (!studySetId) return;
     this.questionStartTime = new Date();
 
@@ -60,7 +59,6 @@ export class LearningModuleComponent implements OnInit {
         console.log(error);
       }
     });
-    //ustawienie mozluwych metod
   }
 
   generateRandomOptions() {
@@ -104,36 +102,22 @@ export class LearningModuleComponent implements OnInit {
 
   onAnswerSelected(isCorrect: boolean) {
     const answerTime = new Date();
-    //const timeTaken = Number((answerTime.getTime() - this.questionStartTime.getTime()) / 1000);
     const timeTaken = answerTime.getTime() - this.questionStartTime.getTime();
     if (this.currentFlashcardIndex < this.flashcards.length) {
       const currentFlashcard = this.flashcards[this.currentFlashcardIndex];
       if (currentFlashcard) {
         const currentFlashcardId = currentFlashcard.flashcardId;
         console.log("flashcardId: " + currentFlashcardId);
-        this.flashcardService.generateAnswer({ answerTime: timeTaken, flashcardId: currentFlashcardId, isCorrect })
-          .subscribe({
-            next: (result) => {
-              console.log("good post answer: " + result);
-            },
-            error: (error) => {
-              console.log("bad errror post answer: " + error);
-            }
-          });
+        this.flashcardService.generateAnswer({ answerTime: timeTaken, flashcardId: currentFlashcardId, isCorrect });
 
         if (!isCorrect) {
           this.incorrectFlashcards.push(currentFlashcard);
         }
       }
     }
-
     this.currentFlashcardIndex++;
     this.setCurrentQuestion();
     this.setLearningMethod();
-
-    console.log("flashcards:" + this.flashcards)
-    console.log("incorrectFlashcards:" + this.incorrectFlashcards)
-
   }
 
 

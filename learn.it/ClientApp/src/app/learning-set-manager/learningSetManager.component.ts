@@ -38,7 +38,7 @@ export class LearningSetManagerComponent {
 
   showAddError = false;
   flashcards: Flashcard[] = [
-    { flashcardId: 1, term: 'Wpisz dane', definition: 'Wpisz dane', isTermText: true }
+    { flashcardId: 1, term: '', definition: '', isTermText: true }
   ];
 
   originalFlashcards: Flashcard[] = [];

@@ -6,6 +6,7 @@ import { style } from '@angular/animations';
 import { User } from 'oidc-client';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AccountService } from '../services/account.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-sets',
@@ -21,7 +22,8 @@ export class UserSetsComponent implements OnInit {
     private location: Location,
     private studySetService: StudySetsService,
     private accountService: AccountService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) { }
 
 
@@ -58,6 +60,10 @@ export class UserSetsComponent implements OnInit {
       }
     });
   }
+  redirectToLearnModule(id: number) {
+    this.router.navigate(['/learn', id]);
+  }
+
 
   canDeleteSet(username: string): boolean {
     return this.currentUsername === username;

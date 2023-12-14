@@ -74,6 +74,7 @@
   margin-right: 15px;
   counter-increment: sets-counter;
   gap: 10px;
+  cursor: pointer;
 }
 
 .sets-row::before{

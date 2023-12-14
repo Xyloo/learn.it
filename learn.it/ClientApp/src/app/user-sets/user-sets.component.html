@@ -6,7 +6,8 @@
     </button>
   </div>
    <div class="sets-wrapper">
-     <div class="sets-row" *ngFor="let result of userSets">
+     <div (click)="redirectToLearnModule(result.id)" class="sets-row"
+          *ngFor="let result of userSets" matTooltip="Kliknij aby rozpocząć naukę.">
        <div class="set-info">
           {{result.setName}}
        </div>
