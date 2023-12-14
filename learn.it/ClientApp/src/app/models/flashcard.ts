@@ -3,5 +3,5 @@ export interface Flashcard {
   term: string;
   definition: string;
   isTermText: boolean;
-  studySetId?: number; 
+  studySetId?: number;
 }

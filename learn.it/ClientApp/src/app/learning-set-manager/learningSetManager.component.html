@@ -79,6 +79,7 @@
 
     </div>
     <div class="create-set-button">
+      <button type="button" *ngIf="isEditMode" (click)="redirectToLearnModule()" class="icon-btn icon-btn-small">Rozpocznij naukę</button>
       <button type="submit" class="icon-btn icon-btn-small">{{isEditMode ? 'Zapisz' : 'Stwórz zestaw'}}</button>
     </div>
   </form>

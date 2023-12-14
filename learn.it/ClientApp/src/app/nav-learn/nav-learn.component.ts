@@ -19,7 +19,7 @@ export class NavLearnComponent {
   }
 
   goBack() {
-    this.location.back();
+    //this.location.back();
   }
 
 }

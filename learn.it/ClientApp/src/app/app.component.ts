@@ -15,15 +15,16 @@ export class AppComponent {
       filter((event: RouterEvent): event is NavigationEnd => event instanceof NavigationEnd),
     ).subscribe((event: NavigationEnd) => {
       const hideNavMenuOnRoutes = ['/login', '/register'];
-      const learningComponentRoutes = ['/learn']; //add more
-      if (learningComponentRoutes.includes(event.urlAfterRedirects)) {
+      const learningComponentRoutes = ['/learn']; // Base path for learning component
+      const isLearningRoute = learningComponentRoutes.some(route => event.urlAfterRedirects.startsWith(route));
+
+      if (isLearningRoute) {
         this.showNavMenu = false;
         this.showNavLearn = true;
       }
       else {
-        this.showNavMenu = !hideNavMenuOnRoutes.includes(event.urlAfterRedirects);
+        this.showNavMenu = !hideNavMenuOnRoutes.some(route => event.urlAfterRedirects.startsWith(route));
       }
-      
     });
   }
 }

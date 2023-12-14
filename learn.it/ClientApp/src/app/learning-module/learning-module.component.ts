@@ -34,8 +34,8 @@ export class LearningModuleComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //const studySetId = this.activatedRoute.snapshot.paramMap.get('id');
-    const studySetId = 31;
+    const studySetId = this.activatedRoute.snapshot.paramMap.get('id');
+    //const studySetId = 31;
     if (!studySetId) return;
     this.questionStartTime = new Date();
 

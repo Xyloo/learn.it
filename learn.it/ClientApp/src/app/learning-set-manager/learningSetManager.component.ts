@@ -83,8 +83,8 @@ export class LearningSetManagerComponent {
   addFlashcard() {
     if (this.canAddFlashcard()) {
 
-      const newId = this.getMaxId() + 1;
-      this.flashcards.push({ flashcardId: newId, term: '', definition: '', isTermText: true });
+      //const newId = this.getMaxId() + 1;
+      this.flashcards.push({ flashcardId: -1, term: '', definition: '', isTermText: true });
       this.showAddError = false;
       setTimeout(() => {
         if (this.newFlashcardElement) {
@@ -139,9 +139,16 @@ export class LearningSetManagerComponent {
         var backendFlashcard = {
           Term: flashcard.term,
           Definition: flashcard.definition,
-          StudySetId: this.studySet.id
+          StudySetId: this.studySet.id,
         };
-        this.flashcardService.createFlashcards([backendFlashcard]);
+        this.flashcardService.createFlashcards([backendFlashcard]).subscribe({
+          next: results => {
+            console.log("result");
+          },
+          error: err => {
+            console.log("error adding new flashcard: " + err)
+          }
+        });
       });
 
       modified.forEach(flashcard => {
@@ -165,7 +172,7 @@ export class LearningSetManagerComponent {
           name: this.studySet.name,
           description: this.studySet.description,
           visibility: this.studySet.visibility,
-          groupId: this.studySet.group == -1 ? undefined : this.studySet.group
+          groupId: this.studySet.group == -1 ? null : this.studySet.group
         };
         this.studySetsService.updateStudySet(this.studySet.id, studySetDto).subscribe({
           next: results => {
@@ -224,13 +231,18 @@ export class LearningSetManagerComponent {
   }
 
   getFlashcardChanges() {
-    const added = this.flashcards.filter(fc => !fc.flashcardId);
+    console.log(this.flashcards)
+    const added = this.flashcards.filter(fc => fc.flashcardId == -1);
     const modified = this.flashcards.filter(fc => {
       if (!fc.flashcardId) return false;
       const original = this.originalFlashcards.find(ofc => ofc.flashcardId === fc.flashcardId);
       return original && (fc.term !== original.term || fc.definition !== original.definition);
     });
     return { added, modified };
+  }
+
+  redirectToLearnModule() {
+    this.router.navigate(['/learn', this.studySet.id]);
   }
 
 

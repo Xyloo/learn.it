@@ -41,6 +41,7 @@ import { GroupDetailsComponent } from './group-details/group-details.component';
 import { CreateGroupDialogComponent } from './create-group-dialog/create-group-dialog.component';
 import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -90,7 +91,7 @@ import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dial
       { path: 'register', component: RegisterComponent },
       { path: 'set', component: LearningSetManagerComponent },
       { path: 'set/:id', component: LearningSetManagerComponent },
-      { path: 'learn', component: LearningModuleComponent },
+      { path: 'learn/:id', component: LearningModuleComponent },
       { path: 'search', component: SearchComponent },
       { path: 'sets', component: UserSetsComponent },
       { path: 'settings', component: SettingsComponent },
