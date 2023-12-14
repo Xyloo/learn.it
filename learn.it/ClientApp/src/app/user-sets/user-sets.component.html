@@ -5,15 +5,16 @@
       <img src="/assets/plus-icon.svg" alt="Icon" />
     </button>
   </div>
-   <div class="sets-wrapper">
-     <div (click)="redirectToLearnModule(result.id)" class="sets-row"
-          *ngFor="let result of userSets" matTooltip="Kliknij aby rozpocząć naukę.">
-       <div class="set-info">
+  <div class="sets-wrapper">
+    <ng-container *ngIf="userSets && userSets.length; else noAvailableSets">
+      <div (click)="redirectToLearnModule(result.id)" class="sets-row"
+           *ngFor="let result of userSets" matTooltip="Kliknij aby rozpocząć naukę.">
+        <div class="set-info">
           {{result.setName}}
-       </div>
+        </div>
         <div class="set-info">
           {{result.description}}
-       </div>
+        </div>
         <div class="set-buttons">
           <button *ngIf="canDeleteSet(result.username)" (click)="deleteSet(result.id)" class="icon-btn-clear rotate45">
             <img src="/assets/plus-icon.svg" alt="Icon" />
@@ -22,6 +23,10 @@
             <img src="/assets/edit-icon.svg" alt="Icon" />
           </button>
         </div>
-     </div>
-   </div>
+      </div>
+    </ng-container>
+    <ng-template #noAvailableSets>
+      Brak dostępnych zestawów.
+    </ng-template>
+  </div>
 </div>
