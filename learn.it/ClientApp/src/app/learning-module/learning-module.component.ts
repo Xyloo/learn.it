@@ -38,6 +38,7 @@ export class LearningModuleComponent implements OnInit {
     if (!studySetId) return;
     this.questionStartTime = new Date();
 
+
     this.studySetsService.getStudySet(+studySetId).subscribe({
       next: (result) => {
         this.studySet = result;
@@ -51,6 +52,9 @@ export class LearningModuleComponent implements OnInit {
 
           this.currentTerm = '';
           this.currentDefinition = '';
+        }
+        if (this.flashcards.length < 3) {
+          this.availableMethods = this.availableMethods.filter(method => method !== 'multipleChoice');
         }
 
         this.setLearningMethod();
