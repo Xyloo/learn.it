@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-learn',
@@ -11,7 +12,9 @@ export class NavLearnComponent {
   totalItems: number = 5;
   learningSetTitle: string = 'Learn'; //get from service
 
-  constructor(private location: Location) { }
+  constructor(
+    private router: Router,
+  ) { }
 
   getProgressWidth(): string {
     const progress = (this.currentItem / this.totalItems) * 100;
@@ -19,7 +22,7 @@ export class NavLearnComponent {
   }
 
   goBack() {
-    //this.location.back();
+    this.router.navigate(['']);
   }
 
 }
