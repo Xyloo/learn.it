@@ -263,9 +263,9 @@ namespace learn.it.Controllers
             var random = new Random();
             var sets = (await _studySetsService.GetAllStudySets()).Where(s => s.Visibility == Visibility.Public).ToList();
             var randomSets = new HashSet<BasicStudySetDto>();
-            for(var i = 0; randomSets.Count < 3; i++)
+            for(var i = 0; randomSets.Count < 4; i++)
             {
-                var randomSet = sets.ElementAt(random.Next(sets.Count()));
+                var randomSet = sets.ElementAt(random.Next(sets.Count));
                 randomSets.Add(randomSet);
             }
             return Ok(randomSets);

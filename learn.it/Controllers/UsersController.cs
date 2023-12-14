@@ -236,7 +236,7 @@ namespace learn.it.Controllers
 
         [HttpGet("{userId}/studysets")]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> GetUserStudyStes([FromRoute] int userId)
+        public async Task<IActionResult> GetUserStudySets([FromRoute] int userId)
         {
             var queriedUser = await _usersService.GetUserByIdOrUsername(userId.ToString());
 
@@ -256,7 +256,7 @@ namespace learn.it.Controllers
 
             if (ControllerUtils.IsUserAdminOrSelf(queriedUser, User))
             {
-                var achievements = (await _achievementsService.GetUserAchievements(queriedUser.UserId))
+                var achievements = (await _achievementsService.GetUserAchievements(queriedUser.UserId)).OrderByDescending(a => a.Timestamp)
                     .Select(a => new UserAchievementsDto(a));
                 return Ok(achievements);
             }
@@ -293,7 +293,7 @@ namespace learn.it.Controllers
         public async Task<IActionResult> GetLastActivity()
         {
             var answers = await _answersService.GetAnswersByUserId(ControllerUtils.GetUserIdFromClaims(User));
-            answers = answers.OrderByDescending(x => x.AnswerTimestamp).Take(3);
+            answers = answers.OrderByDescending(x => x.AnswerTimestamp).Distinct().Take(4);
             var sets = answers.Select(x => new BasicStudySetDto(x.Flashcard.StudySet));
             return Ok(sets);
         }
