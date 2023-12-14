@@ -43,7 +43,7 @@ namespace learn.it.Repos
                 .Include(u => u.Permissions)
                 .Include(u => u.UserStats)
                 .Include(u => u.UserPreferences)
-                .Include(u => u.Groups)
+                .Include(u => u.Groups).ThenInclude(g => g.Creator)
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
@@ -53,7 +53,7 @@ namespace learn.it.Repos
                 .Include(u => u.Permissions)
                 .Include(u => u.UserStats)
                 .Include(u => u.UserPreferences)
-                .Include(u => u.Groups)
+                .Include(u => u.Groups).ThenInclude(g => g.Creator)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
@@ -63,7 +63,7 @@ namespace learn.it.Repos
                 .Include(u => u.Permissions)
                 .Include(u => u.UserStats)
                 .Include(u => u.UserPreferences)
-                .Include(u => u.Groups)
+                .Include(u => u.Groups).ThenInclude(g => g.Creator)
                 .FirstOrDefaultAsync(u => u.Username == username);
         }
 
