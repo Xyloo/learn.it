@@ -32,6 +32,9 @@ namespace learn.it.Repos
             return await _context.StudySets
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
+                .ThenInclude(g => g.Users)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator)
                 .Select(g => new BasicStudySetDto(g))
                 .ToListAsync();
         }
@@ -41,6 +44,9 @@ namespace learn.it.Repos
             return await _context.StudySets.Where(g => g.Name.Contains(studySetName))
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
+                .ThenInclude(g => g.Users)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator)
                 .Select(g => new BasicStudySetDto(g))
                 .ToListAsync();
         }
@@ -51,6 +57,9 @@ namespace learn.it.Repos
                 .Where(g => g.Creator.UserId == creatorId)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
+                .ThenInclude(g => g.Users)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator)
                 .Select(g => new BasicStudySetDto(g))
                 .ToListAsync();
         }
@@ -61,6 +70,9 @@ namespace learn.it.Repos
                 .Where(g => g.Group != null && g.Group.GroupId == groupId)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
+                .ThenInclude(g => g.Users)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator)
                 .Select(g => new BasicStudySetDto(g))
                 .ToListAsync();
         }
@@ -100,6 +112,9 @@ namespace learn.it.Repos
                 .Where(g => g.StudySetId == studySetId)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
+                .ThenInclude(g => g.Users)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator)
                 .Include(g => g.Flashcards)
                 .Select(g => new StudySetDto(g))
                 .FirstOrDefaultAsync();
@@ -111,6 +126,9 @@ namespace learn.it.Repos
                 .Where(g => g.Name == studySetName)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
+                .ThenInclude(g => g.Users)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator)
                 .Include(g => g.Flashcards)
                 .Select(g => new StudySetDto(g))
                 .FirstOrDefaultAsync();

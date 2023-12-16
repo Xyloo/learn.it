@@ -30,7 +30,7 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<BasicGroupDto>> GetAllGroups()
         {
-            return await _context.Groups.Include(g => g.Creator).Select(g => g.ToBasicGroupDto()).ToListAsync();
+            return await _context.Groups.Include(g => g.Creator).Include(g => g.Users).Select(g => g.ToBasicGroupDto()).ToListAsync();
         }
 
         public async Task<IEnumerable<GroupDto>> GetAllOwnedGroups(int ownerId)
@@ -86,7 +86,9 @@ namespace learn.it.Repos
             return await _context.GroupJoinRequests.Where(request => request.GroupId == groupId)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
-                .ThenInclude(g => g.Creator).ToListAsync();
+                .ThenInclude(g => g.Creator)
+                .Include(g => g.Group.Users)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<GroupJoinRequest>> GetAllGroupJoinRequestsForUser(int userId)
@@ -94,7 +96,9 @@ namespace learn.it.Repos
             return await _context.GroupJoinRequests.Where(request => request.UserId == userId)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
-                .ThenInclude(g => g.Creator).ToListAsync();
+                .ThenInclude(g => g.Creator)
+                .Include(g => g.Group.Users)
+                .ToListAsync();
         } 
 
         public async Task<GroupJoinRequest?> GetGroupJoinRequest(int userId, int groupId)
@@ -104,7 +108,10 @@ namespace learn.it.Repos
 
         public async Task<IEnumerable<BasicGroupDto>> FindGroups(string name)
         {
-            return await _context.Groups.Where(g => g.Name.Contains(name)).Include(g => g.Creator).Select(g => g.ToBasicGroupDto()).ToListAsync();
+            return await _context.Groups.Where(g => g.Name.Contains(name))
+                .Include(g => g.Creator)
+                .Include(g => g.Users)
+                .Select(g => g.ToBasicGroupDto()).ToListAsync();
         }
     }
 }
