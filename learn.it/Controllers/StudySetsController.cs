@@ -261,8 +261,10 @@ namespace learn.it.Controllers
         public async Task<IActionResult> GetPublicStudySets()
         {
             var random = new Random();
-            var sets = (await _studySetsService.GetAllStudySets()).Where(s => s.Visibility == Visibility.Public).ToList();
+            var sets = (await _studySetsService.GetAllStudySets()).Where(s => s.Visibility == Visibility.Public).Distinct().ToList();
             var randomSets = new HashSet<BasicStudySetDto>();
+            if(sets.Count <= 4)
+                return Ok(sets);
             for(var i = 0; randomSets.Count < 4; i++)
             {
                 var randomSet = sets.ElementAt(random.Next(sets.Count));
