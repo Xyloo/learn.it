@@ -293,7 +293,7 @@ namespace learn.it.Controllers
         public async Task<IActionResult> GetLastActivity()
         {
             var answers = await _answersService.GetAnswersByUserId(ControllerUtils.GetUserIdFromClaims(User));
-            answers = answers.OrderByDescending(x => x.AnswerTimestamp).Distinct().Take(4);
+            answers = answers.DistinctBy(x => x.Flashcard.StudySet).OrderByDescending(x => x.AnswerTimestamp).Take(4);
             var sets = answers.Select(x => new BasicStudySetDto(x.Flashcard.StudySet));
             return Ok(sets);
         }
