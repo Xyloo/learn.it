@@ -1,7 +1,4 @@
-export interface SearchResultDto {
-  id: number;
-  setName: string,
-  setCount: number;
-  avatarUrl: string;
-  username: string;
-}
+import { GroupDto } from "./groups/group.dto";
+import { StudySet } from "./study-sets/study-set";
+
+export type SearchResultDto = StudySet | GroupDto;

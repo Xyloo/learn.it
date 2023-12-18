@@ -6,12 +6,21 @@
     </button>
   </div>
   <div class="search-results-container">
-    <div class="result-row" *ngFor="let result of searchResults | slice:0:displayLimit" (click)="goToSet(result.id)">
-      <div class="result-item">
+    <div class="result-row" *ngFor="let result of searchResults | slice:0:displayLimit">
+      <div class="result-item" (click)="isStudySet(result) ? goToSet(result.id) : goToGroup(result.id)">
         <div class="set-title">{{ result.name }}</div>
-        <div class="set-count"> {{result.flashcardsCount}} fiszek</div>
+        <div class="set-count">
+          <ng-container *ngIf="isStudySet(result)">
+          <div>Zestaw fiszek</div>
+            {{result.count}} {{result.count == 1 ? 'fiszka' : 'fiszek'}}
+          </ng-container>
+          <ng-container *ngIf="!isStudySet(result)">
+          <div>Grupa</div>
+            {{result.count}} {{result.count == 1 ? 'użytkownik' : 'użytkowników'}}
+          </ng-container>
+        </div>
         <div class="user-info">
-          <img [src]="result.creator.avatar || '/assets/temp-avatar.png'" alt="Avatar" class="user-avatar">
+          <img [src]="result.creator.avatar ? '/Avatars/' + result.creator.avatar : '/assets/temp-avatar.png'" alt="Avatar" class="user-avatar">
           <div class="username">{{ result.creator.username }}</div>
         </div>
       </div>

@@ -49,14 +49,12 @@ export class LearningModuleComponent implements OnInit {
           this.generateRandomOptions();
         }
         else {  //brak fiszek
-
           this.currentTerm = '';
           this.currentDefinition = '';
         }
         if (this.flashcards.length < 3) {
           this.availableMethods = this.availableMethods.filter(method => method !== 'multipleChoice');
         }
-
         this.setLearningMethod();
       },
       error: (error) => {
@@ -95,7 +93,6 @@ export class LearningModuleComponent implements OnInit {
     }
   }
 
-
   setLearningMethod() {
     const randomIndex = Math.floor(Math.random() * this.availableMethods.length);
     this.currentMethod = this.availableMethods[randomIndex];
@@ -123,9 +120,6 @@ export class LearningModuleComponent implements OnInit {
     this.setCurrentQuestion();
     this.setLearningMethod();
   }
-
-
-
 }
 
 

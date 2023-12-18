@@ -7,6 +7,6 @@ export interface StudySet {
   visibility: number;
   creator: { username: string; avatar: string | null };
   flashcards: Flashcard[];
-  flashcardsCount: number;
+  count: number;
   group?: number; 
 }

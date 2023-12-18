@@ -29,7 +29,7 @@ export class LearningSetManagerComponent {
     visibility: 0,
     group: -1,
     flashcards: [],
-    flashcardsCount: 0,
+    count: 0,
     creator: {
       username: '',
       avatar: null

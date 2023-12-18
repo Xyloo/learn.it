@@ -17,9 +17,9 @@ export class StudySetsService {
     private http: HttpClient,
     private accountSerivce: AccountService
   ) { }
-/*
-const storedUser = JSON.parse(localStorage.getItem('userId')!);
-this.userId = storedUser ? storedUser : null;*/
+  /*
+  const storedUser = JSON.parse(localStorage.getItem('userId')!);
+  this.userId = storedUser ? storedUser : null;*/
 
 
   getStudySets(): Observable<UserSetDto[]> {
@@ -53,13 +53,26 @@ this.userId = storedUser ? storedUser : null;*/
     return this.http.put(`${environment.apiUrl}/studysets/${setId}`, studySet);
   }
   findStudySets(query: string): Observable<StudySet[]> {
-    return this.http.get<StudySet[]>(`${environment.apiUrl}/studysets/find/${query}`);
+    return this.http.get<any[]>(`${environment.apiUrl}/studysets/find/${query}`).pipe(
+      map(response => response.map(data => ({
+        id: data.id,
+        name: data.name,
+        description: '', 
+        visibility: data.visibility, 
+        flashcards: [], 
+        count: data.flashcardsCount,
+        creator: {
+          username: data.creator.username,
+          avatar: data.creator.avatar
+        }
+      })))
+    );
   }
 
   getUserRecommendedSets(): Observable<StudySet[]> {
     return this.http.get<StudySet[]>(`${environment.apiUrl}/studysets`).pipe(
       map(response => response.map(item => ({
-        ...item, 
+        ...item,
         creator: {
           ...item.creator,
           avatar: item.creator.avatar ? `/Avatars/${item.creator.avatar}` : '/assets/temp-avatar.png'

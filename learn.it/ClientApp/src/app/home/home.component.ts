@@ -56,33 +56,4 @@ export class HomeComponent implements OnInit {
       this.router.navigateByUrl(`/set/${id}`);
     }
   }
-
-
-/*  usersLastActivity: ActivityDto[] = [
-    {
-      id: 1,
-      name: "Nazwa zestawu 1",
-      avatarUrl: "/assets/plus-icon.svg",
-      username: "Userasdasd1",
-      isPrivate: true
-    },
-    {
-      id: 2,
-      name: "Nazwa zestawu 2",
-      avatarUrl: "/assets/plus-icon.svg",
-      username: "User2",
-      isPrivate: false
-    },
-    {
-      id: 3,
-      name: "Nazwa zestawu 2",
-      avatarUrl: "/assets/plus-icon.svg",
-      username: "User1",
-      isPrivate: true
-    }
-  ]
-*/
-
-
-
 }

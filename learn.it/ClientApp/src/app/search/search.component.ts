@@ -4,6 +4,10 @@ import { SearchResultDto } from '../models/searchesult.dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudySetsService } from '../services/study-sets/study-sets.service';
 import { StudySet } from '../models/study-sets/study-set';
+import { GroupsService } from '../services/groups/groups.service';
+import { forkJoin } from 'rxjs';
+import { GroupDto } from '../models/groups/group.dto';
+import { SnackbarService } from '../services/snackbar.service';
 
 
 @Component({
@@ -11,35 +15,44 @@ import { StudySet } from '../models/study-sets/study-set';
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent implements OnInit{
+export class SearchComponent implements OnInit {
 
-  searchResults: StudySet[] = [];
+  searchResults: SearchResultDto[] = [];
   searchedText: string = '';
   displayLimit: number = 6;
   maxDisplayLimit: number = 15;
   isExpanded: boolean = false;
   buttonText: string = 'Więcej';
+
   constructor(
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private studySetsService: StudySetsService
+    private studySetsService: StudySetsService,
+    private groupService: GroupsService,
+    private snackBarService: SnackbarService
   ) { }
 
-    ngOnInit(): void {
-      this.route.queryParams.subscribe(params => {
-        const query = params['query'];
-        if (query) {
-          this.studySetsService.findStudySets(query).subscribe(data => {
-            this.searchResults = data;
-            this.searchedText
-          });
-        }
-      });
-    }
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const query = params['query'];
+      if (query) {
+        forkJoin([
+          this.studySetsService.findStudySets(query),
+          this.groupService.findGroups(query)
+        ]).subscribe(results => {
+          const [firstResult, secondResult] = results;
+          this.searchResults = [...firstResult, ...secondResult];
+          console.log("Search results: ", this.searchResults)
+        });
+      }
+    });
+
+  }
+
 
   toggleItemsDisplay(): void {
-    this.isExpanded = !this.isExpanded; 
+    this.isExpanded = !this.isExpanded;
     if (this.isExpanded) {
       this.displayLimit = this.searchResults.length % 15;
       this.buttonText = 'Schowaj';
@@ -50,11 +63,26 @@ export class SearchComponent implements OnInit{
   }
 
   goBack() {
-    this.location.back();  
+    this.location.back();
   }
 
-  goToSet(setId: number): void {
-    this.router.navigate(['/set', setId]);
+  goToSet(id: number): void {
+    this.router.navigate(['/set', id]);
+  }
+
+  goToGroup(id: number): void {
+    this.groupService.sendJoinRequest(id).subscribe({
+      next: () => {
+        this.snackBarService.openSnackBar('Wysłano prośbę o dołączenie do grupy.');
+      },
+      error: (error) => {
+        this.snackBarService.openSnackBar(error.error.detail);
+      }
+    });
+  }
+
+  isStudySet(result: SearchResultDto): boolean {
+    return (result as StudySet).visibility !== undefined;
   }
 
 }
