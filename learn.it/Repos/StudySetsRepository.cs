@@ -31,6 +31,7 @@ namespace learn.it.Repos
         {
             return await _context.StudySets
                 .Include(g => g.Creator)
+                .Include(g => g.Flashcards)
                 .Include(g => g.Group)
                 .ThenInclude(g => g.Users)
                 .Include(g => g.Group)
@@ -43,6 +44,7 @@ namespace learn.it.Repos
         {
             return await _context.StudySets.Where(g => g.Name.Contains(studySetName))
                 .Include(g => g.Creator)
+                .Include(g => g.Flashcards)
                 .Include(g => g.Group)
                 .ThenInclude(g => g.Users)
                 .Include(g => g.Group)
@@ -56,6 +58,7 @@ namespace learn.it.Repos
             return await _context.StudySets
                 .Where(g => g.Creator.UserId == creatorId)
                 .Include(g => g.Creator)
+                .Include(g => g.Flashcards)
                 .Include(g => g.Group)
                 .ThenInclude(g => g.Users)
                 .Include(g => g.Group)
@@ -69,6 +72,7 @@ namespace learn.it.Repos
             return await _context.StudySets
                 .Where(g => g.Group != null && g.Group.GroupId == groupId)
                 .Include(g => g.Creator)
+                .Include(g => g.Flashcards)
                 .Include(g => g.Group)
                 .ThenInclude(g => g.Users)
                 .Include(g => g.Group)
@@ -102,6 +106,9 @@ namespace learn.it.Repos
                 .Where(g => g.Name == studySetName)
                 .Include(g => g.Creator)
                 .Include(g => g.Group)
+                .ThenInclude(g => g.Users)
+                .Include(g => g.Group)
+                .ThenInclude(g => g.Creator)
                 .Include(g => g.Flashcards)
                 .FirstOrDefaultAsync();
         }
