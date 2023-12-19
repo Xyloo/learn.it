@@ -40,7 +40,8 @@ import { UserGroupsComponent } from './user-groups/user-groups.component';
 import { GroupDetailsComponent } from './group-details/group-details.component';
 import { CreateGroupDialogComponent } from './create-group-dialog/create-group-dialog.component';
 import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
-
+import { ChooseMethodDialogComponent } from '../choose-method-dialog/choose-method-dialog.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dial
     GroupDetailsComponent,
     CreateGroupDialogComponent,
     InviteUserDialogComponent,
+    ChooseMethodDialogComponent,
 
   ],
   imports: [
@@ -83,6 +85,7 @@ import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dial
     MatSnackBarModule,
     MatSelectModule,
     MatButtonModule,
+    MatSlideToggleModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },

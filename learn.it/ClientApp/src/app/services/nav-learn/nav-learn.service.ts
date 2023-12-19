@@ -9,10 +9,17 @@ export class NavLearnService {
   private flashcardSource = new BehaviorSubject<number>(0);
   private totalFlashcardSource = new BehaviorSubject<number>(0);
   private studySetNameSoruce = new BehaviorSubject<string>("");
+  private selectedMethodSource = new BehaviorSubject<string[]>(['multipleChoice', 'flashcard', 'input-quiz']); 
 
   currentFlashcard = this.flashcardSource.asObservable();
   totalFlashcards = this.totalFlashcardSource.asObservable();
   currentStudySetName = this.studySetNameSoruce.asObservable();
+  selectedMethods = this.selectedMethodSource.asObservable();
+
+
+  setSelectedMethods(methods: string[]) {
+    this.selectedMethodSource.next(methods);
+  }
 
   setCurrentItem(item: number) {
     this.flashcardSource.next(item);
@@ -27,7 +34,8 @@ export class NavLearnService {
   }
 
   incrementCurrentItem() {
-    this.flashcardSource.next(this.flashcardSource.value + 1);
+    if(this.currentFlashcard < this.totalFlashcards)
+      this.flashcardSource.next(this.flashcardSource.value + 1);
   }
 
 }

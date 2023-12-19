@@ -42,10 +42,10 @@ export class LearningModuleComponent implements OnInit {
   ngOnInit(): void {
     const studySetId = this.activatedRoute.snapshot.paramMap.get('id');
     if (!studySetId) return;
-    this.questionStartTime = new Date();
-
-    
-
+    this.navLearnService.selectedMethods.subscribe(methods => {
+      this.availableMethods = methods;
+    });
+    this.questionStartTime = new Date();   
     this.studySetsService.getStudySet(+studySetId).subscribe({
       next: (result) => {
         this.studySet = result;
