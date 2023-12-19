@@ -56,7 +56,7 @@ export class LearningModuleComponent implements OnInit {
           this.generateRandomOptions();
           this.navLearnService.setCurrentItem(1)
           this.navLearnService.setTotalItems(this.flashcards.length)
-          this.navLearnService.setStudySetName(this.studySet.name)``
+          this.navLearnService.setStudySetName(this.studySet.name)
         }
         else {  //brak fiszek
           this.currentFlashcard.term = '';
