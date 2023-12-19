@@ -4,6 +4,7 @@ import { StudySet } from '../models/study-sets/study-set';
 import { StudySetsService } from '../services/study-sets/study-sets.service';
 import { Flashcard } from '../models/flashcard';
 import { FlashcardService } from '../services/flashcard/flashcard.service';
+import { NavLearnService } from '../services/nav-learn/nav-learn.service';
 
 
 @Component({
@@ -34,7 +35,8 @@ export class LearningModuleComponent implements OnInit {
   constructor(
     private studySetsService: StudySetsService,
     private flashcardService: FlashcardService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private navLearnService: NavLearnService,
   ) { }
 
   ngOnInit(): void {
@@ -42,17 +44,19 @@ export class LearningModuleComponent implements OnInit {
     if (!studySetId) return;
     this.questionStartTime = new Date();
 
+    
 
     this.studySetsService.getStudySet(+studySetId).subscribe({
       next: (result) => {
         this.studySet = result;
         this.flashcards = result.flashcards;
 
-        console.log(result)
-
         if (this.flashcards.length > 0) {
           this.setCurrentQuestion();
           this.generateRandomOptions();
+          this.navLearnService.setCurrentItem(1)
+          this.navLearnService.setTotalItems(this.flashcards.length)
+          this.navLearnService.setStudySetName(this.studySet.name)``
         }
         else {  //brak fiszek
           this.currentFlashcard.term = '';
@@ -115,12 +119,8 @@ export class LearningModuleComponent implements OnInit {
       const currentFlashcard = this.flashcards[this.currentFlashcardIndex];
       if (currentFlashcard) {
         const currentFlashcardId = currentFlashcard.flashcardId;
-        console.log("flashcardId: " + currentFlashcardId);
         this.flashcardService.generateAnswer({ answerTime: timeTaken, flashcardId: currentFlashcardId, isCorrect });
-
-        if (!isCorrect) {
-          this.incorrectFlashcards.push(currentFlashcard);
-        }
+        isCorrect == true ? this.navLearnService.incrementCurrentItem() : this.incorrectFlashcards.push(currentFlashcard);         
       }
     }
     this.currentFlashcardIndex++;

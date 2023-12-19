@@ -33,6 +33,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\src\app\helpers\" />
     <Folder Include="ClientApp\src\app\models\achievements\" />
+    <Folder Include="ClientApp\src\app\services\nav-learn\" />
   </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
