@@ -1,21 +1,21 @@
 <div class="container">
   <div class="term-wrapper">
     <div class="term-top">
-      <button (click)="goBack()" class="icon-btn">
-        <img src="/assets/star-icon.svg" alt="Icon" />
+      <button (click)="markAsDifficult()" class="icon-btn">
+        <img class="icon-img" [src]="needsMoreRepetitions ? '/assets/star-filled-icon.svg' : '/assets/star-icon.svg'" alt="Icon" />
       </button>
       <button (click)="goBack()" class="icon-btn">
-        <img src="/assets/sound-max-icon.svg" alt="Icon" />
+        <img class="icon-img" src="/assets/sound-max-icon.svg" alt="Icon" />
       </button>
       <button (click)="goBack()" class="icon-btn">
-        <img src="/assets/sort-random-icon.svg" alt="Icon" />
+        <img class="icon-img" src="/assets/sort-random-icon.svg" alt="Icon" />
       </button>
       <button (click)="goBack()" class="icon-btn">
-        <img src="/assets/edit-icon.svg" alt="Icon" />
+        <img class="icon-img" src="/assets/edit-icon.svg" alt="Icon" />
       </button>
     </div>
     <div (click)="toggleFlashcard()" class="term-data">
-      <h3>{{ displayedTerm }}</h3>
+      <h3>{{ displayedTerm ? displayedTerm : flashcard.term }}</h3>
     </div>
   </div>
   <div class="buttons-wrapper">

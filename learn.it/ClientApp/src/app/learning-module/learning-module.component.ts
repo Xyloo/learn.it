@@ -13,8 +13,13 @@ import { FlashcardService } from '../services/flashcard/flashcard.service';
 })
 export class LearningModuleComponent implements OnInit {
   currentMethod: string = 'multipleChoice';
-  currentTerm: string = 'currentTerm';
-  currentDefinition: string = 'currentDefinition';
+  currentFlashcard: Flashcard = {
+    flashcardId: -1,
+    term: '',
+    definition: '',
+    isTermText: false,
+  };
+
   currentOptions: string[] = ['currentOptions', '2', '3', 'a'];
   availableMethods: string[] = ['multipleChoice', 'flashcard', 'input-quiz'];
 
@@ -29,7 +34,6 @@ export class LearningModuleComponent implements OnInit {
   constructor(
     private studySetsService: StudySetsService,
     private flashcardService: FlashcardService,
-    private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
 
@@ -44,13 +48,15 @@ export class LearningModuleComponent implements OnInit {
         this.studySet = result;
         this.flashcards = result.flashcards;
 
+        console.log(result)
+
         if (this.flashcards.length > 0) {
           this.setCurrentQuestion();
           this.generateRandomOptions();
         }
         else {  //brak fiszek
-          this.currentTerm = '';
-          this.currentDefinition = '';
+          this.currentFlashcard.term = '';
+          this.currentFlashcard.definition = '';
         }
         if (this.flashcards.length < 3) {
           this.availableMethods = this.availableMethods.filter(method => method !== 'multipleChoice');
@@ -76,8 +82,9 @@ export class LearningModuleComponent implements OnInit {
   setCurrentQuestion() {
     if (this.currentFlashcardIndex < this.flashcards.length) {
       let currentQuestion = this.flashcards[this.currentFlashcardIndex];
-      this.currentTerm = currentQuestion.term;
-      this.currentDefinition = currentQuestion.definition;
+      this.currentFlashcard.term = currentQuestion.term;
+      this.currentFlashcard.definition = currentQuestion.definition;
+      this.currentFlashcard.flashcardId = currentQuestion.flashcardId;
     }
     else if (this.incorrectFlashcards.length > 0 && !this.isReviewingIncorrect) {
 

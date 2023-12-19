@@ -1,20 +1,17 @@
 <div class="container">
   <div class="learn-container">
     <app-multiple-choice *ngIf="currentMethod === 'multipleChoice' && !quizCompleted"
-                         [term]="currentTerm"
-                         [definition]="currentDefinition"
+                         [flashcard]="currentFlashcard"
                          [options]="currentOptions"
                          (answerSelected)="onAnswerSelected($event)">
     </app-multiple-choice>
     <app-flashcard *ngIf="currentMethod === 'flashcard' && !quizCompleted"
-                   [term]="currentTerm"
-                   [definition]="currentDefinition"
+                   [flashcard]="currentFlashcard"
                    (answerSelected)="onAnswerSelected($event)">
     </app-flashcard>
     <app-input-quiz *ngIf="currentMethod === 'input-quiz' && !quizCompleted"
-                   [term]="currentTerm"
-                   [definition]="currentDefinition"
-                   (answerSelected)="onAnswerSelected($event)">
+                    [flashcard]="currentFlashcard"
+                    (answerSelected)="onAnswerSelected($event)">
     </app-input-quiz>
   </div>
 </div>

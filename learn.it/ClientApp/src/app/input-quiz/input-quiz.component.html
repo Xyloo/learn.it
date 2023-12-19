@@ -1,8 +1,8 @@
 <div class="container">
   <div class="term-wrapper">
     <div class="term-top">
-      <button (click)="markAsFavourite()" class="icon-btn">
-        <img src="/assets/star-icon.svg" alt="Icon" />
+      <button (click)="markAsDifficult()" class="icon-btn">
+        <img [src]="needsMoreRepetitions ? '/assets/star-filled-icon.svg' : '/assets/star-icon.svg'" alt="Icon" />
       </button>
       <button (click)="goBack()" class="icon-btn">
         <img src="/assets/sound-max-icon.svg" alt="Icon" />
@@ -12,7 +12,7 @@
       </button>
     </div>
     <div class="term-data">
-      <h3>{{ term }}</h3>
+      <h3>{{ flashcard.term }}</h3>
     </div>
     <div class="input-wrapper">
       <input [(ngModel)]="userInput" type="text" placeholder="Wpisz pojęcie...">      

@@ -46,6 +46,13 @@ button {
   justify-content: center;
 }
 
+  .icon-btn img {
+    width: 3rem;
+    height: 3rem;
+  }
+
+
+
 .term-data {
   display: flex;
   flex-direction: column;
