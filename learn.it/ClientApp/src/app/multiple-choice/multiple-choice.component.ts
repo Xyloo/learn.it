@@ -30,7 +30,6 @@ export class MultipleChoiceComponent implements OnChanges {
   checkAnswer(selectedOption: string) {
     this.isCorrect = selectedOption === this.flashcard.definition;
     this.selectedOption = selectedOption;
-    console.log("isCorrect: " + this.isCorrect)
 
     setTimeout(() => {
       this.answerSelected.emit(this.isCorrect ?? false);
@@ -41,7 +40,9 @@ export class MultipleChoiceComponent implements OnChanges {
   markAsDifficult() {
     this.needsMoreRepetitions = !this.needsMoreRepetitions;
     this.flashcardService.markAsDifficult(this.flashcard.flashcardId, this.needsMoreRepetitions).subscribe(
-      data => this.needsMoreRepetitions = data
+      data => {
+        this.needsMoreRepetitions = data.needsMoreRepetitions;
+      }
     );
   }
 

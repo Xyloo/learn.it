@@ -36,7 +36,7 @@ export class FlashcardService {
   }
 
   markAsDifficult(flashcardId: number, isDifficult: boolean): Observable<any> {
-    return this.http.put(`${environment.apiUrl}/flashcards/${flashcardId}`, { needsMoreRepetitions: isDifficult });
+    return this.http.put(`${environment.apiUrl}/flashcard_progress/${flashcardId}`, { needsMoreRepetitions: isDifficult });
   }
 
   getNeedsMoreRepetitions(flashcardId: number): Observable<boolean> {

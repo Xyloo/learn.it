@@ -44,7 +44,7 @@ export class FlashcardComponent implements OnChanges {
   markAsDifficult() {
     this.needsMoreRepetitions = !this.needsMoreRepetitions;
     this.flashcardService.markAsDifficult(this.flashcard.flashcardId, this.needsMoreRepetitions).subscribe(
-      data => this.needsMoreRepetitions = data
+      data => this.needsMoreRepetitions = data.needsMoreRepetitions
     );
   }
 
