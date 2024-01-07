@@ -91,7 +91,6 @@ export class LearningModuleComponent implements OnInit {
       this.currentFlashcard.flashcardId = currentQuestion.flashcardId;
     }
     else if (this.incorrectFlashcards.length > 0 && !this.isReviewingIncorrect) {
-
       this.flashcards = this.incorrectFlashcards;
       this.incorrectFlashcards = [];
       this.currentFlashcardIndex = 0;
@@ -100,7 +99,6 @@ export class LearningModuleComponent implements OnInit {
     }
     else {
       this.quizCompleted = true;
-      console.log("quizCompleted: " + this.quizCompleted)
     }
   }
 
@@ -119,8 +117,11 @@ export class LearningModuleComponent implements OnInit {
       const currentFlashcard = this.flashcards[this.currentFlashcardIndex];
       if (currentFlashcard) {
         const currentFlashcardId = currentFlashcard.flashcardId;
-        this.flashcardService.generateAnswer({ answerTime: timeTaken, flashcardId: currentFlashcardId, isCorrect });
-        isCorrect == true ? this.navLearnService.incrementCurrentItem() : this.incorrectFlashcards.push(currentFlashcard);         
+        this.flashcardService.generateAnswer({
+          answerTime: timeTaken, flashcardId: currentFlashcardId, isCorrect
+        });
+        isCorrect == true ? this.navLearnService.incrementMasteredFlashcards()
+          : this.incorrectFlashcards.push(currentFlashcard);         
       }
     }
     this.currentFlashcardIndex++;

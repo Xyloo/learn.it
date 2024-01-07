@@ -28,32 +28,34 @@ export class AccountService {
   }
 
   login(username: string, password: string) {
-    return this.http.post<UserLoginDto>(`${environment.apiUrl}/users/login`, { username, password })
+    return this.http.post<UserLoginDto>(`${environment.apiUrl}/users/login`,
+      { username, password })
       .pipe(
         map(response => {
           localStorage.setItem('token', response.token);
           const user = this.decodeToken(response.token);
           this.userSubject.next(user);
-
-          if (user) {
-            this.getUserAvatar(user.userId).subscribe(
-              avatar => {
-                console.log("avartar:" + avatar ? `/Avatars/${avatar}` : '/assets/temp-avatar.png' )
-                const updatedUser = { ...user, avatarName: avatar ? `/Avatars/${avatar}` : '/assets/temp-avatar.png' };
-                this.userSubject.next(updatedUser);
-              },
-              error => {
-                console.error('Error fetching avatar:', error);
-                const updatedUser = { ...user, avatarName: '/assets/temp-avatar.png' };
-                this.userSubject.next(updatedUser);
-              }
-            );
-            console.log("user avatar name: " + user.avatarName)
-          }
-
+          if (user) 
+            this.setupUserAvatar(user);         
           return response;
         })
       );
+  }
+
+  setupUserAvatar(user: UserLoginDto) {
+    this.getUserAvatar(user.userId).subscribe(
+      avatar => {
+        const updatedUser = {
+          ...user, avatarName: avatar ? `/Avatars/${avatar}`
+            : '/assets/temp-avatar.png'
+        };
+        this.userSubject.next(updatedUser);
+      },
+      error => {
+        const updatedUser = { ...user, avatarName: '/assets/temp-avatar.png' };
+        this.userSubject.next(updatedUser);
+      }
+    );
   }
 
   register(username: string, email: string, password: string) {

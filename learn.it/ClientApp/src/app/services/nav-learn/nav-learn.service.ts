@@ -6,10 +6,11 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class NavLearnService {
 
+  private availableMethods = ['multipleChoice', 'flashcard', 'input-quiz'];
   private flashcardSource = new BehaviorSubject<number>(0);
   private totalFlashcardSource = new BehaviorSubject<number>(0);
   private studySetNameSoruce = new BehaviorSubject<string>("");
-  private selectedMethodSource = new BehaviorSubject<string[]>(['multipleChoice', 'flashcard', 'input-quiz']); 
+  private selectedMethodSource = new BehaviorSubject<string[]>(this.availableMethods); 
 
   currentFlashcard = this.flashcardSource.asObservable();
   totalFlashcards = this.totalFlashcardSource.asObservable();
@@ -33,7 +34,7 @@ export class NavLearnService {
     this.studySetNameSoruce.next(name);
   }
 
-  incrementCurrentItem() {
+  incrementMasteredFlashcards() {
     if(this.currentFlashcard < this.totalFlashcards)
       this.flashcardSource.next(this.flashcardSource.value + 1);
   }
