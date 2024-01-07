@@ -30,7 +30,7 @@ export class SearchComponent implements OnInit {
     private route: ActivatedRoute,
     private studySetsService: StudySetsService,
     private groupService: GroupsService,
-    private snackBarService: SnackbarService
+    private snackBarService: SnackbarService,
   ) { }
 
   ngOnInit(): void {
@@ -43,7 +43,6 @@ export class SearchComponent implements OnInit {
         ]).subscribe(results => {
           const [firstResult, secondResult] = results;
           this.searchResults = [...firstResult, ...secondResult];
-          console.log("Search results: ", this.searchResults)
         });
       }
     });

@@ -4,12 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { LearningSetManagerComponent } from './learning-set-manager/learningSetManager.component';
@@ -42,6 +40,7 @@ import { CreateGroupDialogComponent } from './create-group-dialog/create-group-d
 import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
 import { ChooseMethodDialogComponent } from '../choose-method-dialog/choose-method-dialog.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AppGuard } from './guards/app.guard';
 
 @NgModule({
   declarations: [
@@ -49,7 +48,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent,
     LoginComponent,
     RegisterComponent,
     LearningSetManagerComponent,
@@ -87,24 +85,23 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatButtonModule,
     MatSlideToggleModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-      { path: 'set', component: LearningSetManagerComponent },
-      { path: 'set/:id', component: LearningSetManagerComponent },
-      { path: 'learn/:id', component: LearningModuleComponent },
-      { path: 'search', component: SearchComponent },
-      { path: 'sets', component: UserSetsComponent },
-      { path: 'settings', component: SettingsComponent },
-      { path: 'groups', component: UserGroupsComponent },
-      { path: 'groups/:id', component: GroupDetailsComponent },
+      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AppGuard] },
+      { path: 'counter', component: CounterComponent, canActivate: [AppGuard] },
+      { path: 'login', component: LoginComponent, canActivate: [AppGuard] },
+      { path: 'register', component: RegisterComponent, canActivate: [AppGuard] },
+      { path: 'set', component: LearningSetManagerComponent, canActivate: [AppGuard] },
+      { path: 'set/:id', component: LearningSetManagerComponent, canActivate: [AppGuard] },
+      { path: 'learn/:id', component: LearningModuleComponent, canActivate: [AppGuard] },
+      { path: 'search', component: SearchComponent, canActivate: [AppGuard] },
+      { path: 'sets', component: UserSetsComponent, canActivate: [AppGuard] },
+      { path: 'settings', component: SettingsComponent, canActivate: [AppGuard] },
+      { path: 'groups', component: UserGroupsComponent, canActivate: [AppGuard] },
+      { path: 'groups/:id', component: GroupDetailsComponent, canActivate: [AppGuard] },
     ]),
     BrowserAnimationsModule,
     ReactiveFormsModule
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, AppGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

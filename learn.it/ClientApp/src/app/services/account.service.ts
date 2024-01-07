@@ -27,6 +27,10 @@ export class AccountService {
     return this.userSubject.value;
   }
 
+  public isLoggedIn(): boolean {
+    return this.userValue !== null;
+  }
+
   login(username: string, password: string) {
     return this.http.post<UserLoginDto>(`${environment.apiUrl}/users/login`,
       { username, password })
