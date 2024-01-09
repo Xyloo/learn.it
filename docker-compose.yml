@@ -1,0 +1,62 @@
+version: '3.4'
+
+services:
+    db:
+        build:
+            dockerfile: mssql-dockerfile
+            context: .
+        image: ${DOCKER_REGISTRY-}db
+        ports:
+            - '1433:1433'
+        networks:
+            back:
+                ipv4_address: 10.5.0.5
+    check-db-started:
+        image: jwilder/dockerize:latest
+        depends_on:
+            - db
+        command: 'dockerize -wait=tcp://10.5.0.5:1433 -timeout 60s'
+        networks:
+            - back
+    reverse_proxy:
+        build:
+            dockerfile: learn.it/ReverseProxy/Dockerfile
+            context: .
+        image: ${DOCKER_REGISTRY-}reverseproxy
+        ports:
+            - "5000:80"
+            - "5001:5001"
+        networks:
+            - overlay
+        depends_on:
+            - frontend
+    frontend:
+        image: ${DOCKER_REGISTRY-}frontend
+        build:
+            dockerfile: learn.it/ClientApp/Dockerfile
+        networks:
+            - overlay
+        depends_on:
+            - backend
+    backend:
+        image: ${DOCKER_REGISTRY-}backend
+        build:
+            dockerfile: learn.it/Dockerfile
+            context: .
+        networks:
+            - overlay
+            - back
+        depends_on:
+            check-db-started:
+                condition: service_completed_successfully
+
+ 
+networks:
+    overlay:
+    back:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 10.5.0.0/16
+                  gateway: 10.5.0.1
+   

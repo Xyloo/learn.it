@@ -28,7 +28,7 @@ namespace learn.it.Tests
             var loginResponse = await client.PostAsJsonAsync("/api/users/login", login);
             loginResponse.EnsureSuccessStatusCode();
             var token = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
-            return token.Token;
+            return token!.Token;
         }
     }
 }

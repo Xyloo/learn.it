@@ -3,3 +3,18 @@ ENV ACCEPT_EULA="Y"
 ENV SA_PASSWORD="!root123456"
 ENV MSSQL_DATABASE="learnitdb"
 EXPOSE 1433
+
+USER root
+RUN mkdir -p /usr/config
+RUN chown mssql /usr/config
+
+WORKDIR /usr/config
+COPY ./entrypoint.sh /configure-db.sh /initial.sql /usr/config
+
+# Grant permissions for to our scripts to be executable
+RUN chmod +x /usr/config/entrypoint.sh
+RUN chmod +x /usr/config/configure-db.sh
+
+USER mssql
+
+ENTRYPOINT ["./entrypoint.sh"]

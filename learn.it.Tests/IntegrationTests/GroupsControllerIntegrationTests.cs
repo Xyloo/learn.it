@@ -19,7 +19,6 @@ namespace learn.it.Tests.IntegrationTests
     {
         private WebApplicationFactory<Program> _factory;
         private List<User> _users;
-        private List<Achievement> _achievements;
         private List<Group> _groups;
         private LearnitDbContext _db;
 
@@ -27,10 +26,10 @@ namespace learn.it.Tests.IntegrationTests
         public void Init()
         {
             _factory = new TestWebApplicationFactory<Program>();
-            _db = _factory.Services.CreateScope().ServiceProvider.GetRequiredService<LearnitDbContext>();
+            _db = _factory.Services.CreateScope().ServiceProvider
+                .GetRequiredService<LearnitDbContext>();
             var data = DatabaseSeeder.Prepare(_db);
             _users = data.Users;
-            _achievements = data.Achievements;
             _groups = data.Groups;
         }
 
@@ -134,11 +133,14 @@ namespace learn.it.Tests.IntegrationTests
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             var response = await client.GetAsync($"/api/groups/{group.GroupId}");
             var groupDetails = await response.Content.ReadFromJsonAsync<GroupDto>();
+            Assert.Multiple(() =>
+            {
 
-            // Assert
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(groupDetails.GroupId, Is.EqualTo(group.GroupId));
-            Assert.That(groupDetails.Name, Is.EqualTo(group.Name));
+                // Assert
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(groupDetails.GroupId, Is.EqualTo(group.GroupId));
+                Assert.That(groupDetails.Name, Is.EqualTo(group.Name));
+            });
         }
 
         [Test]
@@ -157,11 +159,13 @@ namespace learn.it.Tests.IntegrationTests
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             var response = await client.GetAsync($"/api/groups/{group.GroupId}");
             var groupDetails = await response.Content.ReadFromJsonAsync<BasicGroupDto>();
-
             // Assert
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(groupDetails.GroupId, Is.EqualTo(group.GroupId));
-            Assert.That(groupDetails.Name, Is.EqualTo(group.Name));
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(groupDetails.GroupId, Is.EqualTo(group.GroupId));
+                Assert.That(groupDetails.Name, Is.EqualTo(group.Name));
+            });
         }
 
         [Test]
