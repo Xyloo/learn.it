@@ -46,7 +46,6 @@ namespace learn.it.Controllers
         }
 
         [HttpGet("find/{groupName}")]
-        [Authorize(Policy = "Users")]
         public async Task<IActionResult> FindGroup([FromRoute] string groupName)
         {
             var groups = await _groupsService.FindGroups(groupName);

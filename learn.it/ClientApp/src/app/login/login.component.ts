@@ -28,22 +28,19 @@ export class LoginComponent implements OnInit{
   get f() { return this.form.controls; }
 
   onSubmit() {
-    if (this.form.invalid) {
-      return;
-    }
+    if (this.form.invalid) 
+      return;    
     this.accountService.login(this.f.username.value, this.f.password.value)
       .pipe(first())
       .subscribe({
         next: () => {
-          const returnUrl = '/';
-          this.router.navigateByUrl(returnUrl);
+          this.router.navigateByUrl('/');
         },
         error: error => {
-          if (error.status === 400) {
+          if (error.status === 400) 
             this.errorMessage = 'Niepoprawna nazwa użytkownika lub hasło.';
-          } else {
+          else 
             this.errorMessage = 'Wystąpił błąd podczas logowania.';
-          }
         }
       });
   }
